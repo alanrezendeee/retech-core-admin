@@ -56,6 +56,7 @@ export default function AdminAPIKeysPage() {
   const [keyToRevoke, setKeyToRevoke] = useState<APIKey | null>(null);
   const [keyToRotate, setKeyToRotate] = useState<APIKey | null>(null);
   const [newRotatedKey, setNewRotatedKey] = useState<string | null>(null);
+  const [isRotating, setIsRotating] = useState(false); // ✅ Flag adicional para bloqueio
 
   useEffect(() => {
     if (isReady) {
@@ -116,34 +117,50 @@ export default function AdminAPIKeysPage() {
   const handleRotateAPIKey = (key: APIKey) => {
     setKeyToRotate(key);
     setNewRotatedKey(null);
+    setIsRotating(false); // ✅ Reset flag
     setShowRotateDialog(true);
   };
 
   const confirmRotateAPIKey = async () => {
     if (!keyToRotate) return;
 
+    console.log('🔄 [ROTATE] Iniciando rotação...', keyToRotate.keyId);
+
+    // ✅ Seta flag ANTES de tudo
+    setIsRotating(true);
+    
     try {
       setIsSubmitting(true);
+      console.log('🔄 [ROTATE] isSubmitting = true, isRotating = true');
       
       const response = await api.post('/admin/apikeys/rotate', { keyId: keyToRotate.keyId });
+      console.log('🔄 [ROTATE] Resposta da API:', response.data);
       
       // Guardar a nova chave para exibir NO MODAL
       if (response.data.api_key) {
+        console.log('🔄 [ROTATE] Nova key recebida, setando estado...');
         setNewRotatedKey(response.data.api_key);
+        console.log('🔄 [ROTATE] newRotatedKey setado:', response.data.api_key.substring(0, 20) + '...');
+        
         // ✅ Modal vai trocar de conteúdo para exibir a key
         // Aguardar um pouco para garantir que o estado foi atualizado
         await new Promise(resolve => setTimeout(resolve, 100));
+        console.log('🔄 [ROTATE] Aguardou 100ms para React re-render');
+      } else {
+        console.error('❌ [ROTATE] response.data.api_key está vazio!', response.data);
       }
       
       // Recarregar lista em background (sem fechar modal)
+      console.log('🔄 [ROTATE] Recarregando lista em background...');
       loadData();
     } catch (error) {
-      console.error('Erro ao rotacionar API key:', error);
+      console.error('❌ [ROTATE] Erro ao rotacionar API key:', error);
       toast.error('Erro ao rotacionar API key');
       setShowRotateDialog(false);
       setKeyToRotate(null);
     } finally {
       setIsSubmitting(false);
+      console.log('🔄 [ROTATE] isSubmitting = false, concluído!');
     }
   };
 
@@ -362,16 +379,25 @@ export default function AdminAPIKeysPage() {
         </AlertDialog>
 
         <AlertDialog open={showRotateDialog} onOpenChange={(open) => {
-          if (!open) {
+          console.log('🔄 [MODAL] onOpenChange chamado, open:', open, 'isRotating:', isRotating, 'newRotatedKey:', !!newRotatedKey);
+          // ✅ NÃO permitir fechar se estiver rotacionando OU se tiver nova key
+          if (!open && !isRotating && !newRotatedKey) {
+            console.log('🔄 [MODAL] ✅ Permitido fechar, limpando estados...');
             setShowRotateDialog(false);
             setKeyToRotate(null);
             setNewRotatedKey(null);
+            setIsRotating(false);
+          } else if (!open) {
+            console.log('🔄 [MODAL] ❌ BLOQUEADO! isRotating:', isRotating, 'newRotatedKey:', !!newRotatedKey);
           }
         }}>
           <AlertDialogContent className="max-w-2xl">
             <AlertDialogHeader>
               <AlertDialogTitle className="text-xl">
-                {newRotatedKey ? '✅ Nova API Key Gerada!' : '🔄 Rotacionar API Key'}
+                {(() => {
+                  console.log('🔄 [MODAL] Renderizando título, newRotatedKey:', newRotatedKey ? 'EXISTE' : 'NULL');
+                  return newRotatedKey ? '✅ Nova API Key Gerada!' : '🔄 Rotacionar API Key';
+                })()}
               </AlertDialogTitle>
               <AlertDialogDescription asChild>
                 {newRotatedKey ? (
@@ -426,6 +452,7 @@ export default function AdminAPIKeysPage() {
                       setShowRotateDialog(false);
                       setKeyToRotate(null);
                       setNewRotatedKey(null);
+                      setIsRotating(false); // ✅ Limpa flag
                     }}
                     className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                   >
@@ -436,6 +463,7 @@ export default function AdminAPIKeysPage() {
                     setShowRotateDialog(false);
                     setKeyToRotate(null);
                     setNewRotatedKey(null);
+                    setIsRotating(false); // ✅ Limpa flag
                     toast.warning('⚠️ Certifique-se de ter salvo a API Key!');
                   }}>
                     Fechar sem Copiar
@@ -446,8 +474,11 @@ export default function AdminAPIKeysPage() {
                   <AlertDialogCancel disabled={isSubmitting}>
                     Cancelar
                   </AlertDialogCancel>
-                  <AlertDialogAction 
-                    onClick={confirmRotateAPIKey}
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation(); // ✅ BLOQUEAR propagação!
+                      confirmRotateAPIKey();
+                    }}
                     disabled={isSubmitting}
                     className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                   >
@@ -462,7 +493,7 @@ export default function AdminAPIKeysPage() {
                         Sim, Rotacionar
                       </>
                     )}
-                  </AlertDialogAction>
+                  </Button>
                 </>
               )}
             </AlertDialogFooter>

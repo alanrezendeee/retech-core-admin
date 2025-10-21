@@ -38,6 +38,7 @@ export default function PainelAPIKeysPage() {
   const [keyToRotate, setKeyToRotate] = useState<any | null>(null);
   const [newRotatedKey, setNewRotatedKey] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRotating, setIsRotating] = useState(false); // ✅ Flag adicional para bloqueio
 
   useEffect(() => {
     if (isReady) {
@@ -78,11 +79,15 @@ export default function PainelAPIKeysPage() {
   const handleRotateAPIKey = (key: any) => {
     setKeyToRotate(key);
     setNewRotatedKey(null);
+    setIsRotating(false); // ✅ Reset flag
     setShowRotateDialog(true);
   };
 
   const confirmRotateAPIKey = async () => {
     if (!keyToRotate) return;
+
+    // ✅ Seta flag ANTES de tudo
+    setIsRotating(true);
 
     try {
       setIsSubmitting(true);
@@ -360,10 +365,12 @@ export default function PainelAPIKeysPage() {
 
         {/* AlertDialog para rotacionar */}
         <AlertDialog open={showRotateDialog} onOpenChange={(open) => {
-          if (!open) {
+          // ✅ NÃO permitir fechar se estiver rotacionando OU se tiver nova key
+          if (!open && !isRotating && !newRotatedKey) {
             setShowRotateDialog(false);
             setKeyToRotate(null);
             setNewRotatedKey(null);
+            setIsRotating(false);
           }
         }}>
           <AlertDialogContent className="max-w-2xl">
@@ -424,6 +431,7 @@ export default function PainelAPIKeysPage() {
                       setShowRotateDialog(false);
                       setKeyToRotate(null);
                       setNewRotatedKey(null);
+                      setIsRotating(false); // ✅ Limpa flag
                     }}
                     className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                   >
@@ -434,6 +442,7 @@ export default function PainelAPIKeysPage() {
                     setShowRotateDialog(false);
                     setKeyToRotate(null);
                     setNewRotatedKey(null);
+                    setIsRotating(false); // ✅ Limpa flag
                     toast.warning('⚠️ Certifique-se de ter salvo a API Key!');
                   }}>
                     Fechar sem Copiar
@@ -444,8 +453,11 @@ export default function PainelAPIKeysPage() {
                   <AlertDialogCancel disabled={isSubmitting}>
                     Cancelar
                   </AlertDialogCancel>
-                  <AlertDialogAction 
-                    onClick={confirmRotateAPIKey}
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation(); // ✅ BLOQUEAR propagação!
+                      confirmRotateAPIKey();
+                    }}
                     disabled={isSubmitting}
                     className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                   >
@@ -460,7 +472,7 @@ export default function PainelAPIKeysPage() {
                         Sim, Rotacionar
                       </>
                     )}
-                  </AlertDialogAction>
+                  </Button>
                 </>
               )}
             </AlertDialogFooter>
