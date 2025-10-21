@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Cliente HTTP para comunicação com backend
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://api-core.theretech.com.br',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || '/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -38,7 +38,7 @@ api.interceptors.response.use(
         const refreshToken = localStorage.getItem('refreshToken');
         if (refreshToken) {
           const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
+            `${process.env.NEXT_PUBLIC_API_URL || '/api'}/auth/refresh`,
             { refreshToken }
           );
 

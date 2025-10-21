@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Token</title>
+</head>
+<body>
+    <h1>Debug Token</h1>
+    <button onclick="checkToken()">Verificar Token</button>
+    <button onclick="testAPI()">Testar API</button>
+    <div id="result"></div>
+
+    <script>
+        function checkToken() {
+            const token = localStorage.getItem('accessToken');
+            const user = localStorage.getItem('user');
+            
+            document.getElementById('result').innerHTML = `
+                <h3>Token:</h3>
+                <p>${token || 'Não encontrado'}</p>
+                <h3>User:</h3>
+                <p>${user || 'Não encontrado'}</p>
+            `;
+        }
+
+        async function testAPI() {
+            const token = localStorage.getItem('accessToken');
+            
+            try {
+                const response = await fetch('/api/admin/tenants', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                document.getElementById('result').innerHTML = `
+                    <h3>Status: ${response.status}</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('result').innerHTML = `
+                    <h3>Erro:</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
