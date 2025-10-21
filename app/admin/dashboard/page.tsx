@@ -1,23 +1,28 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/lib/stores/auth-store';
 import AdminLayout from '@/components/layouts/admin-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useRequireAuth } from '@/lib/hooks/use-auth';
+import { useDebugAuth } from '@/lib/hooks/use-debug-auth';
 
 export default function AdminDashboardPage() {
-  const router = useRouter();
-  const { user, isAuthenticated } = useAuthStore();
+  const { isReady, user } = useRequireAuth('SUPER_ADMIN');
+  useDebugAuth(); // Debug automático
 
   useEffect(() => {
-    if (!isAuthenticated || user?.role !== 'SUPER_ADMIN') {
-      router.push('/admin/login');
-    }
-  }, [isAuthenticated, user, router]);
+    console.log('🏠 Dashboard montou. isReady:', isReady, 'user:', user);
+  }, [isReady, user]);
 
-  if (!isAuthenticated) {
-    return null;
+  if (!isReady) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
+          <p className="mt-2 text-slate-600">Carregando...</p>
+        </div>
+      </div>
+    );
   }
 
   // Mock data - será substituído por dados reais da API

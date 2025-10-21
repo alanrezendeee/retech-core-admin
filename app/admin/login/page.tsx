@@ -38,7 +38,9 @@ export default function AdminLoginPage() {
       setLoading(true);
       setError('');
 
+      console.log('🔐 Tentando login...', data.email);
       const response = await login(data);
+      console.log('✅ Login response:', response);
       
       // Verificar se é super admin
       if (response.user.role !== 'SUPER_ADMIN') {
@@ -46,13 +48,24 @@ export default function AdminLoginPage() {
         return;
       }
 
+      console.log('👤 Salvando auth no store...', response.user);
+      
       // Salvar autenticação
       setAuth(response.user, response.accessToken, response.refreshToken);
+
+      // Aguardar um pouco para garantir que salvou
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      console.log('📍 Redirecionando para dashboard...');
+      
+      // Verificar se salvou
+      const stored = localStorage.getItem('auth-storage');
+      console.log('💾 Auth storage:', stored ? 'OK' : 'VAZIO');
 
       // Redirecionar para dashboard
       router.push('/admin/dashboard');
     } catch (err: any) {
-      console.error('Erro no login:', err);
+      console.error('❌ Erro no login:', err);
       setError(err.response?.data?.detail || 'Email ou senha incorretos');
     } finally {
       setLoading(false);

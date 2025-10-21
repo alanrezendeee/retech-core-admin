@@ -1,25 +1,20 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/lib/stores/auth-store';
+import { useRequireAuth } from '@/lib/hooks/use-auth';
 import PainelLayout from '@/components/layouts/painel-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 export default function PainelDashboardPage() {
-  const router = useRouter();
-  const { user, isAuthenticated } = useAuthStore();
+  const { isReady, user } = useRequireAuth('TENANT_USER');
 
-  useEffect(() => {
-    if (!isAuthenticated || user?.role !== 'TENANT_USER') {
-      router.push('/painel/login');
-    }
-  }, [isAuthenticated, user, router]);
-
-  if (!isAuthenticated) {
-    return null;
+  if (!isReady) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin h-8 w-8 border-4 border-indigo-600 border-t-transparent rounded-full"></div>
+      </div>
+    );
   }
 
   // Mock data - será substituído por dados reais da API

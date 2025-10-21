@@ -1,22 +1,19 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/lib/stores/auth-store';
+import { useRequireAuth } from '@/lib/hooks/use-auth';
 import AdminLayout from '@/components/layouts/admin-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function AdminSettingsPage() {
-  const router = useRouter();
-  const { user, isAuthenticated } = useAuthStore();
+  const { isReady } = useRequireAuth('SUPER_ADMIN');
 
-  useEffect(() => {
-    if (!isAuthenticated || user?.role !== 'SUPER_ADMIN') {
-      router.push('/admin/login');
-    }
-  }, [isAuthenticated, user, router]);
-
-  if (!isAuthenticated) return null;
+  if (!isReady) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
+      </div>
+    );
+  }
 
   return (
     <AdminLayout>

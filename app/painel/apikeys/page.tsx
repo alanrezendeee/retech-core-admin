@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/lib/stores/auth-store';
+import { useRequireAuth } from '@/lib/hooks/use-auth';
 import PainelLayout from '@/components/layouts/painel-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,8 +12,7 @@ import { Label } from '@/components/ui/label';
 import { getMyAPIKeys, createMyAPIKey, deleteMyAPIKey } from '@/lib/api/tenant';
 
 export default function PainelAPIKeysPage() {
-  const router = useRouter();
-  const { user, isAuthenticated } = useAuthStore();
+  const { isReady } = useRequireAuth('TENANT_USER');
   const [apikeys, setApikeys] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
@@ -23,13 +21,10 @@ export default function PainelAPIKeysPage() {
   const [createdKey, setCreatedKey] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isAuthenticated || user?.role !== 'TENANT_USER') {
-      router.push('/painel/login');
-      return;
+    if (isReady) {
+      loadAPIKeys();
     }
-
-    loadAPIKeys();
-  }, [isAuthenticated, user, router]);
+  }, [isReady]);
 
   const loadAPIKeys = async () => {
     try {
@@ -77,8 +72,12 @@ export default function PainelAPIKeysPage() {
     alert('API Key copiada!');
   };
 
-  if (!isAuthenticated || loading) {
-    return null;
+  if (!isReady || loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin h-8 w-8 border-4 border-indigo-600 border-t-transparent rounded-full"></div>
+      </div>
+    );
   }
 
   return (

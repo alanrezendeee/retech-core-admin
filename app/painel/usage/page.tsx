@@ -1,26 +1,21 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/lib/stores/auth-store';
+import { useRequireAuth } from '@/lib/hooks/use-auth';
 import PainelLayout from '@/components/layouts/painel-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getMyUsage } from '@/lib/api/tenant';
 
 export default function PainelUsagePage() {
-  const router = useRouter();
-  const { user, isAuthenticated } = useAuthStore();
+  const { isReady } = useRequireAuth('TENANT_USER');
   const [usage, setUsage] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAuthenticated || user?.role !== 'TENANT_USER') {
-      router.push('/painel/login');
-      return;
+    if (isReady) {
+      loadUsage();
     }
-
-    loadUsage();
-  }, [isAuthenticated, user, router]);
+  }, [isReady]);
 
   const loadUsage = async () => {
     try {
@@ -33,8 +28,12 @@ export default function PainelUsagePage() {
     }
   };
 
-  if (!isAuthenticated || loading) {
-    return null;
+  if (!isReady || loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin h-8 w-8 border-4 border-indigo-600 border-t-transparent rounded-full"></div>
+      </div>
+    );
   }
 
   const percentageToday = usage ? (usage.requestsToday / usage.dailyLimit) * 100 : 0;

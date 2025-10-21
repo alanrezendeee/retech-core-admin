@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/lib/stores/auth-store';
+import { useRequireAuth } from '@/lib/hooks/use-auth';
 import AdminLayout from '@/components/layouts/admin-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,19 +10,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { listAllTenants } from '@/lib/api/admin';
 
 export default function AdminTenantsPage() {
-  const router = useRouter();
-  const { user, isAuthenticated } = useAuthStore();
+  const { isReady } = useRequireAuth('SUPER_ADMIN');
   const [tenants, setTenants] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAuthenticated || user?.role !== 'SUPER_ADMIN') {
-      router.push('/admin/login');
-      return;
+    if (isReady) {
+      loadTenants();
     }
-
-    loadTenants();
-  }, [isAuthenticated, user, router]);
+  }, [isReady]);
 
   const loadTenants = async () => {
     try {
@@ -36,8 +31,12 @@ export default function AdminTenantsPage() {
     }
   };
 
-  if (!isAuthenticated || loading) {
-    return null;
+  if (!isReady || loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
+      </div>
+    );
   }
 
   return (
