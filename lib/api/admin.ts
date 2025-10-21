@@ -24,3 +24,9 @@ export const getAdminUsage = async () => {
   return response.data;
 };
 
+// Admin - Atividade recente
+export const getRecentActivity = async (limit = 20) => {
+  const response = await api.get(`/admin/activity?limit=${limit}`);
+  return response.data;
+};
+

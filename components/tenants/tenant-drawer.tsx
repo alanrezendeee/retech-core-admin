@@ -14,7 +14,12 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { Loader2, Save, X } from 'lucide-react';
+import { Loader2, Save, X, Shield, AlertCircle } from 'lucide-react';
+
+interface RateLimit {
+  requestsPerDay: number;
+  requestsPerMinute: number;
+}
 
 interface Tenant {
   id: string;
@@ -24,6 +29,7 @@ interface Tenant {
   company?: string;
   purpose?: string;
   active: boolean;
+  rateLimit?: RateLimit | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -51,6 +57,12 @@ export function TenantDrawer({
     active: true,
   });
 
+  const [customRateLimit, setCustomRateLimit] = useState(false);
+  const [rateLimit, setRateLimit] = useState({
+    requestsPerDay: 1000,
+    requestsPerMinute: 60,
+  });
+
   // Atualizar formData quando tenant mudar
   React.useEffect(() => {
     if (tenant) {
@@ -61,6 +73,21 @@ export function TenantDrawer({
         purpose: tenant.purpose || '',
         active: tenant.active ?? true,
       });
+      
+      // Configurar rate limit
+      if (tenant.rateLimit && tenant.rateLimit.requestsPerDay) {
+        setCustomRateLimit(true);
+        setRateLimit({
+          requestsPerDay: tenant.rateLimit.requestsPerDay || 1000,
+          requestsPerMinute: tenant.rateLimit.requestsPerMinute || 60,
+        });
+      } else {
+        setCustomRateLimit(false);
+        setRateLimit({
+          requestsPerDay: 1000,
+          requestsPerMinute: 60,
+        });
+      }
     } else {
       setFormData({
         name: '',
@@ -68,6 +95,11 @@ export function TenantDrawer({
         company: '',
         purpose: '',
         active: true,
+      });
+      setCustomRateLimit(false);
+      setRateLimit({
+        requestsPerDay: 1000,
+        requestsPerMinute: 60,
       });
     }
   }, [tenant]);
@@ -79,7 +111,20 @@ export function TenantDrawer({
     setIsSubmitting(true);
 
     try {
-      await onSave(formData);
+      // Converter rateLimit para o formato que o backend espera (PascalCase)
+      const rateLimitPayload = customRateLimit ? {
+        RequestsPerDay: Number(rateLimit.requestsPerDay) || 1000,
+        RequestsPerMinute: Number(rateLimit.requestsPerMinute) || 60,
+      } : null;
+
+      const dataToSave = {
+        ...formData,
+        rateLimit: rateLimitPayload,
+      };
+      
+      console.log('📤 Enviando dados do tenant:', dataToSave);
+      
+      await onSave(dataToSave);
       onClose();
     } catch (error) {
       console.error('Erro ao salvar tenant:', error);
@@ -195,6 +240,117 @@ export function TenantDrawer({
                       onCheckedChange={(checked) => handleInputChange('active', checked)}
                     />
                   </div>
+                </div>
+
+                {/* Divisor */}
+                <div className="relative pt-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-slate-200"></div>
+                  </div>
+                  <div className="relative flex justify-center">
+                    <span className="bg-white px-4 text-sm text-slate-500 font-medium">
+                      Rate Limiting
+                    </span>
+                  </div>
+                </div>
+
+                {/* Rate Limit Personalizado */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-5 bg-purple-50 rounded-lg border border-purple-200">
+                    <div className="flex items-start gap-3 flex-1">
+                      <Shield className="w-5 h-5 text-purple-600 mt-0.5" />
+                      <div className="flex-1">
+                        <Label htmlFor="customRateLimit" className="text-base font-medium text-slate-900 cursor-pointer block mb-1">
+                          Limite Personalizado
+                        </Label>
+                        <p className="text-sm text-slate-600">
+                          {customRateLimit 
+                            ? 'Usando limite customizado para este tenant' 
+                            : 'Usando limite padrão do sistema (1.000/dia)'}
+                        </p>
+                      </div>
+                    </div>
+                    <Switch
+                      id="customRateLimit"
+                      checked={customRateLimit}
+                      onCheckedChange={setCustomRateLimit}
+                    />
+                  </div>
+
+                  {customRateLimit && (
+                    <div className="space-y-4 p-5 bg-slate-50 rounded-lg border border-slate-200">
+                      <div className="flex items-start gap-2 mb-4">
+                        <AlertCircle className="w-4 h-4 text-blue-600 mt-0.5" />
+                        <p className="text-xs text-slate-600">
+                          Configure os limites específicos para este tenant. Estes valores sobrescrevem o limite padrão do sistema.
+                        </p>
+                      </div>
+
+                      <div className="space-y-3">
+                        <Label htmlFor="requestsPerDay" className="text-sm font-medium text-slate-700 block">
+                          Requests por Dia
+                        </Label>
+                        <Input
+                          id="requestsPerDay"
+                          type="number"
+                          value={rateLimit.requestsPerDay}
+                          onChange={(e) => {
+                            const value = e.target.value === '' ? '' : parseInt(e.target.value);
+                            setRateLimit(prev => ({
+                              ...prev,
+                              requestsPerDay: value as number
+                            }));
+                          }}
+                          onBlur={(e) => {
+                            if (e.target.value === '' || parseInt(e.target.value) < 1) {
+                              setRateLimit(prev => ({
+                                ...prev,
+                                requestsPerDay: 1000
+                              }));
+                            }
+                          }}
+                          min="1"
+                          max="1000000"
+                          className="h-11 text-base"
+                        />
+                        <p className="text-xs text-slate-500">
+                          Máximo de requisições por dia
+                        </p>
+                      </div>
+
+                      <div className="space-y-3">
+                        <Label htmlFor="requestsPerMinute" className="text-sm font-medium text-slate-700 block">
+                          Requests por Minuto
+                        </Label>
+                        <Input
+                          id="requestsPerMinute"
+                          type="number"
+                          value={rateLimit.requestsPerMinute}
+                          onChange={(e) => {
+                            const value = e.target.value === '' ? '' : parseInt(e.target.value);
+                            setRateLimit(prev => ({
+                              ...prev,
+                              requestsPerMinute: value as number
+                            }));
+                          }}
+                          onBlur={(e) => {
+                            if (e.target.value === '' || parseInt(e.target.value) < 1) {
+                              setRateLimit(prev => ({
+                                ...prev,
+                                requestsPerMinute: 60
+                              }));
+                            }
+                          }}
+                          min="1"
+                          max="10000"
+                          className="h-11 text-base"
+                        />
+                        <p className="text-xs text-slate-500">
+                          Máximo de requisições por minuto
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

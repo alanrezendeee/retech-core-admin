@@ -18,8 +18,8 @@ import api from '@/lib/api/client';
 interface SystemSettings {
   // Rate Limiting DEFAULT (global para novos tenants)
   defaultRateLimit: {
-    requestsPerDay: number;
-    requestsPerMinute: number;
+    requestsPerDay: number | '';
+    requestsPerMinute: number | '';
   };
   // CORS
   cors: {
@@ -74,7 +74,18 @@ export default function AdminSettingsPage() {
     try {
       setIsLoading(true);
       const response = await api.get('/admin/settings');
-      setSettings(response.data);
+      
+      // Normalizar os dados do backend (Go usa PascalCase, frontend usa camelCase)
+      const data = response.data;
+      const normalized = {
+        ...data,
+        defaultRateLimit: {
+          requestsPerDay: data.defaultRateLimit?.RequestsPerDay || data.defaultRateLimit?.requestsPerDay || 1000,
+          requestsPerMinute: data.defaultRateLimit?.RequestsPerMinute || data.defaultRateLimit?.requestsPerMinute || 60,
+        },
+      };
+      
+      setSettings(normalized);
     } catch (error: any) {
       console.error('Erro ao carregar configurações:', error);
       // Se não existir configuração, usa as padrões (já definidas no state)
@@ -90,12 +101,35 @@ export default function AdminSettingsPage() {
     try {
       setIsSaving(true);
       
-      await api.put('/admin/settings', settings);
+      // Garantir que valores vazios sejam convertidos para números padrão
+      const requestsPerDay = settings.defaultRateLimit.requestsPerDay === '' 
+        ? 1000 
+        : Number(settings.defaultRateLimit.requestsPerDay);
+      const requestsPerMinute = settings.defaultRateLimit.requestsPerMinute === '' 
+        ? 60 
+        : Number(settings.defaultRateLimit.requestsPerMinute);
+      
+      // Converter para o formato que o backend espera (PascalCase)
+      const payload = {
+        defaultRateLimit: {
+          RequestsPerDay: requestsPerDay,
+          RequestsPerMinute: requestsPerMinute,
+        },
+        cors: settings.cors,
+        jwt: settings.jwt,
+        api: settings.api,
+      };
+      
+      await api.put('/admin/settings', payload);
       
       toast.success('Configurações salvas com sucesso!');
-    } catch (error) {
+      
+      // Recarregar para pegar timestamps atualizados
+      await loadSettings();
+    } catch (error: any) {
       console.error('Erro ao salvar configurações:', error);
-      toast.error('Erro ao salvar configurações');
+      const errorMessage = error.response?.data?.detail || 'Erro ao salvar configurações';
+      toast.error(errorMessage);
     } finally {
       setIsSaving(false);
     }
@@ -218,41 +252,59 @@ export default function AdminSettingsPage() {
               </div>
 
               <div className="space-y-4">
-                <div>
-                  <Label htmlFor="requestsPerDay" className="text-slate-700 font-medium">
-                    Requests por Dia
-                  </Label>
-                  <Input
-                    id="requestsPerDay"
-                    type="number"
-                    value={settings.defaultRateLimit.requestsPerDay}
-                    onChange={(e) => handleInputChange('defaultRateLimit', 'requestsPerDay', parseInt(e.target.value))}
-                    min="1"
-                    max="1000000"
-                    className="mt-1.5 h-11"
-                  />
-                  <p className="text-xs text-slate-500 mt-1">
-                    Máximo de requisições por dia (recomendado: 1.000 para plano free)
-                  </p>
-                </div>
+                      <div>
+                        <Label htmlFor="requestsPerDay" className="text-slate-700 font-medium">
+                          Requests por Dia
+                        </Label>
+                        <Input
+                          id="requestsPerDay"
+                          type="number"
+                          value={settings.defaultRateLimit.requestsPerDay}
+                          onChange={(e) => {
+                            const value = e.target.value === '' ? '' : parseInt(e.target.value);
+                            handleInputChange('defaultRateLimit', 'requestsPerDay', value);
+                          }}
+                          onBlur={(e) => {
+                            // Aplicar valor padrão apenas ao sair do campo se estiver vazio
+                            if (e.target.value === '' || parseInt(e.target.value) < 1) {
+                              handleInputChange('defaultRateLimit', 'requestsPerDay', 1000);
+                            }
+                          }}
+                          min="1"
+                          max="1000000"
+                          className="mt-1.5 h-11"
+                        />
+                        <p className="text-xs text-slate-500 mt-1">
+                          Máximo de requisições por dia (recomendado: 1.000 para plano free)
+                        </p>
+                      </div>
 
-                <div>
-                  <Label htmlFor="requestsPerMinute" className="text-slate-700 font-medium">
-                    Requests por Minuto
-                  </Label>
-                  <Input
-                    id="requestsPerMinute"
-                    type="number"
-                    value={settings.defaultRateLimit.requestsPerMinute}
-                    onChange={(e) => handleInputChange('defaultRateLimit', 'requestsPerMinute', parseInt(e.target.value))}
-                    min="1"
-                    max="10000"
-                    className="mt-1.5 h-11"
-                  />
-                  <p className="text-xs text-slate-500 mt-1">
-                    Máximo de requisições por minuto (recomendado: 60)
-                  </p>
-                </div>
+                      <div>
+                        <Label htmlFor="requestsPerMinute" className="text-slate-700 font-medium">
+                          Requests por Minuto
+                        </Label>
+                        <Input
+                          id="requestsPerMinute"
+                          type="number"
+                          value={settings.defaultRateLimit.requestsPerMinute}
+                          onChange={(e) => {
+                            const value = e.target.value === '' ? '' : parseInt(e.target.value);
+                            handleInputChange('defaultRateLimit', 'requestsPerMinute', value);
+                          }}
+                          onBlur={(e) => {
+                            // Aplicar valor padrão apenas ao sair do campo se estiver vazio
+                            if (e.target.value === '' || parseInt(e.target.value) < 1) {
+                              handleInputChange('defaultRateLimit', 'requestsPerMinute', 60);
+                            }
+                          }}
+                          min="1"
+                          max="10000"
+                          className="mt-1.5 h-11"
+                        />
+                        <p className="text-xs text-slate-500 mt-1">
+                          Máximo de requisições por minuto (recomendado: 60)
+                        </p>
+                      </div>
               </div>
             </CardContent>
           </Card>

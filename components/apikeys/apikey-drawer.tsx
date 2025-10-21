@@ -275,17 +275,32 @@ export function APIKeyDrawer({
                     value={formData.ownerId}
                     onValueChange={(value) => handleInputChange('ownerId', value)}
                   >
-                    <SelectTrigger className="h-12 text-base">
+                    <SelectTrigger className="h-14 text-base">
                       <SelectValue placeholder="Selecione um tenant" />
                     </SelectTrigger>
                     <SelectContent>
                       {tenants.map((tenant) => (
-                        <SelectItem key={tenant.tenantId} value={tenant.tenantId}>
-                          {tenant.name}
+                        <SelectItem 
+                          key={tenant.tenantId} 
+                          value={tenant.tenantId}
+                          className="h-14 cursor-pointer"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold text-sm">
+                              {tenant.name.substring(0, 2).toUpperCase()}
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="font-medium text-slate-900">{tenant.name}</span>
+                              <span className="text-xs text-slate-500">{tenant.tenantId}</span>
+                            </div>
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
+                  <p className="text-xs text-slate-500">
+                    Selecione o tenant que terá acesso à API key
+                  </p>
                 </div>
 
                 {/* Scopes */}

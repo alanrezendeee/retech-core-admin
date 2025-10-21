@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import AdminLayout from '@/components/layouts/admin-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useRequireAuth } from '@/lib/hooks/use-auth';
@@ -16,16 +16,176 @@ import {
   ArrowDownRight
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { getAdminStats, getRecentActivity } from '@/lib/api/admin';
+import { toast } from 'sonner';
+import Link from 'next/link';
 
 export default function AdminDashboardPage() {
   const { isReady, user } = useRequireAuth('SUPER_ADMIN');
   useDebugAuth(); // Debug automático
 
-  useEffect(() => {
-    console.log('🏠 Dashboard montou. isReady:', isReady, 'user:', user);
-  }, [isReady, user]);
+  const [stats, setStats] = useState({
+    totalTenants: 0,
+    totalAPIKeys: 0,
+    activeTenants: 0,
+    activeAPIKeys: 0,
+    requestsToday: 0,
+    requestsMonth: 0,
+    tenantsGrowth: 0,
+    keysGrowth: 0,
+    requestsGrowth: 0,
+  });
+  const [loading, setLoading] = useState(true);
 
-  if (!isReady) {
+  useEffect(() => {
+    if (isReady) {
+      loadStats();
+      loadActivity();
+    }
+  }, [isReady]);
+
+  // Auto-refresh a cada 30 segundos
+  useEffect(() => {
+    if (!isReady) return;
+    
+    const interval = setInterval(() => {
+      loadActivity();
+    }, 30000); // 30 segundos
+    
+    return () => clearInterval(interval);
+  }, [isReady]);
+
+  interface Activity {
+    id: string;
+    type: string;
+    action: string;
+    timestamp: string;
+    actor: {
+      userId: string;
+      email: string;
+      name: string;
+      role: string;
+    };
+    resource: {
+      type: string;
+      id: string;
+      name: string;
+    };
+    metadata?: Record<string, any>;
+  }
+
+  const [recentActivity, setRecentActivity] = useState<Activity[]>([]);
+
+  const loadStats = async () => {
+    try {
+      const data = await getAdminStats();
+      setStats({
+        totalTenants: data.totalTenants || 0,
+        totalAPIKeys: data.totalAPIKeys || 0,
+        activeTenants: data.activeTenants || 0,
+        activeAPIKeys: data.activeAPIKeys || 0,
+        requestsToday: data.requestsToday || 0,
+        requestsMonth: data.requestsMonth || 0,
+        tenantsGrowth: 0, // TODO: calcular crescimento
+        keysGrowth: 0,
+        requestsGrowth: 0,
+      });
+    } catch (error) {
+      console.error('Erro ao carregar stats:', error);
+      toast.error('Erro ao carregar estatísticas');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadActivity = async () => {
+    try {
+      const data = await getRecentActivity(10);
+      setRecentActivity(data.activities || []);
+    } catch (error) {
+      console.error('Erro ao carregar atividades:', error);
+      // Não mostrar toast aqui para não incomodar com erro de refresh
+    }
+  };
+
+  // Helper functions para UI
+  const getActivityIcon = (type: string) => {
+    if (type.includes('tenant')) return Users;
+    if (type.includes('apikey')) return Key;
+    if (type.includes('login')) return CheckCircle2;
+    if (type.includes('settings')) return Activity;
+    return Activity;
+  };
+
+  const getActivityColor = (type: string) => {
+    if (type.includes('created')) return 'green';
+    if (type.includes('deleted') || type.includes('revoked')) return 'red';
+    if (type.includes('updated')) return 'blue';
+    if (type.includes('login')) return 'purple';
+    return 'slate';
+  };
+
+  const getActivityTitle = (activity: Activity) => {
+    const actionMap: Record<string, string> = {
+      'tenant.created': 'Tenant criado',
+      'tenant.updated': 'Tenant atualizado',
+      'tenant.deleted': 'Tenant deletado',
+      'tenant.activated': 'Tenant ativado',
+      'tenant.deactivated': 'Tenant desativado',
+      'apikey.created': 'API Key criada',
+      'apikey.revoked': 'API Key revogada',
+      'settings.updated': 'Configurações atualizadas',
+      'user.created': 'Usuário criado',
+      'user.login': 'Login realizado',
+    };
+    return actionMap[activity.type] || activity.type;
+  };
+
+  const getActivityDescription = (activity: Activity) => {
+    if (activity.type.includes('tenant')) {
+      return `${activity.actor.name} ${activity.action === 'create' ? 'criou' : activity.action === 'update' ? 'atualizou' : 'deletou'} "${activity.resource.name}"`;
+    }
+    if (activity.type.includes('apikey')) {
+      return `${activity.actor.name} ${activity.action === 'create' ? 'gerou' : 'revogou'} uma API Key`;
+    }
+    if (activity.type === 'user.login') {
+      return `${activity.actor.name} fez login no sistema`;
+    }
+    if (activity.type === 'settings.updated') {
+      return `${activity.actor.name} alterou as configurações do sistema`;
+    }
+    return activity.resource.name;
+  };
+
+  const getActivityLink = (activity: Activity): string | null => {
+    if (activity.resource.type === 'tenant') {
+      return '/admin/tenants';
+    }
+    if (activity.resource.type === 'apikey') {
+      return '/admin/apikeys';
+    }
+    if (activity.resource.type === 'settings') {
+      return '/admin/settings';
+    }
+    return null;
+  };
+
+  const formatRelativeTime = (timestamp: string): string => {
+    const now = new Date();
+    const then = new Date(timestamp);
+    const diffMs = now.getTime() - then.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'agora';
+    if (diffMins < 60) return `há ${diffMins} min`;
+    if (diffHours < 24) return `há ${diffHours}h`;
+    if (diffDays < 7) return `há ${diffDays}d`;
+    return then.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+  };
+
+  if (!isReady || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -35,17 +195,6 @@ export default function AdminDashboardPage() {
       </div>
     );
   }
-
-  // Mock data - será substituído por dados reais da API
-  const stats = {
-    totalTenants: 0,
-    totalAPIKeys: 0,
-    requestsToday: 0,
-    requestsMonth: 0,
-    tenantsGrowth: 0, // % de crescimento
-    keysGrowth: 0,
-    requestsGrowth: 0,
-  };
 
   const kpiCards = [
     {
@@ -207,16 +356,64 @@ export default function AdminDashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-50">
-                  <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                    <Users className="w-4 h-4 text-blue-600" />
+                {recentActivity.length === 0 ? (
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-50">
+                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <AlertCircle className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-slate-900">Nenhuma atividade ainda</p>
+                      <p className="text-xs text-slate-500 mt-0.5">Aguardando primeiros cadastros</p>
+                    </div>
+                    <span className="text-xs text-slate-400 flex-shrink-0">Agora</span>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-900">Nenhuma atividade ainda</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Aguardando primeiros cadastros</p>
-                  </div>
-                  <span className="text-xs text-slate-400 flex-shrink-0">Agora</span>
-                </div>
+                ) : (
+                  recentActivity.map((activity) => {
+                    const Icon = getActivityIcon(activity.type);
+                    const color = getActivityColor(activity.type);
+                    const link = getActivityLink(activity);
+                    
+                    const colorClasses: Record<string, { bg: string; text: string }> = {
+                      green: { bg: 'bg-green-100', text: 'text-green-600' },
+                      red: { bg: 'bg-red-100', text: 'text-red-600' },
+                      blue: { bg: 'bg-blue-100', text: 'text-blue-600' },
+                      purple: { bg: 'bg-purple-100', text: 'text-purple-600' },
+                      slate: { bg: 'bg-slate-100', text: 'text-slate-600' },
+                    };
+
+                    const content = (
+                      <>
+                        <div className={`w-8 h-8 rounded-full ${colorClasses[color].bg} flex items-center justify-center flex-shrink-0`}>
+                          <Icon className={`w-4 h-4 ${colorClasses[color].text}`} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-slate-900">{getActivityTitle(activity)}</p>
+                          <p className="text-xs text-slate-500 mt-0.5">{getActivityDescription(activity)}</p>
+                        </div>
+                        <span className="text-xs text-slate-400 flex-shrink-0">
+                          {formatRelativeTime(activity.timestamp)}
+                        </span>
+                      </>
+                    );
+
+                    return link ? (
+                      <Link
+                        key={activity.id}
+                        href={link}
+                        className="flex items-start gap-3 p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer group"
+                      >
+                        {content}
+                      </Link>
+                    ) : (
+                      <div
+                        key={activity.id}
+                        className="flex items-start gap-3 p-3 rounded-lg bg-slate-50"
+                      >
+                        {content}
+                      </div>
+                    );
+                  })
+                )}
               </div>
             </CardContent>
           </Card>

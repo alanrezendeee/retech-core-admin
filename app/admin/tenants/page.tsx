@@ -24,6 +24,11 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
+interface RateLimit {
+  requestsPerDay: number;
+  requestsPerMinute: number;
+}
+
 interface Tenant {
   id: string;
   tenantId: string;
@@ -32,6 +37,7 @@ interface Tenant {
   company?: string;
   purpose?: string;
   active: boolean;
+  rateLimit?: RateLimit | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -56,7 +62,17 @@ export default function AdminTenantsPage() {
     try {
       setLoading(true);
       const data = await listAllTenants();
-      setTenants(data.tenants || []);
+      
+      // Normalizar rateLimit de PascalCase para camelCase
+      const normalizedTenants = (data.tenants || []).map((tenant: any) => ({
+        ...tenant,
+        rateLimit: tenant.rateLimit ? {
+          requestsPerDay: tenant.rateLimit.RequestsPerDay || tenant.rateLimit.requestsPerDay,
+          requestsPerMinute: tenant.rateLimit.RequestsPerMinute || tenant.rateLimit.requestsPerMinute,
+        } : null,
+      }));
+      
+      setTenants(normalizedTenants);
     } catch (error) {
       console.error('Erro ao carregar tenants:', error);
       toast.error('Erro ao carregar tenants');
@@ -79,21 +95,29 @@ export default function AdminTenantsPage() {
     try {
       setIsSubmitting(true);
       
+      console.log('📤 Dados sendo enviados:', tenantData);
+      
       if (selectedTenant) {
         // Atualizar tenant existente
+        console.log('🔄 Atualizando tenant:', selectedTenant.tenantId);
         const response = await api.put(`/admin/tenants/${selectedTenant.tenantId}`, tenantData);
+        console.log('✅ Resposta do servidor:', response.data);
         toast.success('Tenant atualizado com sucesso!');
       } else {
         // Criar novo tenant
+        console.log('➕ Criando novo tenant');
         const response = await api.post('/admin/tenants', tenantData);
+        console.log('✅ Resposta do servidor:', response.data);
         toast.success('Tenant criado com sucesso!');
       }
 
       // Recarregar lista
       await loadTenants();
-    } catch (error) {
-      console.error('Erro ao salvar tenant:', error);
-      toast.error(error instanceof Error ? error.message : 'Erro ao salvar tenant');
+      setIsDrawerOpen(false);
+    } catch (error: any) {
+      console.error('❌ Erro ao salvar tenant:', error);
+      console.error('❌ Resposta do erro:', error.response?.data);
+      toast.error(error.response?.data?.detail || 'Erro ao salvar tenant');
     } finally {
       setIsSubmitting(false);
     }
