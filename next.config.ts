@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Configuração para Railway
+  output: 'standalone',
+  
   // Rewrites para proxy da API Go
   async rewrites() {
     return [
