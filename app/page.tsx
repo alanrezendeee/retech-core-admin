@@ -28,12 +28,15 @@ export default function HomePage() {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/painel/register">
-              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-6">
+              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg px-8 py-6 shadow-lg">
                 Começar Grátis
               </Button>
             </Link>
             <Link href="/painel/login">
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-white/20 text-white hover:bg-white/10">
+              <Button 
+                size="lg" 
+                className="text-lg px-8 py-6 border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 bg-white/5 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all"
+              >
                 Fazer Login
               </Button>
             </Link>

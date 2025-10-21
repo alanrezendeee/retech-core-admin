@@ -119,12 +119,12 @@ export function TenantDrawer({
 
       const dataToSave = {
         ...formData,
-        rateLimit: rateLimitPayload,
+        rateLimit: rateLimitPayload as any, // Backend espera PascalCase
       };
       
       console.log('📤 Enviando dados do tenant:', dataToSave);
       
-      await onSave(dataToSave);
+      await onSave(dataToSave as Partial<Tenant>);
       onClose();
     } catch (error) {
       console.error('Erro ao salvar tenant:', error);
