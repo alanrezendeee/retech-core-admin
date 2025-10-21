@@ -92,9 +92,9 @@ export default function PainelAPIKeysPage() {
       // Guardar a nova chave para exibir
       if (response.data.key) {
         setNewRotatedKey(response.data.key);
+        // ✅ NÃO mostrar toast aqui! O modal vai exibir a key
       }
       
-      toast.success('API key rotacionada com sucesso!');
       await loadAPIKeys();
     } catch (error: any) {
       console.error('Erro ao rotacionar API key:', error);
@@ -392,10 +392,14 @@ export default function PainelAPIKeysPage() {
                     variant="outline"
                     onClick={() => {
                       navigator.clipboard.writeText(newRotatedKey);
-                      toast.success('API Key copiada!');
-                      setShowRotateDialog(false);
-                      setKeyToRotate(null);
-                      setNewRotatedKey(null);
+                      toast.success('API Key copiada para a área de transferência!');
+                      // Fechar após copiar
+                      setTimeout(() => {
+                        setShowRotateDialog(false);
+                        setKeyToRotate(null);
+                        setNewRotatedKey(null);
+                        toast.success('✅ API Key rotacionada com sucesso!');
+                      }, 300);
                     }}
                     className="gap-2"
                   >
@@ -406,6 +410,7 @@ export default function PainelAPIKeysPage() {
                     setShowRotateDialog(false);
                     setKeyToRotate(null);
                     setNewRotatedKey(null);
+                    toast.info('API Key rotacionada. Certifique-se de ter copiado a nova chave!');
                   }}>
                     Fechar
                   </AlertDialogAction>

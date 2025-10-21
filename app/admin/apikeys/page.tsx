@@ -130,9 +130,9 @@ export default function AdminAPIKeysPage() {
       // Guardar a nova chave para exibir
       if (response.data.api_key) {
         setNewRotatedKey(response.data.api_key);
+        // ✅ NÃO mostrar toast aqui! O modal vai exibir a key
       }
       
-      toast.success('API key rotacionada com sucesso!');
       await loadData();
     } catch (error) {
       console.error('Erro ao rotacionar API key:', error);
@@ -387,7 +387,14 @@ export default function AdminAPIKeysPage() {
                 <>
                   <AlertDialogCancel onClick={() => {
                     navigator.clipboard.writeText(newRotatedKey);
-                    toast.success('API Key copiada!');
+                    toast.success('API Key copiada para a área de transferência!');
+                    // Fechar após copiar
+                    setTimeout(() => {
+                      setShowRotateDialog(false);
+                      setKeyToRotate(null);
+                      setNewRotatedKey(null);
+                      toast.success('✅ API Key rotacionada com sucesso!');
+                    }, 300);
                   }}>
                     Copiar e Fechar
                   </AlertDialogCancel>
@@ -395,6 +402,7 @@ export default function AdminAPIKeysPage() {
                     setShowRotateDialog(false);
                     setKeyToRotate(null);
                     setNewRotatedKey(null);
+                    toast.info('API Key rotacionada. Certifique-se de ter copiado a nova chave!');
                   }}>
                     Fechar
                   </AlertDialogAction>
