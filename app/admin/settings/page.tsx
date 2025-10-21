@@ -11,23 +11,27 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Settings, Save, RefreshCw, Shield, Globe, Database, Key } from 'lucide-react';
+import { Settings as SettingsIcon, Save, RefreshCw, Shield, Globe, Database, Key, AlertTriangle, Info } from 'lucide-react';
 import { toast } from 'sonner';
+import api from '@/lib/api/client';
 
 interface SystemSettings {
-  rateLimit: {
-    enabled: boolean;
+  // Rate Limiting DEFAULT (global para novos tenants)
+  defaultRateLimit: {
     requestsPerDay: number;
     requestsPerMinute: number;
   };
+  // CORS
   cors: {
     enabled: boolean;
     allowedOrigins: string[];
   };
+  // JWT
   jwt: {
     accessTokenTTL: number;
     refreshTokenTTL: number;
   };
+  // API Info
   api: {
     version: string;
     environment: string;
@@ -38,14 +42,13 @@ interface SystemSettings {
 export default function AdminSettingsPage() {
   const { isReady } = useRequireAuth('SUPER_ADMIN');
   const [settings, setSettings] = useState<SystemSettings>({
-    rateLimit: {
-      enabled: true,
+    defaultRateLimit: {
       requestsPerDay: 1000,
       requestsPerMinute: 60,
     },
     cors: {
       enabled: true,
-      allowedOrigins: ['https://core.theretech.com.br', 'http://localhost:3000'],
+      allowedOrigins: ['https://core.theretech.com.br', 'http://localhost:3000', 'http://localhost:3001'],
     },
     jwt: {
       accessTokenTTL: 900, // 15 minutos
@@ -53,7 +56,7 @@ export default function AdminSettingsPage() {
     },
     api: {
       version: '1.0.0',
-      environment: 'production',
+      environment: 'development',
       maintenance: false,
     },
   });
@@ -70,11 +73,14 @@ export default function AdminSettingsPage() {
   const loadSettings = async () => {
     try {
       setIsLoading(true);
-      // Aqui você pode carregar as configurações do backend
-      // Por enquanto, vamos usar as configurações padrão
-    } catch (error) {
+      const response = await api.get('/admin/settings');
+      setSettings(response.data);
+    } catch (error: any) {
       console.error('Erro ao carregar configurações:', error);
-      toast.error('Erro ao carregar configurações');
+      // Se não existir configuração, usa as padrões (já definidas no state)
+      if (error.response?.status !== 404) {
+        toast.error('Erro ao carregar configurações');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -84,9 +90,7 @@ export default function AdminSettingsPage() {
     try {
       setIsSaving(true);
       
-      // Aqui você pode salvar as configurações no backend
-      // Por enquanto, vamos simular o salvamento
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await api.put('/admin/settings', settings);
       
       toast.success('Configurações salvas com sucesso!');
     } catch (error) {
@@ -121,145 +125,203 @@ export default function AdminSettingsPage() {
   if (!isReady || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
+        <div className="text-center">
+          <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
+          <p className="mt-2 text-slate-600">Carregando configurações...</p>
+        </div>
       </div>
     );
   }
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
+        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Configurações</h1>
-            <p className="text-slate-500 mt-1">
-              Gerencie as configurações do sistema
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600">
+                <SettingsIcon className="w-6 h-6 text-white" />
+              </div>
+              <h1 className="text-3xl font-bold text-slate-900">Configurações</h1>
+            </div>
+            <p className="text-slate-500">
+              Gerencie as configurações globais do sistema
             </p>
           </div>
           <Button 
             onClick={handleSaveSettings}
             disabled={isSaving}
-            className="bg-gradient-to-r from-blue-600 to-purple-600"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg"
           >
             {isSaving ? (
-              <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+              <>
+                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                Salvando...
+              </>
             ) : (
-              <Save className="w-4 h-4 mr-2" />
+              <>
+                <Save className="w-4 h-4 mr-2" />
+                Salvar Configurações
+              </>
             )}
-            Salvar Configurações
           </Button>
         </div>
 
-        {/* Rate Limiting */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Shield className="w-5 h-5" />
-              Rate Limiting
-            </CardTitle>
-            <CardDescription>
-              Configure os limites de requisições por API key
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label htmlFor="rateLimitEnabled">Rate Limiting Ativo</Label>
-                <p className="text-sm text-slate-500">
-                  Controla se o rate limiting está ativo
-                </p>
+        {/* Info Card */}
+        <Card className="border-blue-200 bg-gradient-to-br from-blue-50 via-purple-50 to-blue-50">
+          <CardContent className="p-6">
+            <div className="flex items-start gap-4">
+              <div className="p-3 rounded-xl bg-blue-100">
+                <Info className="w-6 h-6 text-blue-600" />
               </div>
-              <Switch
-                id="rateLimitEnabled"
-                checked={settings.rateLimit.enabled}
-                onCheckedChange={(checked) => handleInputChange('rateLimit', 'enabled', checked)}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="requestsPerDay">Requests por Dia</Label>
-                <Input
-                  id="requestsPerDay"
-                  type="number"
-                  value={settings.rateLimit.requestsPerDay}
-                  onChange={(e) => handleInputChange('rateLimit', 'requestsPerDay', parseInt(e.target.value))}
-                  min="1"
-                  max="100000"
-                />
-              </div>
-              <div>
-                <Label htmlFor="requestsPerMinute">Requests por Minuto</Label>
-                <Input
-                  id="requestsPerMinute"
-                  type="number"
-                  value={settings.rateLimit.requestsPerMinute}
-                  onChange={(e) => handleInputChange('rateLimit', 'requestsPerMinute', parseInt(e.target.value))}
-                  min="1"
-                  max="1000"
-                />
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                  ℹ️ Sobre as Configurações
+                </h3>
+                <div className="space-y-2 text-sm text-slate-600">
+                  <p>
+                    <strong>Rate Limiting DEFAULT:</strong> Define o limite padrão para novos tenants. Você pode personalizar por tenant em Tenants → Editar → Rate Limit.
+                  </p>
+                  <p>
+                    <strong>CORS:</strong> Controla quais domínios podem acessar a API.
+                  </p>
+                  <p>
+                    <strong>JWT:</strong> Define quanto tempo os tokens de acesso permanecem válidos.
+                  </p>
+                </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* CORS */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Globe className="w-5 h-5" />
-              CORS (Cross-Origin Resource Sharing)
-            </CardTitle>
-            <CardDescription>
-              Configure quais domínios podem acessar a API
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label htmlFor="corsEnabled">CORS Ativo</Label>
-                <p className="text-sm text-slate-500">
-                  Controla se o CORS está ativo
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Rate Limiting DEFAULT */}
+          <Card className="border-slate-200 hover:shadow-lg transition-shadow duration-200">
+            <CardHeader>
+              <div className="flex items-center gap-2 mb-1">
+                <div className="p-2 rounded-lg bg-purple-100">
+                  <Shield className="w-5 h-5 text-purple-600" />
+                </div>
+                <CardTitle className="text-lg">Rate Limiting Padrão</CardTitle>
+              </div>
+              <CardDescription>
+                Limite padrão aplicado a novos tenants
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-yellow-800">
+                  Estes valores são aplicados apenas a <strong>novos tenants</strong>. Para alterar o limite de um tenant existente, vá em Tenants → Editar Tenant.
                 </p>
               </div>
-              <Switch
-                id="corsEnabled"
-                checked={settings.cors.enabled}
-                onCheckedChange={(checked) => handleInputChange('cors', 'enabled', checked)}
-              />
-            </div>
 
-            <div>
-              <Label htmlFor="allowedOrigins">Origens Permitidas</Label>
-              <Textarea
-                id="allowedOrigins"
-                value={settings.cors.allowedOrigins.join(', ')}
-                onChange={(e) => handleArrayChange('cors', 'allowedOrigins', e.target.value)}
-                placeholder="https://core.theretech.com.br, http://localhost:3000"
-                rows={3}
-              />
-              <p className="text-sm text-slate-500 mt-1">
-                Separe múltiplas origens com vírgula
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="requestsPerDay" className="text-slate-700 font-medium">
+                    Requests por Dia
+                  </Label>
+                  <Input
+                    id="requestsPerDay"
+                    type="number"
+                    value={settings.defaultRateLimit.requestsPerDay}
+                    onChange={(e) => handleInputChange('defaultRateLimit', 'requestsPerDay', parseInt(e.target.value))}
+                    min="1"
+                    max="1000000"
+                    className="mt-1.5 h-11"
+                  />
+                  <p className="text-xs text-slate-500 mt-1">
+                    Máximo de requisições por dia (recomendado: 1.000 para plano free)
+                  </p>
+                </div>
 
-        {/* JWT */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Key className="w-5 h-5" />
-              JWT (JSON Web Tokens)
-            </CardTitle>
-            <CardDescription>
-              Configure os tempos de vida dos tokens
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="requestsPerMinute" className="text-slate-700 font-medium">
+                    Requests por Minuto
+                  </Label>
+                  <Input
+                    id="requestsPerMinute"
+                    type="number"
+                    value={settings.defaultRateLimit.requestsPerMinute}
+                    onChange={(e) => handleInputChange('defaultRateLimit', 'requestsPerMinute', parseInt(e.target.value))}
+                    min="1"
+                    max="10000"
+                    className="mt-1.5 h-11"
+                  />
+                  <p className="text-xs text-slate-500 mt-1">
+                    Máximo de requisições por minuto (recomendado: 60)
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* CORS */}
+          <Card className="border-slate-200 hover:shadow-lg transition-shadow duration-200">
+            <CardHeader>
+              <div className="flex items-center gap-2 mb-1">
+                <div className="p-2 rounded-lg bg-green-100">
+                  <Globe className="w-5 h-5 text-green-600" />
+                </div>
+                <CardTitle className="text-lg">CORS</CardTitle>
+              </div>
+              <CardDescription>
+                Controle de acesso cross-origin
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                <div>
+                  <Label htmlFor="corsEnabled" className="font-medium text-slate-700">CORS Ativo</Label>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Permitir requisições de outros domínios
+                  </p>
+                </div>
+                <Switch
+                  id="corsEnabled"
+                  checked={settings.cors.enabled}
+                  onCheckedChange={(checked) => handleInputChange('cors', 'enabled', checked)}
+                />
+              </div>
+
               <div>
-                <Label htmlFor="accessTokenTTL">Access Token TTL (segundos)</Label>
+                <Label htmlFor="allowedOrigins" className="text-slate-700 font-medium">
+                  Origens Permitidas
+                </Label>
+                <Textarea
+                  id="allowedOrigins"
+                  value={settings.cors.allowedOrigins.join(', ')}
+                  onChange={(e) => handleArrayChange('cors', 'allowedOrigins', e.target.value)}
+                  placeholder="https://core.theretech.com.br, http://localhost:3000"
+                  rows={4}
+                  className="mt-1.5"
+                />
+                <p className="text-xs text-slate-500 mt-1">
+                  Separe múltiplas origens com vírgula
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* JWT */}
+          <Card className="border-slate-200 hover:shadow-lg transition-shadow duration-200">
+            <CardHeader>
+              <div className="flex items-center gap-2 mb-1">
+                <div className="p-2 rounded-lg bg-blue-100">
+                  <Key className="w-5 h-5 text-blue-600" />
+                </div>
+                <CardTitle className="text-lg">JWT Tokens</CardTitle>
+              </div>
+              <CardDescription>
+                Tempo de vida dos tokens de autenticação
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="accessTokenTTL" className="text-slate-700 font-medium">
+                  Access Token TTL (segundos)
+                </Label>
                 <Input
                   id="accessTokenTTL"
                   type="number"
@@ -267,13 +329,17 @@ export default function AdminSettingsPage() {
                   onChange={(e) => handleInputChange('jwt', 'accessTokenTTL', parseInt(e.target.value))}
                   min="60"
                   max="3600"
+                  className="mt-1.5 h-11"
                 />
-                <p className="text-sm text-slate-500 mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   Padrão: 900 segundos (15 minutos)
                 </p>
               </div>
+
               <div>
-                <Label htmlFor="refreshTokenTTL">Refresh Token TTL (segundos)</Label>
+                <Label htmlFor="refreshTokenTTL" className="text-slate-700 font-medium">
+                  Refresh Token TTL (segundos)
+                </Label>
                 <Input
                   id="refreshTokenTTL"
                   type="number"
@@ -281,69 +347,87 @@ export default function AdminSettingsPage() {
                   onChange={(e) => handleInputChange('jwt', 'refreshTokenTTL', parseInt(e.target.value))}
                   min="3600"
                   max="2592000"
+                  className="mt-1.5 h-11"
                 />
-                <p className="text-sm text-slate-500 mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   Padrão: 604800 segundos (7 dias)
                 </p>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        {/* API Info */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Database className="w-5 h-5" />
-              Informações da API
-            </CardTitle>
-            <CardDescription>
-              Informações sobre a versão e status da API
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Versão da API</Label>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline">{settings.api.version}</Badge>
+          {/* API Info */}
+          <Card className="border-slate-200 hover:shadow-lg transition-shadow duration-200">
+            <CardHeader>
+              <div className="flex items-center gap-2 mb-1">
+                <div className="p-2 rounded-lg bg-orange-100">
+                  <Database className="w-5 h-5 text-orange-600" />
+                </div>
+                <CardTitle className="text-lg">Informações da API</CardTitle>
+              </div>
+              <CardDescription>
+                Status e versão do sistema
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-slate-700 font-medium">Versão</Label>
+                  <div className="mt-1.5">
+                    <Badge variant="outline" className="text-sm">
+                      v{settings.api.version}
+                    </Badge>
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-slate-700 font-medium">Ambiente</Label>
+                  <div className="mt-1.5">
+                    <Badge 
+                      variant={settings.api.environment === 'production' ? 'default' : 'secondary'}
+                      className="text-sm"
+                    >
+                      {settings.api.environment}
+                    </Badge>
+                  </div>
                 </div>
               </div>
-              <div>
-                <Label>Ambiente</Label>
-                <div className="flex items-center gap-2">
-                  <Badge variant={settings.api.environment === 'production' ? 'default' : 'secondary'}>
-                    {settings.api.environment}
-                  </Badge>
+
+              <Separator />
+
+              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                <div>
+                  <Label htmlFor="maintenanceMode" className="font-medium text-slate-700">
+                    Modo de Manutenção
+                  </Label>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Bloqueia todas as requisições (503)
+                  </p>
                 </div>
+                <Switch
+                  id="maintenanceMode"
+                  checked={settings.api.maintenance}
+                  onCheckedChange={(checked) => handleInputChange('api', 'maintenance', checked)}
+                />
               </div>
-            </div>
 
-            <Separator />
-
-            <div className="flex items-center justify-between">
-              <div>
-                <Label htmlFor="maintenanceMode">Modo de Manutenção</Label>
-                <p className="text-sm text-slate-500">
-                  Ative para colocar a API em modo de manutenção
-                </p>
-              </div>
-              <Switch
-                id="maintenanceMode"
-                checked={settings.api.maintenance}
-                onCheckedChange={(checked) => handleInputChange('api', 'maintenance', checked)}
-              />
-            </div>
-
-            {settings.api.maintenance && (
-              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p className="text-sm text-yellow-800">
-                  ⚠️ A API está em modo de manutenção. Todas as requisições retornarão erro 503.
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+              {settings.api.maintenance && (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-semibold text-red-900">
+                        ⚠️ API em Manutenção
+                      </p>
+                      <p className="text-xs text-red-700 mt-1">
+                        Todas as requisições retornarão erro 503 Service Unavailable
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </AdminLayout>
   );
