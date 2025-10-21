@@ -25,7 +25,18 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV production
 
-# Build da aplicação
+# ⚠️ IMPORTANTE: Variáveis NEXT_PUBLIC_* precisam estar disponíveis no BUILD
+# Elas são injetadas pelo Railway automaticamente via ARG
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_APP_NAME
+ARG NEXT_PUBLIC_APP_URL
+
+# Tornar as ARGs disponíveis como ENV durante o build
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_APP_NAME=$NEXT_PUBLIC_APP_NAME
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+
+# Build da aplicação (agora com as variáveis corretas)
 RUN yarn build
 
 # Imagem de produção, copiar todos os arquivos e executar next
