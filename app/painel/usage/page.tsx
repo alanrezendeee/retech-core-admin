@@ -31,7 +31,7 @@ export default function PainelUsagePage() {
   if (!isReady || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin h-8 w-8 border-4 border-indigo-600 border-t-transparent rounded-full"></div>
+        <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
       </div>
     );
   }
@@ -49,10 +49,10 @@ export default function PainelUsagePage() {
         </div>
 
         {/* Limite Atual */}
-        <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-0">
+        <Card className="bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0">
           <CardHeader>
             <CardTitle className="text-white">Plano Free</CardTitle>
-            <CardDescription className="text-indigo-100">
+            <CardDescription className="text-blue-100">
               {usage?.dailyLimit?.toLocaleString() || 1000} requests por dia
             </CardDescription>
           </CardHeader>
@@ -137,7 +137,7 @@ export default function PainelUsagePage() {
                     </div>
                     <div className="w-full bg-slate-200 rounded-full h-2">
                       <div
-                        className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full h-2"
+                        className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-full h-2"
                         style={{
                           width: `${(item.count / usage.dailyLimit) * 100}%`,
                         }}

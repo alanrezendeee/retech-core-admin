@@ -391,7 +391,7 @@ export function APIKeyDrawer({
                   type="submit"
                   disabled={isSubmitting || isLoading}
                   onClick={handleSubmit}
-                  className="flex-1 h-12 text-base font-medium bg-blue-600 hover:bg-blue-700"
+                  className="flex-1 h-12 text-base font-medium bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                 >
                   {isSubmitting ? (
                     <>

@@ -12,6 +12,7 @@ import { TenantDrawer } from '@/components/tenants/tenant-drawer';
 import { Plus, Edit, Power, Trash2, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/api/client';
+import { EmptyState } from '@/components/ui/empty-state';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -188,20 +189,15 @@ export default function AdminTenantsPage() {
           </CardHeader>
           <CardContent>
             {tenants.length === 0 ? (
-              <div className="text-center py-12 text-slate-500">
-                <Users className="w-12 h-12 mx-auto mb-4 text-slate-400" />
-                <p className="text-lg mb-2">Nenhum tenant cadastrado ainda</p>
-                <p className="text-sm mb-4">
-                  Comece criando seu primeiro tenant
-                </p>
-                <Button 
-                  onClick={handleCreateTenant}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Criar Primeiro Tenant
-                </Button>
-              </div>
+              <EmptyState
+                icon={Users}
+                title="Nenhum tenant cadastrado"
+                description="Comece criando seu primeiro tenant para gerenciar desenvolvedores e suas API keys"
+                action={{
+                  label: 'Criar Primeiro Tenant',
+                  onClick: handleCreateTenant
+                }}
+              />
             ) : (
               <Table>
                 <TableHeader>

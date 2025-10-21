@@ -12,6 +12,7 @@ import { APIKeyDrawer } from '@/components/apikeys/apikey-drawer';
 import { Plus, Key, Eye, RotateCcw, Trash2, Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/api/client';
+import { EmptyState } from '@/components/ui/empty-state';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -222,20 +223,15 @@ export default function AdminAPIKeysPage() {
           </CardHeader>
           <CardContent>
             {apikeys.length === 0 ? (
-              <div className="text-center py-12 text-slate-500">
-                <Key className="w-12 h-12 mx-auto mb-4 text-slate-400" />
-                <p className="text-lg mb-2">Nenhuma API key criada ainda</p>
-                <p className="text-sm mb-4">
-                  Comece criando sua primeira API key
-                </p>
-                <Button 
-                  onClick={handleCreateAPIKey}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Criar Primeira API Key
-                </Button>
-              </div>
+              <EmptyState
+                icon={Key}
+                title="Nenhuma API key criada"
+                description="Crie API keys para seus tenants acessarem a plataforma de forma segura"
+                action={{
+                  label: 'Criar Primeira API Key',
+                  onClick: handleCreateAPIKey
+                }}
+              />
             ) : (
               <Table>
                 <TableHeader>
@@ -408,7 +404,7 @@ export default function AdminAPIKeysPage() {
                   <AlertDialogCancel>Cancelar</AlertDialogCancel>
                   <AlertDialogAction 
                     onClick={confirmRotateAPIKey}
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                   >
                     Rotacionar
                   </AlertDialogAction>

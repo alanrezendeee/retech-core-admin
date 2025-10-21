@@ -7,28 +7,28 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white py-20">
+      <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 text-white py-20">
         <div className="container mx-auto px-4 text-center">
           <div className="inline-block mb-6">
-            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl mx-auto">
+            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-2xl mx-auto">
               <svg className="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
           </div>
           
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
             Retech Core API
           </h1>
           <p className="text-xl md:text-2xl text-slate-300 mb-8 max-w-2xl mx-auto">
             APIs de dados geográficos do Brasil
             <br />
-            <span className="text-indigo-400 font-semibold">Rápido • Confiável • Gratuito</span>
+            <span className="text-blue-400 font-semibold">Rápido • Confiável • Gratuito</span>
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/painel/register">
-              <Button size="lg" className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-lg px-8 py-6">
+              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-6">
                 Começar Grátis
               </Button>
             </Link>
@@ -91,7 +91,7 @@ export default function HomePage() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {/* Free */}
-            <Card className="border-2 border-indigo-200">
+            <Card className="border-2 border-blue-200">
               <CardHeader>
                 <CardTitle>Free</CardTitle>
                 <div className="mt-4">
@@ -128,7 +128,7 @@ export default function HomePage() {
             {/* Pro - Coming soon */}
             <Card className="border-2 border-purple-400 relative">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <Badge className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+                <Badge className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
                   Em Breve
                 </Badge>
               </div>
@@ -203,16 +203,16 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Pronto para começar?
           </h2>
-          <p className="text-xl text-indigo-100 mb-8">
+          <p className="text-xl text-blue-100 mb-8">
             Crie sua conta gratuita agora e comece a integrar em minutos
           </p>
           <Link href="/painel/register">
-            <Button size="lg" className="bg-white text-indigo-600 hover:bg-slate-100 text-lg px-8 py-6">
+            <Button size="lg" className="bg-white text-blue-600 hover:bg-slate-100 text-lg px-8 py-6">
               Criar Conta Grátis
             </Button>
           </Link>

@@ -10,7 +10,7 @@ export default function PainelDocsPage() {
   if (!isReady) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin h-8 w-8 border-4 border-indigo-600 border-t-transparent rounded-full"></div>
+        <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
       </div>
     );
   }
@@ -35,7 +35,7 @@ export default function PainelDocsPage() {
             <div>
               <h3 className="font-semibold mb-2">1. Obtenha sua API Key</h3>
               <p className="text-sm text-slate-600">
-                Vá para <a href="/painel/apikeys" className="text-indigo-600 underline">Minhas API Keys</a> e crie sua primeira chave de acesso.
+                Vá para <a href="/painel/apikeys" className="text-blue-600 underline">Minhas API Keys</a> e crie sua primeira chave de acesso.
               </p>
             </div>
 

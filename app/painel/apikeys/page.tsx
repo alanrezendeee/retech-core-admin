@@ -75,7 +75,7 @@ export default function PainelAPIKeysPage() {
   if (!isReady || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin h-8 w-8 border-4 border-indigo-600 border-t-transparent rounded-full"></div>
+        <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
       </div>
     );
   }
@@ -91,7 +91,7 @@ export default function PainelAPIKeysPage() {
             </p>
           </div>
           <Button
-            className="bg-gradient-to-r from-indigo-600 to-purple-600"
+            className="bg-gradient-to-r from-blue-600 to-purple-600"
             onClick={() => setShowCreate(!showCreate)}
           >
             + Nova API Key
@@ -100,7 +100,7 @@ export default function PainelAPIKeysPage() {
 
         {/* Formulário de criação */}
         {showCreate && (
-          <Card className="border-indigo-200 bg-indigo-50/50">
+          <Card className="border-blue-200 bg-blue-50/50">
             <CardHeader>
               <CardTitle>Criar Nova API Key</CardTitle>
               <CardDescription>
@@ -123,7 +123,7 @@ export default function PainelAPIKeysPage() {
                   <Button
                     onClick={handleCreate}
                     disabled={creating || !newKeyName.trim()}
-                    className="bg-indigo-600"
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                   >
                     {creating ? 'Criando...' : 'Criar API Key'}
                   </Button>
@@ -188,7 +188,7 @@ export default function PainelAPIKeysPage() {
                 </p>
                 <Button
                   onClick={() => setShowCreate(true)}
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600"
                 >
                   + Criar Primeira API Key
                 </Button>
