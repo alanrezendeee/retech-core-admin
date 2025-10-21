@@ -89,13 +89,16 @@ export default function PainelAPIKeysPage() {
       
       const response = await api.post(`/me/apikeys/${keyToRotate.keyId}/rotate`);
       
-      // Guardar a nova chave para exibir
+      // Guardar a nova chave para exibir NO MODAL
       if (response.data.key) {
         setNewRotatedKey(response.data.key);
-        // ✅ NÃO mostrar toast aqui! O modal vai exibir a key
+        // ✅ Modal vai trocar de conteúdo para exibir a key
+        // Aguardar um pouco para garantir que o estado foi atualizado
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
       
-      await loadAPIKeys();
+      // Recarregar lista em background (sem fechar modal)
+      loadAPIKeys();
     } catch (error: any) {
       console.error('Erro ao rotacionar API key:', error);
       if (error.response?.status === 403) {
@@ -357,73 +360,106 @@ export default function PainelAPIKeysPage() {
 
         {/* AlertDialog para rotacionar */}
         <AlertDialog open={showRotateDialog} onOpenChange={(open) => {
-          setShowRotateDialog(open);
           if (!open) {
+            setShowRotateDialog(false);
             setKeyToRotate(null);
             setNewRotatedKey(null);
           }
         }}>
-          <AlertDialogContent>
+          <AlertDialogContent className="max-w-2xl">
             <AlertDialogHeader>
-              <AlertDialogTitle>Rotacionar API Key</AlertDialogTitle>
-              {newRotatedKey ? (
-                <AlertDialogDescription>
-                  Nova API Key gerada com sucesso! Por favor, copie-a agora, pois ela não será exibida novamente.
-                  <div className="mt-4 p-4 bg-slate-100 rounded-lg break-all font-mono text-sm border-2 border-blue-200">
-                    {newRotatedKey}
+              <AlertDialogTitle className="text-xl">
+                {newRotatedKey ? '✅ Nova API Key Gerada!' : '🔄 Rotacionar API Key'}
+              </AlertDialogTitle>
+              <AlertDialogDescription asChild>
+                {newRotatedKey ? (
+                  <div className="space-y-4">
+                    <div className="text-sm text-slate-700">
+                      <strong className="text-amber-700">⚠️ IMPORTANTE:</strong> Esta é sua nova API Key. 
+                      Copie-a agora, pois ela <strong>não será exibida novamente</strong> por questões de segurança.
+                    </div>
+                    
+                    <div className="p-4 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 rounded-lg">
+                      <div className="text-xs text-slate-600 mb-2 font-semibold">SUA NOVA API KEY:</div>
+                      <div className="font-mono text-sm break-all bg-white p-3 rounded border border-blue-300 select-all">
+                        {newRotatedKey}
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-xs">
+                      <span className="text-yellow-700">💡</span>
+                      <div className="text-yellow-800">
+                        <strong>A chave antiga foi revogada</strong> e não funciona mais. 
+                        Atualize suas aplicações com esta nova chave.
+                      </div>
+                    </div>
                   </div>
-                  <div className="mt-2 text-xs text-slate-600">
-                    💡 A chave antiga foi revogada e não funciona mais.
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-sm">
+                      Tem certeza que deseja rotacionar a API key?
+                    </p>
+                    <div className="p-3 bg-slate-100 rounded-lg border border-slate-200">
+                      <div className="text-xs text-slate-600 mb-1">Key ID:</div>
+                      <code className="text-sm font-mono">{keyToRotate?.keyId}</code>
+                    </div>
+                    <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm">
+                      <span>⚠️</span>
+                      <div className="text-amber-800">
+                        <strong>Atenção:</strong> A chave antiga será <strong>revogada imediatamente</strong> e 
+                        uma nova chave será gerada. Aplicações usando a chave antiga deixarão de funcionar.
+                      </div>
+                    </div>
                   </div>
-                </AlertDialogDescription>
-              ) : (
-                <AlertDialogDescription>
-                  Tem certeza que deseja rotacionar a API key &quot;{keyToRotate?.keyId}&quot;?
-                  <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md text-sm">
-                    <strong>⚠️ Atenção:</strong> A chave antiga será revogada imediatamente e uma nova será gerada.
-                  </div>
-                </AlertDialogDescription>
-              )}
+                )}
+              </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               {newRotatedKey ? (
                 <>
-                  <Button
-                    variant="outline"
+                  <AlertDialogAction 
                     onClick={() => {
                       navigator.clipboard.writeText(newRotatedKey);
-                      toast.success('API Key copiada para a área de transferência!');
-                      // Fechar após copiar
-                      setTimeout(() => {
-                        setShowRotateDialog(false);
-                        setKeyToRotate(null);
-                        setNewRotatedKey(null);
-                        toast.success('✅ API Key rotacionada com sucesso!');
-                      }, 300);
+                      toast.success('✅ API Key copiada para a área de transferência!');
+                      setShowRotateDialog(false);
+                      setKeyToRotate(null);
+                      setNewRotatedKey(null);
                     }}
-                    className="gap-2"
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                   >
-                    <Copy className="w-4 h-4" />
+                    <Copy className="w-4 h-4 mr-2" />
                     Copiar e Fechar
-                  </Button>
-                  <AlertDialogAction onClick={() => {
+                  </AlertDialogAction>
+                  <AlertDialogCancel onClick={() => {
                     setShowRotateDialog(false);
                     setKeyToRotate(null);
                     setNewRotatedKey(null);
-                    toast.info('API Key rotacionada. Certifique-se de ter copiado a nova chave!');
+                    toast.warning('⚠️ Certifique-se de ter salvo a API Key!');
                   }}>
-                    Fechar
-                  </AlertDialogAction>
+                    Fechar sem Copiar
+                  </AlertDialogCancel>
                 </>
               ) : (
                 <>
-                  <AlertDialogCancel disabled={isSubmitting}>Cancelar</AlertDialogCancel>
+                  <AlertDialogCancel disabled={isSubmitting}>
+                    Cancelar
+                  </AlertDialogCancel>
                   <AlertDialogAction 
                     onClick={confirmRotateAPIKey}
                     disabled={isSubmitting}
                     className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                   >
-                    {isSubmitting ? 'Rotacionando...' : 'Rotacionar'}
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Rotacionando...
+                      </>
+                    ) : (
+                      <>
+                        <RotateCcw className="w-4 h-4 mr-2" />
+                        Sim, Rotacionar
+                      </>
+                    )}
                   </AlertDialogAction>
                 </>
               )}
