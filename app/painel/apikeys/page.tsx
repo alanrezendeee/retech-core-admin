@@ -10,6 +10,19 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { getMyAPIKeys, createMyAPIKey, deleteMyAPIKey } from '@/lib/api/tenant';
+import { RotateCcw, Trash2, Copy, Plus } from 'lucide-react';
+import { toast } from 'sonner';
+import api from '@/lib/api/client';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 export default function PainelAPIKeysPage() {
   const { isReady } = useRequireAuth('TENANT_USER');
@@ -19,6 +32,12 @@ export default function PainelAPIKeysPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [newKeyName, setNewKeyName] = useState('');
   const [createdKey, setCreatedKey] = useState<string | null>(null);
+  const [showRevokeDialog, setShowRevokeDialog] = useState(false);
+  const [showRotateDialog, setShowRotateDialog] = useState(false);
+  const [keyToRevoke, setKeyToRevoke] = useState<any | null>(null);
+  const [keyToRotate, setKeyToRotate] = useState<any | null>(null);
+  const [newRotatedKey, setNewRotatedKey] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (isReady) {
@@ -46,30 +65,77 @@ export default function PainelAPIKeysPage() {
       setCreatedKey(data.key);
       setNewKeyName('');
       setShowCreate(false);
+      toast.success('API Key criada com sucesso!');
       loadAPIKeys();
     } catch (error) {
       console.error('Erro ao criar API key:', error);
-      alert('Erro ao criar API key');
+      toast.error('Erro ao criar API key');
     } finally {
       setCreating(false);
     }
   };
 
-  const handleDelete = async (keyId: string) => {
-    if (!confirm('Tem certeza que deseja revogar esta API key?')) return;
+  const handleRotateAPIKey = (key: any) => {
+    setKeyToRotate(key);
+    setNewRotatedKey(null);
+    setShowRotateDialog(true);
+  };
+
+  const confirmRotateAPIKey = async () => {
+    if (!keyToRotate) return;
 
     try {
-      await deleteMyAPIKey(keyId);
-      loadAPIKeys();
+      setIsSubmitting(true);
+      
+      const response = await api.post(`/me/apikeys/${keyToRotate.keyId}/rotate`);
+      
+      // Guardar a nova chave para exibir
+      if (response.data.key) {
+        setNewRotatedKey(response.data.key);
+      }
+      
+      toast.success('API key rotacionada com sucesso!');
+      await loadAPIKeys();
+    } catch (error: any) {
+      console.error('Erro ao rotacionar API key:', error);
+      if (error.response?.status === 403) {
+        toast.error('Você não tem permissão para rotacionar esta key');
+      } else {
+        toast.error('Erro ao rotacionar API key');
+      }
+      setShowRotateDialog(false);
+      setKeyToRotate(null);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleRevokeAPIKey = (key: any) => {
+    setKeyToRevoke(key);
+    setShowRevokeDialog(true);
+  };
+
+  const confirmRevokeAPIKey = async () => {
+    if (!keyToRevoke) return;
+
+    try {
+      setIsSubmitting(true);
+      await deleteMyAPIKey(keyToRevoke.keyId);
+      toast.success('API key revogada com sucesso!');
+      await loadAPIKeys();
     } catch (error) {
-      console.error('Erro ao deletar API key:', error);
-      alert('Erro ao revogar API key');
+      console.error('Erro ao revogar API key:', error);
+      toast.error('Erro ao revogar API key');
+    } finally {
+      setIsSubmitting(false);
+      setShowRevokeDialog(false);
+      setKeyToRevoke(null);
     }
   };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    alert('API Key copiada!');
+    toast.success('Copiado para a área de transferência!');
   };
 
   if (!isReady || loading) {
@@ -91,10 +157,11 @@ export default function PainelAPIKeysPage() {
             </p>
           </div>
           <Button
-            className="bg-gradient-to-r from-blue-600 to-purple-600"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
             onClick={() => setShowCreate(!showCreate)}
           >
-            + Nova API Key
+            <Plus className="w-4 h-4 mr-2" />
+            Nova API Key
           </Button>
         </div>
 
@@ -208,16 +275,17 @@ export default function PainelAPIKeysPage() {
                   {apikeys.map((key: any) => (
                     <TableRow key={key.keyId}>
                       <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <code className="text-xs bg-slate-100 px-2 py-1 rounded">
+                        <div className="flex items-center gap-2">
+                          <code className="text-xs bg-slate-100 px-2 py-1 rounded font-mono">
                             {key.keyId}
                           </code>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => copyToClipboard(key.keyId)}
+                            title="Copiar Key ID"
                           >
-                            📋
+                            <Copy className="w-3 h-3" />
                           </Button>
                         </div>
                       </TableCell>
@@ -233,14 +301,28 @@ export default function PainelAPIKeysPage() {
                         {new Date(key.createdAt).toLocaleDateString('pt-BR')}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => handleDelete(key.keyId)}
-                          disabled={key.revoked}
-                        >
-                          Revogar
-                        </Button>
+                        <div className="flex gap-2 justify-end">
+                          {!key.revoked && (
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleRotateAPIKey(key)}
+                              title="Rotacionar API Key"
+                            >
+                              <RotateCcw className="w-4 h-4" />
+                            </Button>
+                          )}
+                          {!key.revoked && (
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleRevokeAPIKey(key)}
+                              title="Revogar API Key"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -249,6 +331,100 @@ export default function PainelAPIKeysPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* AlertDialog para revogar */}
+        <AlertDialog open={showRevokeDialog} onOpenChange={setShowRevokeDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Revogar API Key</AlertDialogTitle>
+              <AlertDialogDescription>
+                Tem certeza que deseja revogar a API key &quot;{keyToRevoke?.keyId}&quot;?
+                Esta ação não pode ser desfeita e a chave deixará de funcionar imediatamente.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={isSubmitting}>Cancelar</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={confirmRevokeAPIKey}
+                disabled={isSubmitting}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                {isSubmitting ? 'Revogando...' : 'Revogar'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* AlertDialog para rotacionar */}
+        <AlertDialog open={showRotateDialog} onOpenChange={(open) => {
+          setShowRotateDialog(open);
+          if (!open) {
+            setKeyToRotate(null);
+            setNewRotatedKey(null);
+          }
+        }}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Rotacionar API Key</AlertDialogTitle>
+              {newRotatedKey ? (
+                <AlertDialogDescription>
+                  Nova API Key gerada com sucesso! Por favor, copie-a agora, pois ela não será exibida novamente.
+                  <div className="mt-4 p-4 bg-slate-100 rounded-lg break-all font-mono text-sm border-2 border-blue-200">
+                    {newRotatedKey}
+                  </div>
+                  <div className="mt-2 text-xs text-slate-600">
+                    💡 A chave antiga foi revogada e não funciona mais.
+                  </div>
+                </AlertDialogDescription>
+              ) : (
+                <AlertDialogDescription>
+                  Tem certeza que deseja rotacionar a API key &quot;{keyToRotate?.keyId}&quot;?
+                  <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md text-sm">
+                    <strong>⚠️ Atenção:</strong> A chave antiga será revogada imediatamente e uma nova será gerada.
+                  </div>
+                </AlertDialogDescription>
+              )}
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              {newRotatedKey ? (
+                <>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      navigator.clipboard.writeText(newRotatedKey);
+                      toast.success('API Key copiada!');
+                      setShowRotateDialog(false);
+                      setKeyToRotate(null);
+                      setNewRotatedKey(null);
+                    }}
+                    className="gap-2"
+                  >
+                    <Copy className="w-4 h-4" />
+                    Copiar e Fechar
+                  </Button>
+                  <AlertDialogAction onClick={() => {
+                    setShowRotateDialog(false);
+                    setKeyToRotate(null);
+                    setNewRotatedKey(null);
+                  }}>
+                    Fechar
+                  </AlertDialogAction>
+                </>
+              ) : (
+                <>
+                  <AlertDialogCancel disabled={isSubmitting}>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction 
+                    onClick={confirmRotateAPIKey}
+                    disabled={isSubmitting}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  >
+                    {isSubmitting ? 'Rotacionando...' : 'Rotacionar'}
+                  </AlertDialogAction>
+                </>
+              )}
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </PainelLayout>
   );
