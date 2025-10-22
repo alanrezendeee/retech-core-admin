@@ -18,9 +18,14 @@ export const deleteMyAPIKey = async (keyId: string) => {
   return response.data;
 };
 
-// Tenant - Meu uso
+// Tenant - Métricas rápidas para dashboard
+export const getMyStats = async () => {
+  const response = await api.get('/me/stats');
+  return response.data;
+};
+
+// Tenant - Meu uso detalhado
 export const getMyUsage = async () => {
   const response = await api.get('/me/usage');
   return response.data;
 };
-

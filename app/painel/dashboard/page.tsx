@@ -15,11 +15,59 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { getMyStats } from '@/lib/api/tenant';
+
+interface Stats {
+  activeKeys: number;
+  requestsToday: number;
+  requestsMonth: number;
+  dailyLimit: number;
+  remaining: number;
+  percentageUsed: number;
+}
 
 export default function PainelDashboardPage() {
   const { isReady, user } = useRequireAuth('TENANT_USER');
+  const [stats, setStats] = useState<Stats>({
+    activeKeys: 0,
+    requestsToday: 0,
+    requestsMonth: 0,
+    dailyLimit: 1000,
+    remaining: 1000,
+    percentageUsed: 0,
+  });
+  const [loading, setLoading] = useState(true);
 
-  if (!isReady) {
+  // Carregar dados reais da API
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const data = await getMyStats();
+        setStats({
+          activeKeys: data.activeKeys || 0,
+          requestsToday: data.requestsToday || 0,
+          requestsMonth: data.requestsMonth || 0,
+          dailyLimit: data.dailyLimit || 1000,
+          remaining: data.remaining || 0,
+          percentageUsed: data.percentageUsed || 0,
+        });
+      } catch (error) {
+        console.error('Erro ao carregar estatísticas:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (isReady) {
+      loadStats();
+      // Auto-refresh a cada 30 segundos
+      const interval = setInterval(loadStats, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [isReady]);
+
+  if (!isReady || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
@@ -27,15 +75,7 @@ export default function PainelDashboardPage() {
     );
   }
 
-  // Mock data - será substituído por dados reais da API
-  const stats = {
-    activeKeys: 0,
-    requestsToday: 0,
-    requestsMonth: 0,
-    dailyLimit: 1000,
-  };
-
-  const percentage = stats.dailyLimit > 0 ? (stats.requestsToday / stats.dailyLimit) * 100 : 0;
+  const percentage = stats.percentageUsed;
 
   const quickActions = [
     {

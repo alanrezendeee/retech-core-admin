@@ -14,6 +14,9 @@ export default function PainelUsagePage() {
   useEffect(() => {
     if (isReady) {
       loadUsage();
+      // Auto-refresh a cada 30 segundos
+      const interval = setInterval(loadUsage, 30000);
+      return () => clearInterval(interval);
     }
   }, [isReady]);
 
