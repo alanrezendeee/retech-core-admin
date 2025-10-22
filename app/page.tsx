@@ -20,10 +20,13 @@ export default function HomePage() {
           <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
             Retech Core API
           </h1>
-          <p className="text-xl md:text-2xl text-slate-300 mb-8 max-w-2xl mx-auto">
-            APIs de dados geográficos do Brasil
+          <p className="text-xl md:text-2xl text-slate-300 mb-4 max-w-3xl mx-auto">
+            A API definitiva de dados brasileiros para desenvolvedores
+          </p>
+          <p className="text-lg text-slate-400 mb-8 max-w-2xl mx-auto">
+            Geografia • CEP • CPF • CNPJ • Dados Públicos • Tudo em uma única API
             <br />
-            <span className="text-blue-400 font-semibold">Rápido • Confiável • Gratuito</span>
+            <span className="text-blue-400 font-semibold mt-2 inline-block">⚡ Rápido • 🔒 Confiável • 🎁 Gratuito para começar</span>
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -44,42 +47,649 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features */}
+      {/* Por que Retech Core */}
+      <section className="py-20 bg-gradient-to-br from-blue-50 via-purple-50 to-slate-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <h2 className="text-4xl font-bold mb-6 text-slate-900">
+              Por que <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Retech Core</span>?
+            </h2>
+            <p className="text-lg text-slate-600">
+              Você poderia consultar o IBGE, Receita Federal, e diversos outros sites públicos...
+              <br />
+              <strong>Ou usar uma única API moderna, rápida e confiável.</strong>
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <Card className="border-2 border-blue-200 hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="flex items-start gap-4">
+                  <div className="text-4xl">🚀</div>
+                  <div>
+                    <CardTitle className="text-xl mb-2">Performance Otimizada</CardTitle>
+                    <CardDescription className="text-base">
+                      <strong className="text-slate-700">Respostas em &lt;100ms</strong>
+                      <br />
+                      Enquanto o IBGE pode levar segundos, nossa infraestrutura com Go + MongoDB + Redis garante velocidade de sobra.
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-2 border-purple-200 hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="flex items-start gap-4">
+                  <div className="text-4xl">🎯</div>
+                  <div>
+                    <CardTitle className="text-xl mb-2">Tudo em um Só Lugar</CardTitle>
+                    <CardDescription className="text-base">
+                      <strong className="text-slate-700">Uma API, múltiplas fontes</strong>
+                      <br />
+                      Não perca tempo integrando 5+ APIs diferentes. CEP, CNPJ, CPF, Geografia, Dados Judiciais — tudo unificado.
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-2 border-green-200 hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="flex items-start gap-4">
+                  <div className="text-4xl">🔒</div>
+                  <div>
+                    <CardTitle className="text-xl mb-2">Segurança Enterprise</CardTitle>
+                    <CardDescription className="text-base">
+                      <strong className="text-slate-700">API Keys + Rate Limiting + Logs</strong>
+                      <br />
+                      Autenticação robusta, controle de acesso, auditoria completa. Tudo que você espera de uma API profissional.
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-2 border-amber-200 hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="flex items-start gap-4">
+                  <div className="text-4xl">📊</div>
+                  <div>
+                    <CardTitle className="text-xl mb-2">Dashboard Inteligente</CardTitle>
+                    <CardDescription className="text-base">
+                      <strong className="text-slate-700">Monitore seu uso em tempo real</strong>
+                      <br />
+                      Veja quantas requests você fez, quais endpoints mais usa, e gerencie suas API keys facilmente.
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* APIs Disponíveis */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-slate-900">
-            O que oferecemos?
+          <h2 className="text-4xl font-bold text-center mb-4 text-slate-900">
+            O Hub Definitivo de APIs Brasileiras
           </h2>
+          <p className="text-center text-slate-600 mb-12 max-w-3xl mx-auto">
+            Mais de <strong>30 APIs essenciais</strong> para desenvolvedores brasileiros. Uma única integração, infinitas possibilidades.
+          </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card>
-              <CardHeader>
-                <div className="text-4xl mb-2">🗺️</div>
-                <CardTitle>Dados Geográficos</CardTitle>
-                <CardDescription>
-                  27 estados e 5.570 municípios brasileiros com regiões, microrregiões e mais
+          {/* CATEGORIA: Dados Cadastrais & Validação */}
+          <div className="mb-16">
+            <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+              <span className="text-3xl">📋</span>
+              Dados Cadastrais & Validação
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card className="border-2 border-blue-300 bg-blue-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">📮</div>
+                    <Badge className="bg-blue-600">Fase 2</Badge>
+                  </div>
+                  <CardTitle className="text-base">Busca de CEP</CardTitle>
+                  <CardDescription className="text-sm">Endereço completo + coordenadas</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-blue-300 bg-blue-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">🏢</div>
+                    <Badge className="bg-blue-600">Fase 2</Badge>
+                  </div>
+                  <CardTitle className="text-base">Consulta CNPJ</CardTitle>
+                  <CardDescription className="text-sm">Razão social, sócios, atividades</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-purple-300 bg-purple-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">👤</div>
+                    <Badge className="bg-purple-600">Fase 3</Badge>
+                  </div>
+                  <CardTitle className="text-base">Validação de CPF</CardTitle>
+                  <CardDescription className="text-sm">Dígitos + status Receita Federal</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-purple-300 bg-purple-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">✉️</div>
+                    <Badge className="bg-purple-600">Fase 3</Badge>
+                  </div>
+                  <CardTitle className="text-base">Validação de Email</CardTitle>
+                  <CardDescription className="text-sm">Verifica existência (não só formato)</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-purple-300 bg-purple-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">📱</div>
+                    <Badge className="bg-purple-600">Fase 3</Badge>
+                  </div>
+                  <CardTitle className="text-base">Validação de Telefone</CardTitle>
+                  <CardDescription className="text-sm">Número válido + operadora</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-slate-300 bg-slate-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">🧾</div>
+                    <Badge className="bg-slate-600">Futuro</Badge>
+                  </div>
+                  <CardTitle className="text-base">Consulta NF-e</CardTitle>
+                  <CardDescription className="text-sm">Validação de chave de acesso</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-slate-300 bg-slate-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">🏭</div>
+                    <Badge className="bg-slate-600">Futuro</Badge>
+                  </div>
+                  <CardTitle className="text-base">Inscrição Estadual</CardTitle>
+                  <CardDescription className="text-sm">Validação por estado</CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
+          </div>
+
+          {/* CATEGORIA: Dados Geográficos */}
+          <div className="mb-16">
+            <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+              <span className="text-3xl">🗺️</span>
+              Dados Geográficos
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card className="border-2 border-green-300 bg-green-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">🗺️</div>
+                    <Badge className="bg-green-600">Disponível</Badge>
+                  </div>
+                  <CardTitle className="text-base">Estados & Municípios</CardTitle>
+                  <CardDescription className="text-sm">27 estados + 5.570 municípios</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-purple-300 bg-purple-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">🏘️</div>
+                    <Badge className="bg-purple-600">Fase 3</Badge>
+                  </div>
+                  <CardTitle className="text-base">Bairros por Cidade</CardTitle>
+                  <CardDescription className="text-sm">Lista completa de bairros</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-slate-300 bg-slate-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">🛣️</div>
+                    <Badge className="bg-slate-600">Futuro</Badge>
+                  </div>
+                  <CardTitle className="text-base">Ruas por Bairro</CardTitle>
+                  <CardDescription className="text-sm">Autocomplete de endereços</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-slate-300 bg-slate-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">📍</div>
+                    <Badge className="bg-slate-600">Futuro</Badge>
+                  </div>
+                  <CardTitle className="text-base">Coordenadas de CEPs</CardTitle>
+                  <CardDescription className="text-sm">Latitude e longitude</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-slate-300 bg-slate-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">📏</div>
+                    <Badge className="bg-slate-600">Futuro</Badge>
+                  </div>
+                  <CardTitle className="text-base">Distância entre CEPs</CardTitle>
+                  <CardDescription className="text-sm">Cálculo de rotas</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-slate-300 bg-slate-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">📊</div>
+                    <Badge className="bg-slate-600">Futuro</Badge>
+                  </div>
+                  <CardTitle className="text-base">Dados Demográficos</CardTitle>
+                  <CardDescription className="text-sm">População, IDH, PIB por cidade</CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
+          </div>
+
+          {/* CATEGORIA: Dados Financeiros */}
+          <div className="mb-16">
+            <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+              <span className="text-3xl">💰</span>
+              Dados Financeiros
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card className="border-2 border-blue-300 bg-blue-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">💵</div>
+                    <Badge className="bg-blue-600">Fase 2</Badge>
+                  </div>
+                  <CardTitle className="text-base">Cotação de Moedas</CardTitle>
+                  <CardDescription className="text-sm">Dólar, Euro, Bitcoin em tempo real</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-blue-300 bg-blue-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">🏦</div>
+                    <Badge className="bg-blue-600">Fase 2</Badge>
+                  </div>
+                  <CardTitle className="text-base">Bancos Brasileiros</CardTitle>
+                  <CardDescription className="text-sm">Códigos COMPE/ISPB</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-purple-300 bg-purple-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">📈</div>
+                    <Badge className="bg-purple-600">Fase 3</Badge>
+                  </div>
+                  <CardTitle className="text-base">SELIC, CDI, IPCA</CardTitle>
+                  <CardDescription className="text-sm">Taxas oficiais Banco Central</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-slate-300 bg-slate-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">🎫</div>
+                    <Badge className="bg-slate-600">Futuro</Badge>
+                  </div>
+                  <CardTitle className="text-base">Geração de Boletos</CardTitle>
+                  <CardDescription className="text-sm">Código de barras</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-slate-300 bg-slate-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">📱</div>
+                    <Badge className="bg-slate-600">Futuro</Badge>
+                  </div>
+                  <CardTitle className="text-base">Pix QR Code</CardTitle>
+                  <CardDescription className="text-sm">Geração de QR Code estático</CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
+          </div>
+
+          {/* CATEGORIA: Transporte & Logística */}
+          <div className="mb-16">
+            <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+              <span className="text-3xl">🚚</span>
+              Transporte & Logística
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card className="border-2 border-blue-300 bg-blue-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">🚗</div>
+                    <Badge className="bg-blue-600">Fase 2</Badge>
+                  </div>
+                  <CardTitle className="text-base">Tabela FIPE</CardTitle>
+                  <CardDescription className="text-sm">Preços de veículos atualizados</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-purple-300 bg-purple-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">📦</div>
+                    <Badge className="bg-purple-600">Fase 3</Badge>
+                  </div>
+                  <CardTitle className="text-base">Cálculo de Frete</CardTitle>
+                  <CardDescription className="text-sm">Correios, Jadlog, etc.</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-purple-300 bg-purple-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">📍</div>
+                    <Badge className="bg-purple-600">Fase 3</Badge>
+                  </div>
+                  <CardTitle className="text-base">Rastreamento</CardTitle>
+                  <CardDescription className="text-sm">Código de rastreio Correios</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-purple-300 bg-purple-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">🚙</div>
+                    <Badge className="bg-purple-600">Fase 3</Badge>
+                  </div>
+                  <CardTitle className="text-base">Consulta de Veículos</CardTitle>
+                  <CardDescription className="text-sm">Dados por placa (DENATRAN)</CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
+          </div>
+
+          {/* CATEGORIA: Utilidades Gerais */}
+          <div className="mb-16">
+            <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+              <span className="text-3xl">🔧</span>
+              Utilidades Gerais
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card className="border-2 border-blue-300 bg-blue-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">📅</div>
+                    <Badge className="bg-blue-600">Fase 2</Badge>
+                  </div>
+                  <CardTitle className="text-base">Feriados Nacionais</CardTitle>
+                  <CardDescription className="text-sm">Calendário completo + estaduais</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-purple-300 bg-purple-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">📞</div>
+                    <Badge className="bg-purple-600">Fase 3</Badge>
+                  </div>
+                  <CardTitle className="text-base">Operadora Telefone</CardTitle>
+                  <CardDescription className="text-sm">Tipo de linha + portabilidade</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-slate-300 bg-slate-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">🗓️</div>
+                    <Badge className="bg-slate-600">Futuro</Badge>
+                  </div>
+                  <CardTitle className="text-base">Dias Úteis</CardTitle>
+                  <CardDescription className="text-sm">Cálculo entre datas</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-slate-300 bg-slate-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">🌍</div>
+                    <Badge className="bg-slate-600">Futuro</Badge>
+                  </div>
+                  <CardTitle className="text-base">Fusos Horários</CardTitle>
+                  <CardDescription className="text-sm">Por cidade/estado</CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
+          </div>
+
+          {/* CATEGORIA: Dados Governamentais & Compliance */}
+          <div className="mb-16">
+            <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+              <span className="text-3xl">🏛️</span>
+              Governo & Compliance
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card className="border-2 border-slate-300 bg-slate-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">⚖️</div>
+                    <Badge className="bg-slate-600">Fase 4</Badge>
+                  </div>
+                  <CardTitle className="text-base">Dados Judiciais</CardTitle>
+                  <CardDescription className="text-sm">Processos públicos (PJe + TJs)</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-slate-300 bg-slate-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">📋</div>
+                    <Badge className="bg-slate-600">Fase 4</Badge>
+                  </div>
+                  <CardTitle className="text-base">Portal Transparência</CardTitle>
+                  <CardDescription className="text-sm">Licitações e convênios</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-slate-300 bg-slate-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">🚫</div>
+                    <Badge className="bg-slate-600">Fase 4</Badge>
+                  </div>
+                  <CardTitle className="text-base">CEIS/CNEP</CardTitle>
+                  <CardDescription className="text-sm">Empresas inidôneas/punidas</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-slate-300 bg-slate-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">📊</div>
+                    <Badge className="bg-slate-600">Futuro</Badge>
+                  </div>
+                  <CardTitle className="text-base">Simples Nacional</CardTitle>
+                  <CardDescription className="text-sm">Consulta de optantes</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-slate-300 bg-slate-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">👔</div>
+                    <Badge className="bg-slate-600">Futuro</Badge>
+                  </div>
+                  <CardTitle className="text-base">PEP</CardTitle>
+                  <CardDescription className="text-sm">Pessoas Politicamente Expostas</CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
+          </div>
+
+          {/* Legenda */}
+          <div className="max-w-4xl mx-auto">
+            <Card className="border-2 border-slate-200">
+              <CardContent className="pt-6">
+                <div className="flex flex-wrap justify-center gap-6 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-green-600">Disponível</Badge>
+                    <span className="text-slate-600">Pronto para usar agora</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-blue-600">Fase 2</Badge>
+                    <span className="text-slate-600">Próximos 3 meses</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-purple-600">Fase 3</Badge>
+                    <span className="text-slate-600">3-6 meses</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-slate-600">Fase 4+</Badge>
+                    <span className="text-slate-600">6+ meses</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center mt-12">
+            <p className="text-slate-600 mb-4">
+              💡 <strong>Tem alguma sugestão de API?</strong> Entre em contato e ajude-nos a priorizar o roadmap!
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Stack Tecnológica */}
+      <section className="py-20 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">
+              Construído com <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Tecnologia de Ponta</span>
+            </h2>
+            <p className="text-lg text-slate-300">
+              Performance, escalabilidade e confiabilidade não são acidente. São resultado de escolhas técnicas inteligentes.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 max-w-6xl mx-auto mb-12">
+            <Card className="bg-slate-800/50 border-slate-700 hover:bg-slate-800 transition-all">
+              <CardHeader className="text-center">
+                <div className="flex justify-center mb-4">
+                  <img 
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg" 
+                    alt="Go Logo" 
+                    className="w-16 h-16"
+                  />
+                </div>
+                <CardTitle className="text-white text-lg">Go (Golang)</CardTitle>
+                <CardDescription className="text-slate-400">
+                  Backend ultra-rápido e eficiente
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <div className="text-4xl mb-2">⚡</div>
-                <CardTitle>Performance</CardTitle>
-                <CardDescription>
-                  Respostas em menos de 100ms com dados atualizados e indexados
+            <Card className="bg-slate-800/50 border-slate-700 hover:bg-slate-800 transition-all">
+              <CardHeader className="text-center">
+                <div className="flex justify-center mb-4">
+                  <img 
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" 
+                    alt="MongoDB Logo" 
+                    className="w-16 h-16"
+                  />
+                </div>
+                <CardTitle className="text-white text-lg">MongoDB</CardTitle>
+                <CardDescription className="text-slate-400">
+                  Banco de dados NoSQL escalável
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <div className="text-4xl mb-2">🔒</div>
-                <CardTitle>Seguro e Confiável</CardTitle>
-                <CardDescription>
-                  Rate limiting, autenticação e logs completos de auditoria
+            <Card className="bg-slate-800/50 border-slate-700 hover:bg-slate-800 transition-all">
+              <CardHeader className="text-center">
+                <div className="flex justify-center mb-4">
+                  <img 
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg" 
+                    alt="Redis Logo" 
+                    className="w-16 h-16"
+                  />
+                </div>
+                <CardTitle className="text-white text-lg">Redis</CardTitle>
+                <CardDescription className="text-slate-400">
+                  Cache de alta performance
                 </CardDescription>
               </CardHeader>
+            </Card>
+
+            <Card className="bg-slate-800/50 border-slate-700 hover:bg-slate-800 transition-all">
+              <CardHeader className="text-center">
+                <div className="flex justify-center mb-4">
+                  <img 
+                    src="https://railway.app/brand/logo-light.svg" 
+                    alt="Railway Logo" 
+                    className="w-16 h-16"
+                  />
+                </div>
+                <CardTitle className="text-white text-lg">Railway</CardTitle>
+                <CardDescription className="text-slate-400">
+                  Deploy automatizado e escalável
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="bg-slate-800/50 border-slate-700 hover:bg-slate-800 transition-all">
+              <CardHeader className="text-center">
+                <div className="flex justify-center mb-4">
+                  <img 
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" 
+                    alt="Next.js Logo" 
+                    className="w-16 h-16 invert"
+                  />
+                </div>
+                <CardTitle className="text-white text-lg">Next.js</CardTitle>
+                <CardDescription className="text-slate-400">
+                  Frontend moderno e performático
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader>
+                <CardTitle className="text-white text-2xl text-center mb-6">Por que essa stack?</CardTitle>
+              </CardHeader>
+              <CardContent className="grid md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="text-4xl mb-3">⚡</div>
+                  <h4 className="text-white font-semibold mb-2">Velocidade</h4>
+                  <p className="text-slate-400 text-sm">
+                    Go compila para código nativo, Redis mantém dados em memória. Resultado: &lt;100ms de resposta.
+                  </p>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl mb-3">📈</div>
+                  <h4 className="text-white font-semibold mb-2">Escalabilidade</h4>
+                  <p className="text-slate-400 text-sm">
+                    MongoDB escala horizontalmente, Go gerencia milhares de conexões simultâneas com eficiência.
+                  </p>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl mb-3">🛡️</div>
+                  <h4 className="text-white font-semibold mb-2">Confiabilidade</h4>
+                  <p className="text-slate-400 text-sm">
+                    Railway garante 99.9% de uptime, backups automáticos e deploy com zero downtime.
+                  </p>
+                </div>
+              </CardContent>
             </Card>
           </div>
         </div>
@@ -201,6 +811,92 @@ export default function HomePage() {
                 </Button>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Exemplo de Código */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold mb-4 text-slate-900">
+                Integração em <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Minutos</span>
+              </h2>
+              <p className="text-lg text-slate-600">
+                Nossa API é RESTful, simples e bem documentada. Veja como é fácil começar:
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              <Card className="border-2 border-slate-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <span className="text-2xl">📘</span>
+                    Buscar Estados
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <pre className="bg-slate-950 rounded-lg p-4 text-sm text-slate-100 overflow-x-auto">
+                    <code>
+                      <span className="text-green-400">GET</span> https://api-core.theretech.com.br/geo/estados{'\n'}
+                      {'\n'}
+                      <span className="text-slate-400">// Headers</span>{'\n'}
+                      <span className="text-yellow-300">X-API-Key: rtc_sua_chave_aqui</span>{'\n'}
+                      {'\n'}
+                      <span className="text-slate-400">// Resposta</span>{'\n'}
+                      {'{'}{'\n'}
+                      {'  '}<span className="text-purple-400">&quot;estados&quot;</span>: [{'\n'}
+                      {'    '}{'{'}{'\n'}
+                      {'      '}<span className="text-purple-400">&quot;sigla&quot;</span>: <span className="text-green-300">&quot;SP&quot;</span>,{'\n'}
+                      {'      '}<span className="text-purple-400">&quot;nome&quot;</span>: <span className="text-green-300">&quot;São Paulo&quot;</span>,{'\n'}
+                      {'      '}<span className="text-purple-400">&quot;regiao&quot;</span>: <span className="text-green-300">&quot;Sudeste&quot;</span>{'\n'}
+                      {'    '}{'}'},{'\n'}
+                      {'    '}<span className="text-slate-500">...</span>{'\n'}
+                      {'  '}]{'\n'}
+                      {'}'}
+                    </code>
+                  </pre>
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 border-slate-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <span className="text-2xl">📗</span>
+                    JavaScript (Node.js)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <pre className="bg-slate-950 rounded-lg p-4 text-sm text-slate-100 overflow-x-auto">
+                    <code>
+                      <span className="text-purple-400">const</span> <span className="text-blue-300">axios</span> = <span className="text-yellow-300">require</span>(<span className="text-green-300">&apos;axios&apos;</span>);{'\n'}
+                      {'\n'}
+                      <span className="text-purple-400">const</span> <span className="text-blue-300">api</span> = axios.<span className="text-yellow-300">create</span>({'({'}{'\n'}
+                      {'  '}<span className="text-purple-400">baseURL</span>: <span className="text-green-300">&apos;https://api-core.theretech.com.br&apos;</span>,{'\n'}
+                      {'  '}<span className="text-purple-400">headers</span>: {'{'}{'\n'}
+                      {'    '}<span className="text-purple-400">&apos;X-API-Key&apos;</span>: <span className="text-green-300">&apos;rtc_sua_chave&apos;</span>{'\n'}
+                      {'  }'}
+                      {'\n'}
+                      {'});'}{'\n'}
+                      {'\n'}
+                      <span className="text-slate-400">// Buscar todos os estados</span>{'\n'}
+                      <span className="text-purple-400">const</span> <span className="text-blue-300">estados</span> = <span className="text-purple-400">await</span> api.<span className="text-yellow-300">get</span>(<span className="text-green-300">&apos;/geo/estados&apos;</span>);{'\n'}
+                      {'\n'}
+                      console.<span className="text-yellow-300">log</span>(estados.<span className="text-blue-300">data</span>);
+                    </code>
+                  </pre>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="text-center mt-8">
+              <Link href="/painel/docs">
+                <Button variant="outline" size="lg" className="text-blue-600 border-blue-600 hover:bg-blue-50">
+                  📚 Ver Documentação Completa
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
