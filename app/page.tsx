@@ -138,6 +138,96 @@ export default function HomePage() {
           <p className="text-center text-slate-600 mb-12 max-w-3xl mx-auto">
             Mais de <strong>30 APIs essenciais</strong> para desenvolvedores brasileiros. Uma única integração, infinitas possibilidades.
           </p>
+
+          {/* ========================================== */}
+          {/* SEÇÃO DESTAQUE: APIs DISPONÍVEIS AGORA */}
+          {/* ========================================== */}
+          <div className="mb-20">
+            <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-300 rounded-2xl p-8 mb-8">
+              <div className="text-center mb-8">
+                <Badge className="bg-green-600 text-white text-base px-4 py-2 mb-4">
+                  ✨ Disponível Agora
+                </Badge>
+                <h3 className="text-3xl font-bold text-slate-900 mb-3">
+                  🚀 APIs Prontas para Uso
+                </h3>
+                <p className="text-slate-600 text-lg">
+                  Comece a integrar <strong>agora mesmo</strong>! Estas APIs já estão em produção e prontas para receber suas requisições.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                {/* CEP */}
+                <Card className="border-2 border-green-400 bg-white hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                  <CardHeader>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-4xl">📮</div>
+                      <Badge className="bg-green-600 text-white">✓ Disponível</Badge>
+                    </div>
+                    <CardTitle className="text-xl mb-2">Busca de CEP</CardTitle>
+                    <CardDescription className="text-base">
+                      Consulta completa de endereços brasileiros com cache inteligente e múltiplas fontes (ViaCEP + Brasil API).
+                    </CardDescription>
+                    <div className="mt-4 pt-4 border-t border-green-200">
+                      <p className="text-sm text-slate-600 mb-2 font-medium">Recursos:</p>
+                      <ul className="text-xs text-slate-600 space-y-1">
+                        <li>✓ Cache de 7 dias (performance)</li>
+                        <li>✓ Fallback automático</li>
+                        <li>✓ Coordenadas geográficas</li>
+                        <li>✓ Resposta em &lt;50ms</li>
+                      </ul>
+                    </div>
+                  </CardHeader>
+                </Card>
+
+                {/* Geografia */}
+                <Card className="border-2 border-green-400 bg-white hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                  <CardHeader>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-4xl">🗺️</div>
+                      <Badge className="bg-green-600 text-white">✓ Disponível</Badge>
+                    </div>
+                    <CardTitle className="text-xl mb-2">Estados & Municípios</CardTitle>
+                    <CardDescription className="text-base">
+                      Dados completos de 27 estados e 5.570 municípios brasileiros com informações do IBGE.
+                    </CardDescription>
+                    <div className="mt-4 pt-4 border-t border-green-200">
+                      <p className="text-sm text-slate-600 mb-2 font-medium">Recursos:</p>
+                      <ul className="text-xs text-slate-600 space-y-1">
+                        <li>✓ 27 estados + regiões</li>
+                        <li>✓ 5.570 municípios</li>
+                        <li>✓ Filtros por UF</li>
+                        <li>✓ Dados atualizados IBGE</li>
+                      </ul>
+                    </div>
+                  </CardHeader>
+                </Card>
+              </div>
+
+              <div className="text-center mt-8">
+                <Link href="/painel/register">
+                  <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white text-lg px-8 py-6 shadow-lg">
+                    Começar a Usar Agora →
+                  </Button>
+                </Link>
+                <p className="text-sm text-slate-600 mt-3">
+                  Gratuito para começar • 1.000 requests/dia • Sem cartão de crédito
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* ========================================== */}
+          {/* ROADMAP: PRÓXIMAS APIs */}
+          {/* ========================================== */}
+          <div className="mb-12 text-center">
+            <h3 className="text-2xl font-bold text-slate-800 mb-3">
+              📅 Roadmap: Próximas APIs
+            </h3>
+            <p className="text-slate-600 max-w-2xl mx-auto mb-8">
+              Estamos constantemente adicionando novas APIs. Veja o que está por vir e quando você pode esperar cada funcionalidade.
+            </p>
+          </div>
           
           {/* CATEGORIA: Dados Cadastrais & Validação */}
           <div className="mb-16">
@@ -146,17 +236,6 @@ export default function HomePage() {
               Dados Cadastrais & Validação
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <Card className="border-2 border-green-300 bg-green-50/30 hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="text-3xl">📮</div>
-                    <Badge className="bg-green-600">Disponível</Badge>
-                  </div>
-                  <CardTitle className="text-base">Busca de CEP</CardTitle>
-                  <CardDescription className="text-sm">Endereço completo + coordenadas</CardDescription>
-                </CardHeader>
-              </Card>
-
               <Card className="border-2 border-blue-300 bg-blue-50/30 hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
@@ -232,17 +311,6 @@ export default function HomePage() {
               Dados Geográficos
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <Card className="border-2 border-green-300 bg-green-50/30 hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="text-3xl">🗺️</div>
-                    <Badge className="bg-green-600">Disponível</Badge>
-                  </div>
-                  <CardTitle className="text-base">Estados & Municípios</CardTitle>
-                  <CardDescription className="text-sm">27 estados + 5.570 municípios</CardDescription>
-                </CardHeader>
-              </Card>
-
               <Card className="border-2 border-purple-300 bg-purple-50/30 hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
