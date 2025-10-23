@@ -95,8 +95,7 @@ export default function AdminSettingsPage() {
 
   useEffect(() => {
     if (isReady) {
-      loadSettings();
-      loadCacheStats();
+      loadSettings(); // Carrega settings, que por sua vez chama loadCacheStats()
     }
   }, [isReady]);
 
@@ -116,6 +115,9 @@ export default function AdminSettingsPage() {
       };
       
       setSettings(normalized);
+      
+      // ✅ Carregar stats APÓS settings carregar com sucesso
+      loadCacheStats();
     } catch (error: any) {
       console.error('Erro ao carregar configurações:', error);
       // Se não existir configuração, usa as padrões (já definidas no state)
@@ -131,11 +133,13 @@ export default function AdminSettingsPage() {
     try {
       const response = await api.get('/admin/cache/cep/stats');
       setCacheStats({
-        totalCached: response.data.totalCached,
-        recentCached: response.data.recentCached,
+        totalCached: response.data.totalCached || 0,
+        recentCached: response.data.recentCached || 0,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao carregar stats de cache:', error);
+      // Silencioso: não mostra erro ao usuário, apenas deixa stats como null
+      // Se 404, o usuário provavelmente não está autenticado ainda
     }
   };
 
