@@ -712,7 +712,7 @@ export default function AdminSettingsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="cacheTTL">TTL do Cache (dias)</Label>
+                <Label htmlFor="cacheTTL">TTL do Cache CEP (dias)</Label>
                 <Input
                   id="cacheTTL"
                   type="number"
@@ -720,7 +720,19 @@ export default function AdminSettingsPage() {
                   max="365"
                   placeholder="7"
                   value={settings.cache?.cepTtlDays || 7}
-                  onChange={(e) => handleInputChange('cache', 'cepTtlDays', parseInt(e.target.value) || 7)}
+                  onChange={(e) => {
+                    const value = e.target.value === '' ? 7 : parseInt(e.target.value);
+                    handleInputChange('cache', 'cepTtlDays', value);
+                  }}
+                  onBlur={(e) => {
+                    // Aplicar valor padrão ao sair do campo se estiver vazio ou inválido
+                    const value = parseInt(e.target.value);
+                    if (isNaN(value) || value < 1) {
+                      handleInputChange('cache', 'cepTtlDays', 7);
+                    } else if (value > 365) {
+                      handleInputChange('cache', 'cepTtlDays', 365);
+                    }
+                  }}
                 />
                 <p className="text-xs text-slate-500">
                   Tempo que um CEP fica em cache antes de ser revalidado (1-365 dias)
@@ -830,7 +842,19 @@ export default function AdminSettingsPage() {
                   max="365"
                   placeholder="30"
                   value={settings.cache?.cnpjTtlDays || 30}
-                  onChange={(e) => handleInputChange('cache', 'cnpjTtlDays', parseInt(e.target.value) || 30)}
+                  onChange={(e) => {
+                    const value = e.target.value === '' ? 30 : parseInt(e.target.value);
+                    handleInputChange('cache', 'cnpjTtlDays', value);
+                  }}
+                  onBlur={(e) => {
+                    // Aplicar valor padrão ao sair do campo se estiver vazio ou inválido
+                    const value = parseInt(e.target.value);
+                    if (isNaN(value) || value < 1) {
+                      handleInputChange('cache', 'cnpjTtlDays', 30);
+                    } else if (value > 365) {
+                      handleInputChange('cache', 'cnpjTtlDays', 365);
+                    }
+                  }}
                 />
                 <p className="text-xs text-slate-500">
                   Tempo que um CNPJ fica em cache (1-365 dias). Padrão: 30 dias.
