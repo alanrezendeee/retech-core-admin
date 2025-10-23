@@ -37,6 +37,12 @@ interface SystemSettings {
     environment: string;
     maintenance: boolean;
   };
+  // Contato/Vendas
+  contact?: {
+    whatsapp: string;
+    email: string;
+    phone: string;
+  };
 }
 
 export default function AdminSettingsPage() {
@@ -58,6 +64,11 @@ export default function AdminSettingsPage() {
       version: '1.0.0',
       environment: 'development',
       maintenance: false,
+    },
+    contact: {
+      whatsapp: '48999616679',
+      email: 'suporte@theretech.com.br',
+      phone: '+55 48 99961-6679',
     },
   });
 
@@ -477,6 +488,78 @@ export default function AdminSettingsPage() {
                   </div>
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Contato & Vendas */}
+          <Card className="border-green-200">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-green-100">
+                  <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                </div>
+                <div>
+                  <CardTitle>Contato & Vendas</CardTitle>
+                  <CardDescription>Configure informações de contato para a landing page</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="whatsapp">WhatsApp (Vendas)</Label>
+                <div className="flex gap-2 items-center">
+                  <span className="text-sm text-slate-500">+55</span>
+                  <Input
+                    id="whatsapp"
+                    type="text"
+                    placeholder="48999616679"
+                    value={settings.contact?.whatsapp || ''}
+                    onChange={(e) => handleInputChange('contact', 'whatsapp', e.target.value)}
+                    className="flex-1"
+                  />
+                </div>
+                <p className="text-xs text-slate-500">
+                  Número sem espaços ou traços. Ex: 48999616679
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">E-mail de Suporte</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="suporte@theretech.com.br"
+                  value={settings.contact?.email || ''}
+                  onChange={(e) => handleInputChange('contact', 'email', e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone">Telefone (Formatado)</Label>
+                <Input
+                  id="phone"
+                  type="text"
+                  placeholder="+55 48 99961-6679"
+                  value={settings.contact?.phone || ''}
+                  onChange={(e) => handleInputChange('contact', 'phone', e.target.value)}
+                />
+              </div>
+
+              <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <Info className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-green-900">
+                      Usado na Landing Page
+                    </p>
+                    <p className="text-xs text-green-700 mt-1">
+                      O botão "Falar com Vendas" irá redirecionar para o WhatsApp configurado aqui
+                    </p>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
