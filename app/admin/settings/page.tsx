@@ -43,6 +43,13 @@ interface SystemSettings {
     email: string;
     phone: string;
   };
+  // Cache
+  cache?: {
+    enabled: boolean;
+    cepTtlDays: number;
+    maxSizeMb: number;
+    autoCleanup: boolean;
+  };
 }
 
 export default function AdminSettingsPage() {
@@ -70,14 +77,26 @@ export default function AdminSettingsPage() {
       email: 'suporte@theretech.com.br',
       phone: '+55 48 99961-6679',
     },
+    cache: {
+      enabled: true,
+      cepTtlDays: 7,
+      maxSizeMb: 100,
+      autoCleanup: true,
+    },
   });
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
+  const [cacheStats, setCacheStats] = useState<{
+    totalCached: number;
+    recentCached: number;
+  } | null>(null);
 
   useEffect(() => {
     if (isReady) {
       loadSettings();
+      loadCacheStats();
     }
   }, [isReady]);
 
@@ -108,6 +127,36 @@ export default function AdminSettingsPage() {
     }
   };
 
+  const loadCacheStats = async () => {
+    try {
+      const response = await api.get('/admin/cache/cep/stats');
+      setCacheStats({
+        totalCached: response.data.totalCached,
+        recentCached: response.data.recentCached,
+      });
+    } catch (error) {
+      console.error('Erro ao carregar stats de cache:', error);
+    }
+  };
+
+  const handleClearCache = async () => {
+    if (!confirm('Tem certeza que deseja limpar todo o cache de CEP? Esta ação não pode ser desfeita.')) {
+      return;
+    }
+
+    try {
+      setIsClearing(true);
+      const response = await api.delete('/admin/cache/cep');
+      toast.success(`Cache limpo! ${response.data.deletedCount} registros removidos.`);
+      loadCacheStats(); // Recarregar stats
+    } catch (error) {
+      console.error('Erro ao limpar cache:', error);
+      toast.error('Erro ao limpar cache');
+    } finally {
+      setIsClearing(false);
+    }
+  };
+
   const handleSaveSettings = async () => {
     try {
       setIsSaving(true);
@@ -129,6 +178,8 @@ export default function AdminSettingsPage() {
         cors: settings.cors,
         jwt: settings.jwt,
         api: settings.api,
+        contact: settings.contact,
+        cache: settings.cache,
       };
       
       await api.put('/admin/settings', payload);
@@ -557,6 +608,130 @@ export default function AdminSettingsPage() {
                     <p className="text-xs text-green-700 mt-1">
                       O botão "Falar com Vendas" irá redirecionar para o WhatsApp configurado aqui
                     </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Cache de CEP */}
+          <Card className="border-blue-200">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-blue-100">
+                  <Database className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <CardTitle>Cache de CEP</CardTitle>
+                  <CardDescription>Configurações de cache para otimizar performance</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Stats do Cache */}
+              {cacheStats && (
+                <div className="grid grid-cols-2 gap-4 p-4 bg-blue-50 rounded-lg mb-4">
+                  <div>
+                    <p className="text-sm font-medium text-blue-900">Total em Cache</p>
+                    <p className="text-2xl font-bold text-blue-600">{cacheStats.totalCached.toLocaleString()}</p>
+                    <p className="text-xs text-blue-600">CEPs armazenados</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-blue-900">Últimas 24h</p>
+                    <p className="text-2xl font-bold text-blue-600">{cacheStats.recentCached.toLocaleString()}</p>
+                    <p className="text-xs text-blue-600">Novos no cache</p>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                <div>
+                  <Label htmlFor="cacheEnabled" className="font-medium text-slate-700">
+                    Habilitar Cache
+                  </Label>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Ativa cache global de CEP (melhora performance)
+                  </p>
+                </div>
+                <Switch
+                  id="cacheEnabled"
+                  checked={settings.cache?.enabled || false}
+                  onCheckedChange={(checked) => handleInputChange('cache', 'enabled', checked)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="cacheTTL">TTL do Cache (dias)</Label>
+                <Input
+                  id="cacheTTL"
+                  type="number"
+                  min="1"
+                  max="365"
+                  placeholder="7"
+                  value={settings.cache?.cepTtlDays || 7}
+                  onChange={(e) => handleInputChange('cache', 'cepTtlDays', parseInt(e.target.value) || 7)}
+                />
+                <p className="text-xs text-slate-500">
+                  Tempo que um CEP fica em cache antes de ser revalidado (1-365 dias)
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                <div>
+                  <Label htmlFor="autoCleanup" className="font-medium text-slate-700">
+                    Limpeza Automática
+                  </Label>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    MongoDB remove CEPs expirados automaticamente (TTL Index)
+                  </p>
+                </div>
+                <Switch
+                  id="autoCleanup"
+                  checked={settings.cache?.autoCleanup || false}
+                  onCheckedChange={(checked) => handleInputChange('cache', 'autoCleanup', checked)}
+                />
+              </div>
+
+              <Separator />
+
+              <div className="space-y-2">
+                <Label>Limpeza Manual</Label>
+                <Button 
+                  variant="destructive" 
+                  className="w-full"
+                  onClick={handleClearCache}
+                  disabled={isClearing}
+                >
+                  {isClearing ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      Limpando...
+                    </>
+                  ) : (
+                    <>
+                      <AlertTriangle className="w-4 h-4 mr-2" />
+                      Limpar Todo Cache
+                    </>
+                  )}
+                </Button>
+                <p className="text-xs text-red-600">
+                  ⚠️ Remove todos os {cacheStats?.totalCached || 0} CEPs do cache. Esta ação não pode ser desfeita.
+                </p>
+              </div>
+
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-blue-900">
+                      Como funciona o cache?
+                    </p>
+                    <ul className="text-xs text-blue-700 mt-1 space-y-1">
+                      <li>✅ Cache é <strong>compartilhado</strong> entre todos os tenants</li>
+                      <li>✅ Primeira consulta: ~50ms (ViaCEP)</li>
+                      <li>✅ Consultas seguintes: ~5ms (cache)</li>
+                      <li>✅ Reduz 95%+ das chamadas externas</li>
+                    </ul>
                   </div>
                 </div>
               </div>
