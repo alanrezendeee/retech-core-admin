@@ -99,7 +99,13 @@ export default function AdminSettingsPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
   const [showClearDialog, setShowClearDialog] = useState(false);
+  const [showClearCNPJDialog, setShowClearCNPJDialog] = useState(false);
+  const [isClearingCNPJ, setIsClearingCNPJ] = useState(false);
   const [cacheStats, setCacheStats] = useState<{
+    totalCached: number;
+    recentCached: number;
+  } | null>(null);
+  const [cnpjCacheStats, setCnpjCacheStats] = useState<{
     totalCached: number;
     recentCached: number;
   } | null>(null);
@@ -129,6 +135,7 @@ export default function AdminSettingsPage() {
       
       // ✅ Carregar stats APÓS settings carregar com sucesso
       loadCacheStats();
+      loadCNPJCacheStats();
     } catch (error: any) {
       console.error('Erro ao carregar configurações:', error);
       // Se não existir configuração, usa as padrões (já definidas no state)
@@ -148,9 +155,22 @@ export default function AdminSettingsPage() {
         recentCached: response.data.recentCached || 0,
       });
     } catch (error: any) {
-      console.error('Erro ao carregar stats de cache:', error);
+      console.error('Erro ao carregar stats de cache CEP:', error);
       // Silencioso: não mostra erro ao usuário, apenas deixa stats como null
       // Se 404, o usuário provavelmente não está autenticado ainda
+    }
+  };
+
+  const loadCNPJCacheStats = async () => {
+    try {
+      const response = await api.get('/admin/cache/cnpj/stats');
+      setCnpjCacheStats({
+        totalCached: response.data.totalCached || 0,
+        recentCached: response.data.recentCached || 0,
+      });
+    } catch (error: any) {
+      console.error('Erro ao carregar stats de cache CNPJ:', error);
+      // Silencioso
     }
   };
 
@@ -160,13 +180,29 @@ export default function AdminSettingsPage() {
       setShowClearDialog(false); // Fechar dialog
       
       const response = await api.delete('/admin/cache/cep');
-      toast.success(`Cache limpo! ${response.data.deletedCount} registros removidos.`);
+      toast.success(`Cache de CEP limpo! ${response.data.deletedCount} registros removidos.`);
       loadCacheStats(); // Recarregar stats
     } catch (error: any) {
-      console.error('Erro ao limpar cache:', error);
-      toast.error(error.response?.data?.error || 'Erro ao limpar cache');
+      console.error('Erro ao limpar cache CEP:', error);
+      toast.error(error.response?.data?.error || 'Erro ao limpar cache de CEP');
     } finally {
       setIsClearing(false);
+    }
+  };
+
+  const handleClearCNPJCache = async () => {
+    try {
+      setIsClearingCNPJ(true);
+      setShowClearCNPJDialog(false); // Fechar dialog
+      
+      const response = await api.delete('/admin/cache/cnpj');
+      toast.success(`Cache de CNPJ limpo! ${response.data.deletedCount} registros removidos.`);
+      loadCNPJCacheStats(); // Recarregar stats
+    } catch (error: any) {
+      console.error('Erro ao limpar cache CNPJ:', error);
+      toast.error(error.response?.data?.error || 'Erro ao limpar cache de CNPJ');
+    } finally {
+      setIsClearingCNPJ(false);
     }
   };
 
@@ -750,10 +786,88 @@ export default function AdminSettingsPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Cache de CNPJ */}
+          <Card className="border-orange-200">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-orange-100">
+                  <svg className="w-5 h-5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                </div>
+                <div>
+                  <CardTitle>Cache de CNPJ</CardTitle>
+                  <CardDescription>Gerenciar cache de empresas consultadas</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Stats do Cache */}
+              {cnpjCacheStats && (
+                <div className="grid grid-cols-2 gap-4 p-4 bg-orange-50 rounded-lg mb-4">
+                  <div>
+                    <p className="text-sm font-medium text-orange-900">Total em Cache</p>
+                    <p className="text-2xl font-bold text-orange-600">{cnpjCacheStats.totalCached.toLocaleString()}</p>
+                    <p className="text-xs text-orange-600">CNPJs armazenados</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-orange-900">Últimas 24h</p>
+                    <p className="text-2xl font-bold text-orange-600">{cnpjCacheStats.recentCached.toLocaleString()}</p>
+                    <p className="text-xs text-orange-600">Novos no cache</p>
+                  </div>
+                </div>
+              )}
+
+              <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <Info className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-orange-900">
+                      Cache de CNPJ
+                    </p>
+                    <ul className="text-xs text-orange-700 mt-1 space-y-1">
+                      <li>✅ TTL: <strong>30 dias</strong> (empresas não mudam frequentemente)</li>
+                      <li>✅ Compartilhado entre todos os tenants</li>
+                      <li>✅ Primeira consulta: ~200ms (Brasil API)</li>
+                      <li>✅ Consultas seguintes: ~10ms (cache)</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-2">
+                <Label>Limpeza Manual</Label>
+                <Button 
+                  variant="destructive" 
+                  className="w-full"
+                  onClick={() => setShowClearCNPJDialog(true)}
+                  disabled={isClearingCNPJ}
+                >
+                  {isClearingCNPJ ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      Limpando...
+                    </>
+                  ) : (
+                    <>
+                      <AlertTriangle className="w-4 h-4 mr-2" />
+                      Limpar Cache de CNPJ
+                    </>
+                  )}
+                </Button>
+                <p className="text-xs text-red-600">
+                  ⚠️ Remove todos os {cnpjCacheStats?.totalCached || 0} CNPJs do cache. Esta ação não pode ser desfeita.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
-      {/* Dialog de Confirmação para Limpar Cache */}
+      {/* Dialog de Confirmação para Limpar Cache CEP */}
       <AlertDialog open={showClearDialog} onOpenChange={setShowClearDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -770,6 +884,31 @@ export default function AdminSettingsPage() {
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleClearCache}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Sim, Limpar Cache
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Dialog de Confirmação para Limpar Cache CNPJ */}
+      <AlertDialog open={showClearCNPJDialog} onOpenChange={setShowClearCNPJDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Limpar Todo o Cache de CNPJ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação irá remover todos os <strong>{cnpjCacheStats?.totalCached || 0} CNPJs</strong> do cache.
+              <br /><br />
+              <span className="text-red-600 font-semibold">⚠️ Esta ação não pode ser desfeita.</span>
+              <br /><br />
+              Após limpar o cache, todas as próximas consultas de CNPJ irão buscar diretamente das APIs externas (Brasil API/ReceitaWS) até que o cache seja reconstruído.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleClearCNPJCache}
               className="bg-red-600 hover:bg-red-700"
             >
               Sim, Limpar Cache
