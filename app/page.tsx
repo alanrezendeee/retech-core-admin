@@ -146,11 +146,11 @@ export default function HomePage() {
               Dados Cadastrais & Validação
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <Card className="border-2 border-blue-300 bg-blue-50/30 hover:shadow-lg transition-shadow">
+              <Card className="border-2 border-green-300 bg-green-50/30 hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
                     <div className="text-3xl">📮</div>
-                    <Badge className="bg-blue-600">Fase 2</Badge>
+                    <Badge className="bg-green-600">Disponível</Badge>
                   </div>
                   <CardTitle className="text-base">Busca de CEP</CardTitle>
                   <CardDescription className="text-sm">Endereço completo + coordenadas</CardDescription>
@@ -522,7 +522,7 @@ export default function HomePage() {
               </Card>
 
               <Card className="border-2 border-slate-300 bg-slate-50/30 hover:shadow-lg transition-shadow">
-                <CardHeader>
+              <CardHeader>
                   <div className="flex items-center justify-between mb-2">
                     <div className="text-3xl">👔</div>
                     <Badge className="bg-slate-600">Futuro</Badge>
