@@ -57,6 +57,7 @@ interface SystemSettings {
   cache?: {
     enabled: boolean;
     cepTtlDays: number;
+    cnpjTtlDays: number;
     maxSizeMb: number;
     autoCleanup: boolean;
   };
@@ -90,6 +91,7 @@ export default function AdminSettingsPage() {
     cache: {
       enabled: true,
       cepTtlDays: 7,
+      cnpjTtlDays: 30,
       maxSizeMb: 100,
       autoCleanup: true,
     },
@@ -819,6 +821,22 @@ export default function AdminSettingsPage() {
                 </div>
               )}
 
+              <div className="space-y-2">
+                <Label htmlFor="cnpjTTL">TTL do Cache CNPJ (dias)</Label>
+                <Input
+                  id="cnpjTTL"
+                  type="number"
+                  min="1"
+                  max="365"
+                  placeholder="30"
+                  value={settings.cache?.cnpjTtlDays || 30}
+                  onChange={(e) => handleInputChange('cache', 'cnpjTtlDays', parseInt(e.target.value) || 30)}
+                />
+                <p className="text-xs text-slate-500">
+                  Tempo que um CNPJ fica em cache (1-365 dias). Padrão: 30 dias.
+                </p>
+              </div>
+
               <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
                 <div className="flex items-start gap-2">
                   <Info className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
@@ -827,10 +845,10 @@ export default function AdminSettingsPage() {
                       Cache de CNPJ
                     </p>
                     <ul className="text-xs text-orange-700 mt-1 space-y-1">
-                      <li>✅ TTL: <strong>30 dias</strong> (empresas não mudam frequentemente)</li>
                       <li>✅ Compartilhado entre todos os tenants</li>
                       <li>✅ Primeira consulta: ~200ms (Brasil API)</li>
                       <li>✅ Consultas seguintes: ~10ms (cache)</li>
+                      <li>✅ Empresas não mudam frequentemente (TTL maior)</li>
                     </ul>
                   </div>
                 </div>

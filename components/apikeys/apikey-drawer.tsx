@@ -47,9 +47,10 @@ interface APIKeyDrawerProps {
 }
 
 const availableScopes = [
-  { value: 'geo', label: 'GEO - Dados geográficos (UFs, Municípios)' },
-  { value: 'admin', label: 'Admin - Gerenciamento do sistema' },
-  { value: 'analytics', label: 'Analytics - Métricas e estatísticas' },
+  { value: 'geo', label: '🗺️ GEO - Dados geográficos (UFs, Municípios)' },
+  { value: 'cep', label: '📮 CEP - Consulta de endereços' },
+  { value: 'cnpj', label: '🏢 CNPJ - Dados de empresas (Receita Federal)' },
+  { value: 'all', label: '⭐ ALL - Acesso total a todas as APIs' },
 ];
 
 export function APIKeyDrawer({ 
