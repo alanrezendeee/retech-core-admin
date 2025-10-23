@@ -17,10 +17,28 @@ export default function HomePage() {
 
   useEffect(() => {
     // Buscar informações de contato
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/public/contact`)
-      .then(res => res.json())
-      .then(data => setContact(data))
-      .catch(err => console.error('Erro ao carregar contato:', err));
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    
+    fetch(`${apiUrl}/public/contact`)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then(data => {
+        setContact(data);
+        console.log('✅ Contato carregado:', data);
+      })
+      .catch(err => {
+        console.error('❌ Erro ao carregar contato:', err);
+        // Fallback: usar valores padrão
+        setContact({
+          whatsapp: '48999616679',
+          email: 'suporte@theretech.com.br',
+          phone: '+55 48 99961-6679'
+        });
+      });
   }, []);
 
   const whatsappLink = contact?.whatsapp 
