@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/lib/stores/auth-store';
 import { Button } from '@/components/ui/button';
@@ -22,11 +23,38 @@ import {
   Zap
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { getMyStats } from '@/lib/api/tenant';
+
+interface Stats {
+  activeKeys: number;
+  requestsToday: number;
+  requestsMonth: number;
+  dailyLimit: number;
+  remaining: number;
+  percentageUsed: number;
+}
 
 export default function PainelLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
+  const [stats, setStats] = useState<Stats | null>(null);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const data = await getMyStats();
+        setStats(data);
+      } catch (error) {
+        console.error('Erro ao carregar stats:', error);
+      }
+    };
+
+    loadStats();
+    // Auto-refresh a cada 30 segundos
+    const interval = setInterval(loadStats, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -146,13 +174,18 @@ export default function PainelLayout({ children }: { children: React.ReactNode }
               <span className="text-xs font-semibold text-blue-700">PLANO FREE</span>
             </div>
             <p className="text-xs text-slate-600">
-              1.000 requests/dia
+              {stats ? `${stats.dailyLimit.toLocaleString()} requests/dia` : 'Carregando...'}
             </p>
             <div className="mt-3">
               <div className="w-full bg-slate-200 rounded-full h-1.5">
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 h-1.5 rounded-full" style={{ width: '0%' }}></div>
+                <div 
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 h-1.5 rounded-full transition-all duration-500" 
+                  style={{ width: `${Math.min(stats?.percentageUsed || 0, 100)}%` }}
+                ></div>
               </div>
-              <p className="text-xs text-slate-500 mt-1">0 de 1.000 usados hoje</p>
+              <p className="text-xs text-slate-500 mt-1">
+                {stats ? `${stats.requestsToday} de ${stats.dailyLimit.toLocaleString()} usados hoje` : '0 de 0 usados hoje'}
+              </p>
             </div>
           </div>
 

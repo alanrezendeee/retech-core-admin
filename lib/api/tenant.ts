@@ -24,6 +24,12 @@ export const getMyStats = async () => {
   return response.data;
 };
 
+// Tenant - Configurações para docs
+export const getMyConfig = async () => {
+  const response = await api.get('/me/config');
+  return response.data;
+};
+
 // Tenant - Meu uso detalhado
 export const getMyUsage = async () => {
   const response = await api.get('/me/usage');
