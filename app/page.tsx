@@ -1,9 +1,32 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
+interface ContactInfo {
+  whatsapp: string;
+  email: string;
+  phone: string;
+}
+
 export default function HomePage() {
+  const [contact, setContact] = useState<ContactInfo | null>(null);
+
+  useEffect(() => {
+    // Buscar informações de contato
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/public/contact`)
+      .then(res => res.json())
+      .then(data => setContact(data))
+      .catch(err => console.error('Erro ao carregar contato:', err));
+  }, []);
+
+  const whatsappLink = contact?.whatsapp 
+    ? `https://wa.me/55${contact.whatsapp}?text=Olá! Gostaria de saber mais sobre a Retech Core API`
+    : '#';
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -30,7 +53,7 @@ export default function HomePage() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/painel/register">
+            <Link href="/painel/login">
               <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg px-8 py-6 shadow-lg">
                 Começar Grátis
               </Button>
@@ -205,7 +228,7 @@ export default function HomePage() {
               </div>
 
               <div className="text-center mt-8">
-                <Link href="/painel/register">
+                <Link href="/painel/login">
                   <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white text-lg px-8 py-6 shadow-lg">
                     Começar a Usar Agora →
                   </Button>
@@ -800,9 +823,11 @@ export default function HomePage() {
                     Dashboard de uso
                   </li>
                 </ul>
-                <Button className="w-full mt-6" variant="outline">
-                  Começar Agora
-                </Button>
+                <Link href="/painel/login" className="w-full">
+                  <Button className="w-full mt-6" variant="outline">
+                    Começar Agora
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -874,9 +899,11 @@ export default function HomePage() {
                     White label
                   </li>
                 </ul>
-                <Button className="w-full mt-6" variant="outline">
-                  Falar com Vendas
-                </Button>
+                <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="w-full">
+                  <Button className="w-full mt-6" variant="outline">
+                    Falar com Vendas
+                  </Button>
+                </a>
               </CardContent>
             </Card>
           </div>
