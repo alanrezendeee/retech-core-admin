@@ -53,7 +53,7 @@ export default function HomePage() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/painel/login">
+            <Link href="/painel/register">
               <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg px-8 py-6 shadow-lg">
                 Começar Grátis
               </Button>
@@ -228,7 +228,7 @@ export default function HomePage() {
               </div>
 
               <div className="text-center mt-8">
-                <Link href="/painel/login">
+                <Link href="/painel/register">
                   <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white text-lg px-8 py-6 shadow-lg">
                     Começar a Usar Agora →
                   </Button>
@@ -823,7 +823,7 @@ export default function HomePage() {
                     Dashboard de uso
                   </li>
                 </ul>
-                <Link href="/painel/login" className="w-full">
+                <Link href="/painel/register" className="w-full">
                   <Button className="w-full mt-6" variant="outline">
                     Começar Agora
                   </Button>
