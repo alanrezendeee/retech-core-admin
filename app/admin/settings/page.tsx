@@ -11,6 +11,16 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Settings as SettingsIcon, Save, RefreshCw, Shield, Globe, Database, Key, AlertTriangle, Info } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/api/client';
@@ -88,6 +98,7 @@ export default function AdminSettingsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
+  const [showClearDialog, setShowClearDialog] = useState(false);
   const [cacheStats, setCacheStats] = useState<{
     totalCached: number;
     recentCached: number;
@@ -144,18 +155,16 @@ export default function AdminSettingsPage() {
   };
 
   const handleClearCache = async () => {
-    if (!confirm('Tem certeza que deseja limpar todo o cache de CEP? Esta ação não pode ser desfeita.')) {
-      return;
-    }
-
     try {
       setIsClearing(true);
+      setShowClearDialog(false); // Fechar dialog
+      
       const response = await api.delete('/admin/cache/cep');
       toast.success(`Cache limpo! ${response.data.deletedCount} registros removidos.`);
       loadCacheStats(); // Recarregar stats
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao limpar cache:', error);
-      toast.error('Erro ao limpar cache');
+      toast.error(error.response?.data?.error || 'Erro ao limpar cache');
     } finally {
       setIsClearing(false);
     }
@@ -703,7 +712,7 @@ export default function AdminSettingsPage() {
                 <Button 
                   variant="destructive" 
                   className="w-full"
-                  onClick={handleClearCache}
+                  onClick={() => setShowClearDialog(true)}
                   disabled={isClearing}
                 >
                   {isClearing ? (
@@ -743,6 +752,31 @@ export default function AdminSettingsPage() {
           </Card>
         </div>
       </div>
+
+      {/* Dialog de Confirmação para Limpar Cache */}
+      <AlertDialog open={showClearDialog} onOpenChange={setShowClearDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Limpar Todo o Cache de CEP?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação irá remover todos os <strong>{cacheStats?.totalCached || 0} CEPs</strong> do cache.
+              <br /><br />
+              <span className="text-red-600 font-semibold">⚠️ Esta ação não pode ser desfeita.</span>
+              <br /><br />
+              Após limpar o cache, todas as próximas consultas de CEP irão buscar diretamente das APIs externas (ViaCEP/Brasil API) até que o cache seja reconstruído.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleClearCache}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Sim, Limpar Cache
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AdminLayout>
   );
 }
