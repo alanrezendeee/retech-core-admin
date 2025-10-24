@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,10 +9,12 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Copy, Play, Sparkles, ArrowRight } from 'lucide-react';
+import { Copy, Play, Sparkles, ArrowRight, AlertTriangle, Home } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function PlaygroundPage() {
+  const [isPlaygroundEnabled, setIsPlaygroundEnabled] = useState(true);
+  const [isCheckingStatus, setIsCheckingStatus] = useState(true);
   const [selectedAPI, setSelectedAPI] = useState<'cep' | 'cnpj' | 'geo'>('cep');
   const [cepInput, setCepInput] = useState('01310-100');
   const [cnpjInput, setCnpjInput] = useState('00000000000191');
@@ -26,6 +28,25 @@ export default function PlaygroundPage() {
   // 🔒 API Key Demo para playground (protegido com rate limit)
   // Limite: 100 req/dia (global) + 20 req/dia por IP
   const DEMO_API_KEY = process.env.NEXT_PUBLIC_DEMO_API_KEY || 'rtc_demo_playground_2024';
+
+  // Verificar se playground está habilitado ao carregar
+  useEffect(() => {
+    checkPlaygroundStatus();
+  }, []);
+
+  const checkPlaygroundStatus = async () => {
+    try {
+      const res = await fetch(`${apiBaseURL}/public/playground/status`);
+      const data = await res.json();
+      setIsPlaygroundEnabled(data.enabled);
+    } catch (error) {
+      console.error('Erro ao verificar status do playground:', error);
+      // Em caso de erro, assume que está habilitado (graceful degradation)
+      setIsPlaygroundEnabled(true);
+    } finally {
+      setIsCheckingStatus(false);
+    }
+  };
 
   const handleTest = async () => {
     setLoading(true);
@@ -132,6 +153,61 @@ curl -X GET '${apiBaseURL}${endpoint}' \\
     navigator.clipboard.writeText(code);
     toast.success('Código copiado!');
   };
+
+  // Loading state
+  if (isCheckingStatus) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="text-center">
+          <div className="animate-spin h-12 w-12 border-4 border-indigo-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-slate-600">Verificando disponibilidade...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Playground desabilitado
+  if (!isPlaygroundEnabled) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
+        <Card className="max-w-md w-full shadow-xl">
+          <CardHeader>
+            <div className="flex flex-col items-center text-center">
+              <div className="p-4 rounded-full bg-orange-100 mb-4">
+                <AlertTriangle className="w-12 h-12 text-orange-600" />
+              </div>
+              <CardTitle className="text-2xl mb-2">
+                🚫 Playground Indisponível
+              </CardTitle>
+              <CardDescription className="text-base">
+                O playground está temporariamente desabilitado.
+                <br />
+                Entre em contato para mais informações.
+              </CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Link href="/" className="block">
+              <Button className="w-full" size="lg">
+                <Home className="w-4 h-4 mr-2" />
+                Voltar para Home
+              </Button>
+            </Link>
+            <Link href="/admin/login" className="block">
+              <Button variant="outline" className="w-full" size="lg">
+                Login Admin
+              </Button>
+            </Link>
+            <div className="pt-3 border-t">
+              <p className="text-sm text-slate-500 text-center">
+                Se você é administrador, faça login para gerenciar as configurações do playground.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4">
