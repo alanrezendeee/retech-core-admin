@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 export default function PlaygroundPage() {
   const [isPlaygroundEnabled, setIsPlaygroundEnabled] = useState(true);
   const [isCheckingStatus, setIsCheckingStatus] = useState(true);
+  const [demoApiKey, setDemoApiKey] = useState('rtc_demo_playground_2024'); // Default, será atualizado
   const [selectedAPI, setSelectedAPI] = useState<'cep' | 'cnpj' | 'geo'>('cep');
   const [cepInput, setCepInput] = useState('01310-100');
   const [cnpjInput, setCnpjInput] = useState('00000000000191');
@@ -24,10 +25,6 @@ export default function PlaygroundPage() {
   const [responseTime, setResponseTime] = useState<number | null>(null);
 
   const apiBaseURL = process.env.NEXT_PUBLIC_API_URL || 'https://api-core.theretech.com.br';
-  
-  // 🔒 API Key Demo para playground (protegido com rate limit)
-  // Limite: 100 req/dia (global) + 20 req/dia por IP
-  const DEMO_API_KEY = process.env.NEXT_PUBLIC_DEMO_API_KEY || 'rtc_demo_playground_2024';
 
   // Verificar se playground está habilitado ao carregar
   useEffect(() => {
@@ -39,6 +36,12 @@ export default function PlaygroundPage() {
       const res = await fetch(`${apiBaseURL}/public/playground/status`);
       const data = await res.json();
       setIsPlaygroundEnabled(data.enabled);
+      
+      // ✅ Atualizar API Key do backend (se disponível)
+      if (data.apiKey) {
+        setDemoApiKey(data.apiKey);
+        console.log('✅ API Key do playground carregada:', data.apiKey);
+      }
     } catch (error) {
       console.error('Erro ao verificar status do playground:', error);
       // Em caso de erro, assume que está habilitado (graceful degradation)
@@ -67,7 +70,7 @@ export default function PlaygroundPage() {
 
       const res = await fetch(url, {
         headers: {
-          'X-API-Key': DEMO_API_KEY
+          'X-API-Key': demoApiKey // ✅ Usa API Key do backend
         }
       });
       const data = await res.json();
