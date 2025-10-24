@@ -57,6 +57,8 @@ export default function AdminAPIKeysPage() {
   const [keyToRotate, setKeyToRotate] = useState<APIKey | null>(null);
   const [newRotatedKey, setNewRotatedKey] = useState<string | null>(null);
   const [isRotating, setIsRotating] = useState(false); // ✅ Flag adicional para bloqueio
+  const [newCreatedKey, setNewCreatedKey] = useState<string | null>(null);
+  const [showCreatedKeyDialog, setShowCreatedKeyDialog] = useState(false);
 
   useEffect(() => {
     if (isReady) {
@@ -96,13 +98,12 @@ export default function AdminAPIKeysPage() {
       setIsSubmitting(true);
       
       const response = await api.post('/admin/apikeys', data);
-      toast.success('API key criada com sucesso!');
       
-      // Mostrar a chave criada
+      // Mostrar a chave criada em um dialog (não em toast)
       if (response.data.api_key) {
-        toast.success(`API Key: ${response.data.api_key}`, {
-          duration: 10000,
-        });
+        setNewCreatedKey(response.data.api_key);
+        setShowCreatedKeyDialog(true);
+        setIsDrawerOpen(false); // Fechar drawer de criação
       }
 
       await loadData();
@@ -356,6 +357,63 @@ export default function AdminAPIKeysPage() {
           tenants={tenants.map(t => ({ id: t.id, name: t.name, tenantId: t.tenantId }))}
           isLoading={isSubmitting}
         />
+
+        {/* Dialog de API Key Criada */}
+        <AlertDialog open={showCreatedKeyDialog} onOpenChange={setShowCreatedKeyDialog}>
+          <AlertDialogContent className="max-w-2xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-xl">
+                ✅ API Key Criada com Sucesso!
+              </AlertDialogTitle>
+              <AlertDialogDescription asChild>
+                <div className="space-y-4">
+                  <div className="text-sm text-slate-700">
+                    <strong className="text-green-700">🎉 Sua API Key foi gerada!</strong>{' '}
+                    Copie-a agora, pois ela <strong>não será exibida novamente</strong> por questões de segurança.
+                  </div>
+                  
+                  <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg">
+                    <div className="text-xs text-slate-600 mb-2 font-semibold">SUA NOVA API KEY:</div>
+                    <div className="font-mono text-sm break-all bg-white p-3 rounded border border-green-300 select-all">
+                      {newCreatedKey}
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs">
+                    <span className="text-blue-700">💡</span>
+                    <div className="text-blue-800">
+                      <strong>Dica:</strong> Guarde esta chave em um local seguro (como variáveis de ambiente).
+                      Você pode rotacioná-la a qualquer momento se necessário.
+                    </div>
+                  </div>
+                </div>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction 
+                onClick={() => {
+                  if (newCreatedKey) {
+                    navigator.clipboard.writeText(newCreatedKey);
+                    toast.success('✅ API Key copiada para a área de transferência!');
+                  }
+                  setShowCreatedKeyDialog(false);
+                  setNewCreatedKey(null);
+                }}
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+              >
+                <Copy className="w-4 h-4 mr-2" />
+                Copiar e Fechar
+              </AlertDialogAction>
+              <AlertDialogCancel onClick={() => {
+                setShowCreatedKeyDialog(false);
+                setNewCreatedKey(null);
+                toast.warning('⚠️ Certifique-se de ter salvo a API Key!');
+              }}>
+                Fechar sem Copiar
+              </AlertDialogCancel>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
         <AlertDialog open={showRevokeDialog} onOpenChange={setShowRevokeDialog}>
           <AlertDialogContent>
