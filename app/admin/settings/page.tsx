@@ -56,8 +56,8 @@ interface SystemSettings {
   // Cache
   cache?: {
     enabled: boolean;
-    cepTtlDays: number;
-    cnpjTtlDays: number;
+    cepTtlDays: number | '';
+    cnpjTtlDays: number | '';
     maxSizeMb: number;
     autoCleanup: boolean;
   };
@@ -220,6 +220,10 @@ export default function AdminSettingsPage() {
         ? 60 
         : Number(settings.defaultRateLimit.requestsPerMinute);
       
+      // Garantir que TTL do cache não seja vazio
+      const cepTtlDays = settings.cache?.cepTtlDays === '' ? 7 : Number(settings.cache?.cepTtlDays || 7);
+      const cnpjTtlDays = settings.cache?.cnpjTtlDays === '' ? 30 : Number(settings.cache?.cnpjTtlDays || 30);
+      
       // Converter para o formato que o backend espera (PascalCase)
       const payload = {
         defaultRateLimit: {
@@ -230,7 +234,11 @@ export default function AdminSettingsPage() {
         jwt: settings.jwt,
         api: settings.api,
         contact: settings.contact,
-        cache: settings.cache,
+        cache: {
+          ...settings.cache,
+          cepTtlDays,
+          cnpjTtlDays,
+        },
       };
       
       await api.put('/admin/settings', payload);
@@ -719,9 +727,9 @@ export default function AdminSettingsPage() {
                   min="1"
                   max="365"
                   placeholder="7"
-                  value={settings.cache?.cepTtlDays || 7}
+                  value={settings.cache?.cepTtlDays ?? ''}
                   onChange={(e) => {
-                    const value = e.target.value === '' ? 7 : parseInt(e.target.value);
+                    const value = e.target.value === '' ? '' : parseInt(e.target.value);
                     handleInputChange('cache', 'cepTtlDays', value);
                   }}
                   onBlur={(e) => {
@@ -841,9 +849,9 @@ export default function AdminSettingsPage() {
                   min="1"
                   max="365"
                   placeholder="30"
-                  value={settings.cache?.cnpjTtlDays || 30}
+                  value={settings.cache?.cnpjTtlDays ?? ''}
                   onChange={(e) => {
-                    const value = e.target.value === '' ? 30 : parseInt(e.target.value);
+                    const value = e.target.value === '' ? '' : parseInt(e.target.value);
                     handleInputChange('cache', 'cnpjTtlDays', value);
                   }}
                   onBlur={(e) => {
