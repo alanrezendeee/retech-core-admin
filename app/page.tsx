@@ -88,6 +88,117 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* APIs Disponíveis + Playground/Ferramentas */}
+      <section className="py-16 bg-white border-y-4 border-indigo-100">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <Badge className="mb-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm px-4 py-1">
+              ✨ Disponível Agora
+            </Badge>
+            <h2 className="text-4xl font-bold mb-4 text-slate-900">
+              Comece a Usar <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Imediatamente</span>
+            </h2>
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto">
+              Teste nossas APIs gratuitamente, sem cadastro. Veja funcionando em tempo real e copie o código pronto para seu projeto.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-8">
+            {/* Playground */}
+            <Link href="/playground">
+              <Card className="border-2 border-indigo-200 hover:border-indigo-400 hover:shadow-2xl transition-all cursor-pointer h-full group">
+                <CardHeader className="text-center">
+                  <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">🎮</div>
+                  <CardTitle className="text-xl mb-2 text-indigo-600">API Playground</CardTitle>
+                  <CardDescription className="text-sm">
+                    Teste <strong>CEP, CNPJ e Geografia</strong> diretamente no navegador. Sem cadastro!
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Badge className="w-full justify-center bg-indigo-100 text-indigo-800 hover:bg-indigo-200">
+                    Testar Agora →
+                  </Badge>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* CEP Checker */}
+            <Link href="/ferramentas/consultar-cep">
+              <Card className="border-2 border-blue-200 hover:border-blue-400 hover:shadow-2xl transition-all cursor-pointer h-full group">
+                <CardHeader className="text-center">
+                  <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">📮</div>
+                  <CardTitle className="text-xl mb-2 text-blue-600">Consultar CEP</CardTitle>
+                  <CardDescription className="text-sm">
+                    Busca <strong>gratuita e ilimitada</strong> de endereços brasileiros
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Badge className="w-full justify-center bg-blue-100 text-blue-800 hover:bg-blue-200">
+                    Consultar Grátis →
+                  </Badge>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* CNPJ Validator */}
+            <Link href="/ferramentas/validar-cnpj">
+              <Card className="border-2 border-emerald-200 hover:border-emerald-400 hover:shadow-2xl transition-all cursor-pointer h-full group">
+                <CardHeader className="text-center">
+                  <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">🏢</div>
+                  <CardTitle className="text-xl mb-2 text-emerald-600">Validar CNPJ</CardTitle>
+                  <CardDescription className="text-sm">
+                    Dados completos da <strong>Receita Federal</strong> com QSA e CNAEs
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Badge className="w-full justify-center bg-emerald-100 text-emerald-800 hover:bg-emerald-200">
+                    Validar Grátis →
+                  </Badge>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* API CEP */}
+            <Link href="/apis/cep">
+              <Card className="border-2 border-purple-200 hover:border-purple-400 hover:shadow-2xl transition-all cursor-pointer h-full group">
+                <CardHeader className="text-center">
+                  <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">⚡</div>
+                  <CardTitle className="text-xl mb-2 text-purple-600">API de CEP</CardTitle>
+                  <CardDescription className="text-sm">
+                    <strong>Cache inteligente</strong>, fallback automático, <strong>&lt;50ms</strong>
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Badge className="w-full justify-center bg-purple-100 text-purple-800 hover:bg-purple-200">
+                    Ver Detalhes →
+                  </Badge>
+                </CardContent>
+              </Card>
+            </Link>
+          </div>
+
+          {/* Stats Row */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl border border-indigo-200">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-indigo-600">3</div>
+              <div className="text-sm text-slate-600">APIs Disponíveis</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-purple-600">&lt;100ms</div>
+              <div className="text-sm text-slate-600">Tempo de Resposta</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-blue-600">1.000</div>
+              <div className="text-sm text-slate-600">Requests Grátis/Dia</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-emerald-600">0</div>
+              <div className="text-sm text-slate-600">Cartão Necessário</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Por que Retech Core */}
       <section className="py-20 bg-gradient-to-br from-blue-50 via-purple-50 to-slate-50">
         <div className="container mx-auto px-4">
