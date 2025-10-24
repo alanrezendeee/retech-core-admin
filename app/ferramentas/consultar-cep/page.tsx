@@ -31,6 +31,7 @@ export default function ConsultarCEPPage() {
   const [responseTime, setResponseTime] = useState<number | null>(null);
 
   const apiBaseURL = process.env.NEXT_PUBLIC_API_URL || 'https://api-core.theretech.com.br';
+  const DEMO_API_KEY = process.env.NEXT_PUBLIC_DEMO_API_KEY || 'rtc_demo_playground_2024';
 
   const handleConsulta = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +51,11 @@ export default function ConsultarCEPPage() {
     const startTime = performance.now();
 
     try {
-      const response = await fetch(`${apiBaseURL}/public/cep/${cleanCEP}`);
+      const response = await fetch(`${apiBaseURL}/cep/${cleanCEP}`, {
+        headers: {
+          'X-API-Key': DEMO_API_KEY
+        }
+      });
       
       const endTime = performance.now();
       setResponseTime(Math.round(endTime - startTime));

@@ -22,6 +22,10 @@ export default function PlaygroundPage() {
   const [responseTime, setResponseTime] = useState<number | null>(null);
 
   const apiBaseURL = process.env.NEXT_PUBLIC_API_URL || 'https://api-core.theretech.com.br';
+  
+  // 🔒 API Key Demo para playground (protegido com rate limit)
+  // Limite: 100 req/dia (global) + 20 req/dia por IP
+  const DEMO_API_KEY = process.env.NEXT_PUBLIC_DEMO_API_KEY || 'rtc_demo_playground_2024';
 
   const handleTest = async () => {
     setLoading(true);
@@ -33,14 +37,18 @@ export default function PlaygroundPage() {
     try {
       let url = '';
       if (selectedAPI === 'cep') {
-        url = `${apiBaseURL}/public/cep/${cepInput.replace(/\D/g, '')}`;
+        url = `${apiBaseURL}/cep/${cepInput.replace(/\D/g, '')}`;
       } else if (selectedAPI === 'cnpj') {
-        url = `${apiBaseURL}/public/cnpj/${cnpjInput.replace(/\D/g, '')}`;
+        url = `${apiBaseURL}/cnpj/${cnpjInput.replace(/\D/g, '')}`;
       } else {
-        url = `${apiBaseURL}/public/geo/ufs/${ufInput}`;
+        url = `${apiBaseURL}/geo/ufs/${ufInput}`;
       }
 
-      const res = await fetch(url);
+      const res = await fetch(url, {
+        headers: {
+          'X-API-Key': DEMO_API_KEY
+        }
+      });
       const data = await res.json();
       
       const endTime = performance.now();
@@ -80,7 +88,7 @@ const response = await axios.get(
   '${apiBaseURL}${endpoint}',
   {
     headers: {
-      'X-API-Key': 'rtc_sua_chave_aqui'
+      'X-API-Key': 'sua_api_key_aqui'
     }
   }
 );
@@ -93,7 +101,7 @@ import requests
 
 response = requests.get(
     '${apiBaseURL}${endpoint}',
-    headers={'X-API-Key': 'rtc_sua_chave_aqui'}
+    headers={'X-API-Key': 'sua_api_key_aqui'}
 )
 
 print(response.json())`;
@@ -104,7 +112,7 @@ print(response.json())`;
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, '${apiBaseURL}${endpoint}');
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'X-API-Key: rtc_sua_chave_aqui'
+    'X-API-Key: sua_api_key_aqui'
 ]);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 $response = curl_exec($ch);
@@ -116,7 +124,7 @@ print_r(json_decode($response));
       case 'curl':
         return `# cURL
 curl -X GET '${apiBaseURL}${endpoint}' \\
-  -H 'X-API-Key: rtc_sua_chave_aqui'`;
+  -H 'X-API-Key: sua_api_key_aqui'`;
     }
   };
 

@@ -41,6 +41,7 @@ export default function ValidarCNPJPage() {
   const [responseTime, setResponseTime] = useState<number | null>(null);
 
   const apiBaseURL = process.env.NEXT_PUBLIC_API_URL || 'https://api-core.theretech.com.br';
+  const DEMO_API_KEY = process.env.NEXT_PUBLIC_DEMO_API_KEY || 'rtc_demo_playground_2024';
 
   const validateCNPJ = (cnpj: string): boolean => {
     const clean = cnpj.replace(/\D/g, '');
@@ -95,7 +96,11 @@ export default function ValidarCNPJPage() {
     const startTime = performance.now();
 
     try {
-      const response = await fetch(`${apiBaseURL}/public/cnpj/${cleanCNPJ}`);
+      const response = await fetch(`${apiBaseURL}/cnpj/${cleanCNPJ}`, {
+        headers: {
+          'X-API-Key': DEMO_API_KEY
+        }
+      });
       
       const endTime = performance.now();
       setResponseTime(Math.round(endTime - startTime));
