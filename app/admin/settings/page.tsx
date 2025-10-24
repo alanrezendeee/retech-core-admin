@@ -61,6 +61,16 @@ interface SystemSettings {
     maxSizeMb: number;
     autoCleanup: boolean;
   };
+  // Playground
+  playground?: {
+    enabled: boolean;
+    apiKey: string;
+    rateLimit: {
+      requestsPerDay: number | '';
+      requestsPerMinute: number | '';
+    };
+    allowedApis: string[];
+  };
 }
 
 export default function AdminSettingsPage() {
@@ -94,6 +104,15 @@ export default function AdminSettingsPage() {
       cnpjTtlDays: 30,
       maxSizeMb: 100,
       autoCleanup: true,
+    },
+    playground: {
+      enabled: true,
+      apiKey: 'rtc_demo_playground_2024',
+      rateLimit: {
+        requestsPerDay: 100,
+        requestsPerMinute: 10,
+      },
+      allowedApis: ['cep', 'cnpj', 'geo'],
     },
   });
 
@@ -224,6 +243,14 @@ export default function AdminSettingsPage() {
       const cepTtlDays = settings.cache?.cepTtlDays === '' ? 7 : Number(settings.cache?.cepTtlDays || 7);
       const cnpjTtlDays = settings.cache?.cnpjTtlDays === '' ? 30 : Number(settings.cache?.cnpjTtlDays || 30);
       
+      // Garantir que rate limits do playground não sejam vazios
+      const playgroundReqPerDay = settings.playground?.rateLimit.requestsPerDay === '' 
+        ? 100 
+        : Number(settings.playground?.rateLimit.requestsPerDay || 100);
+      const playgroundReqPerMin = settings.playground?.rateLimit.requestsPerMinute === '' 
+        ? 10 
+        : Number(settings.playground?.rateLimit.requestsPerMinute || 10);
+      
       // Converter para o formato que o backend espera (PascalCase)
       const payload = {
         defaultRateLimit: {
@@ -238,6 +265,15 @@ export default function AdminSettingsPage() {
           ...settings.cache,
           cepTtlDays,
           cnpjTtlDays,
+        },
+        playground: {
+          enabled: settings.playground?.enabled || false,
+          apiKey: settings.playground?.apiKey || 'rtc_demo_playground_2024',
+          rateLimit: {
+            RequestsPerDay: playgroundReqPerDay,
+            RequestsPerMinute: playgroundReqPerMin,
+          },
+          allowedApis: settings.playground?.allowedApis || ['cep', 'cnpj', 'geo'],
         },
       };
       
@@ -667,6 +703,204 @@ export default function AdminSettingsPage() {
                     <p className="text-xs text-green-700 mt-1">
                       O botão "Falar com Vendas" irá redirecionar para o WhatsApp configurado aqui
                     </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Playground Público */}
+          <Card className="border-purple-200 hover:shadow-lg transition-shadow duration-200">
+            <CardHeader>
+              <div className="flex items-center gap-2 mb-1">
+                <div className="p-2 rounded-lg bg-purple-100">
+                  <svg className="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <CardTitle className="text-lg">Playground Público</CardTitle>
+              </div>
+              <CardDescription>
+                Configurações da API Key demo para ferramentas públicas
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                <div>
+                  <Label htmlFor="playgroundEnabled" className="font-medium text-slate-700">
+                    Habilitar Playground
+                  </Label>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Ativa ferramentas públicas (Playground, CEP, CNPJ)
+                  </p>
+                </div>
+                <Switch
+                  id="playgroundEnabled"
+                  checked={settings.playground?.enabled || false}
+                  onCheckedChange={(checked) => handleInputChange('playground', 'enabled', checked)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="playgroundApiKey">API Key Demo</Label>
+                <Input
+                  id="playgroundApiKey"
+                  type="text"
+                  placeholder="rtc_demo_playground_2024"
+                  value={settings.playground?.apiKey || ''}
+                  onChange={(e) => handleInputChange('playground', 'apiKey', e.target.value)}
+                  className="font-mono text-sm"
+                />
+                <p className="text-xs text-slate-500">
+                  Chave usada no playground e ferramentas públicas. Trocar se houver abuso.
+                </p>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-4">
+                <Label className="text-slate-700 font-medium">Rate Limits do Playground</Label>
+                
+                <div>
+                  <Label htmlFor="playgroundReqPerDay" className="text-sm text-slate-600">
+                    Requests por Dia
+                  </Label>
+                  <Input
+                    id="playgroundReqPerDay"
+                    type="number"
+                    value={settings.playground?.rateLimit.requestsPerDay || ''}
+                    onChange={(e) => {
+                      const value = e.target.value === '' ? '' : parseInt(e.target.value);
+                      setSettings(prev => ({
+                        ...prev,
+                        playground: {
+                          ...prev.playground!,
+                          rateLimit: {
+                            ...prev.playground!.rateLimit,
+                            requestsPerDay: value,
+                          },
+                        },
+                      }));
+                    }}
+                    onBlur={(e) => {
+                      if (e.target.value === '' || parseInt(e.target.value) < 1) {
+                        setSettings(prev => ({
+                          ...prev,
+                          playground: {
+                            ...prev.playground!,
+                            rateLimit: {
+                              ...prev.playground!.rateLimit,
+                              requestsPerDay: 100,
+                            },
+                          },
+                        }));
+                      }
+                    }}
+                    min="1"
+                    max="10000"
+                    className="mt-1.5 h-11"
+                  />
+                  <p className="text-xs text-slate-500 mt-1">
+                    Limite agressivo recomendado: 100
+                  </p>
+                </div>
+
+                <div>
+                  <Label htmlFor="playgroundReqPerMin" className="text-sm text-slate-600">
+                    Requests por Minuto
+                  </Label>
+                  <Input
+                    id="playgroundReqPerMin"
+                    type="number"
+                    value={settings.playground?.rateLimit.requestsPerMinute || ''}
+                    onChange={(e) => {
+                      const value = e.target.value === '' ? '' : parseInt(e.target.value);
+                      setSettings(prev => ({
+                        ...prev,
+                        playground: {
+                          ...prev.playground!,
+                          rateLimit: {
+                            ...prev.playground!.rateLimit,
+                            requestsPerMinute: value,
+                          },
+                        },
+                      }));
+                    }}
+                    onBlur={(e) => {
+                      if (e.target.value === '' || parseInt(e.target.value) < 1) {
+                        setSettings(prev => ({
+                          ...prev,
+                          playground: {
+                            ...prev.playground!,
+                            rateLimit: {
+                              ...prev.playground!.rateLimit,
+                              requestsPerMinute: 10,
+                            },
+                          },
+                        }));
+                      }
+                    }}
+                    min="1"
+                    max="100"
+                    className="mt-1.5 h-11"
+                  />
+                  <p className="text-xs text-slate-500 mt-1">
+                    Limite agressivo recomendado: 10
+                  </p>
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-2">
+                <Label>APIs Disponíveis no Playground</Label>
+                <div className="flex flex-wrap gap-2">
+                  {['cep', 'cnpj', 'geo', 'ibge'].map((api) => (
+                    <label
+                      key={api}
+                      className="flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={settings.playground?.allowedApis.includes(api) || false}
+                        onChange={(e) => {
+                          const currentApis = settings.playground?.allowedApis || [];
+                          const newApis = e.target.checked
+                            ? [...currentApis, api]
+                            : currentApis.filter(a => a !== api);
+                          setSettings(prev => ({
+                            ...prev,
+                            playground: {
+                              ...prev.playground!,
+                              allowedApis: newApis,
+                            },
+                          }));
+                        }}
+                        className="rounded"
+                      />
+                      <span className="text-sm font-mono uppercase">{api}</span>
+                    </label>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-500">
+                  Selecione quais APIs estarão disponíveis no playground
+                </p>
+              </div>
+
+              <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <Info className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-purple-900">
+                      Como Funciona?
+                    </p>
+                    <ul className="text-xs text-purple-700 mt-1 space-y-1">
+                      <li>✅ Frontend usa esta API Key automaticamente</li>
+                      <li>✅ Rate limits são aplicados por IP</li>
+                      <li>✅ Trocar chave se houver abuso</li>
+                      <li>✅ Desabilitar temporariamente se necessário</li>
+                    </ul>
                   </div>
                 </div>
               </div>
