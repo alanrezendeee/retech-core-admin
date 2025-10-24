@@ -319,7 +319,7 @@ export default function ValidarCNPJPage() {
             <CardContent className="pt-6 text-center">
               <div className="text-3xl mb-2">⚡</div>
               <h3 className="font-semibold mb-1">Resposta Rápida</h3>
-              <p className="text-sm text-slate-600">~200ms da Receita Federal</p>
+              <p className="text-sm text-slate-600">~160ms com cache Redis</p>
             </CardContent>
           </Card>
 

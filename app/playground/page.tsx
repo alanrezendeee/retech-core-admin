@@ -149,7 +149,7 @@ curl -X GET '${apiBaseURL}${endpoint}' \\
             Teste nossas APIs <strong>sem cadastro</strong>, diretamente no navegador
           </p>
           <p className="text-sm text-slate-500">
-            ⚡ Respostas em menos de 100ms • 🔒 Nenhuma API key necessária • 🎁 Totalmente gratuito
+            ⚡ Respostas em ~160ms com cache Redis • 🔄 3 fontes com fallback • 🎁 Totalmente gratuito
           </p>
         </div>
 

@@ -59,15 +59,17 @@ export default function HomePage() {
           </div>
           
           <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
-            Retech Core API
+            O Hub Definitivo de APIs Brasileiras
           </h1>
           <p className="text-xl md:text-2xl text-slate-300 mb-4 max-w-3xl mx-auto">
-            A API definitiva de dados brasileiros para desenvolvedores
+            36 APIs essenciais em uma única plataforma
           </p>
           <p className="text-lg text-slate-400 mb-8 max-w-2xl mx-auto">
-            Geografia • CEP • CPF • CNPJ • Dados Públicos • Tudo em uma única API
+            ⚡ Respostas em ~160ms com cache inteligente
             <br />
-            <span className="text-blue-400 font-semibold mt-2 inline-block">⚡ Rápido • 🔒 Confiável • 🎁 Gratuito para começar</span>
+            🔄 Fallback automático entre 3 fontes de dados
+            <br />
+            <span className="text-blue-400 font-semibold mt-2 inline-block">✅ Completo • ✅ Confiável • ✅ Rápido • 🎁 1.000 requests/dia grátis</span>
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -165,7 +167,7 @@ export default function HomePage() {
                   <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">⚡</div>
                   <CardTitle className="text-xl mb-2 text-purple-600">API de CEP</CardTitle>
                   <CardDescription className="text-sm">
-                    <strong>Cache inteligente</strong>, fallback automático, <strong>&lt;50ms</strong>
+                    <strong>3 fontes</strong> com fallback automático, cache Redis, <strong>~160ms</strong>
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -180,12 +182,12 @@ export default function HomePage() {
           {/* Stats Row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl border border-indigo-200">
             <div className="text-center">
-              <div className="text-3xl font-bold text-indigo-600">3</div>
-              <div className="text-sm text-slate-600">APIs Disponíveis</div>
+              <div className="text-3xl font-bold text-indigo-600">36</div>
+              <div className="text-sm text-slate-600">APIs Planejadas</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600">&lt;100ms</div>
-              <div className="text-sm text-slate-600">Tempo de Resposta</div>
+              <div className="text-3xl font-bold text-purple-600">~160ms</div>
+              <div className="text-sm text-slate-600">Tempo Médio</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-blue-600">1.000</div>
@@ -221,9 +223,9 @@ export default function HomePage() {
                   <div>
                     <CardTitle className="text-xl mb-2">Performance Otimizada</CardTitle>
                     <CardDescription className="text-base">
-                      <strong className="text-slate-700">Respostas em &lt;100ms</strong>
+                      <strong className="text-slate-700">Respostas em ~160ms com cache Redis</strong>
                       <br />
-                      Enquanto o IBGE pode levar segundos, nossa infraestrutura com Go + MongoDB + Redis garante velocidade de sobra.
+                      Cache inteligente em 3 camadas + fallback automático entre fontes de dados. Processamento do servidor &lt;5ms.
                     </CardDescription>
                   </div>
                 </div>
@@ -352,10 +354,10 @@ export default function HomePage() {
                   <div className="mt-4 pt-4 border-t border-green-200">
                     <p className="text-sm text-slate-600 mb-2 font-medium">Recursos:</p>
                     <ul className="text-xs text-slate-600 space-y-1">
-                      <li>✓ Cache de 7 dias (performance)</li>
-                      <li>✓ Fallback automático</li>
+                      <li>✓ Cache Redis (~160ms)</li>
+                      <li>✓ 3 fontes com fallback</li>
                       <li>✓ Coordenadas geográficas</li>
-                      <li>✓ Resposta em &lt;50ms</li>
+                      <li>✓ Processamento &lt;5ms</li>
                     </ul>
                   </div>
                 </CardHeader>
@@ -996,7 +998,7 @@ export default function HomePage() {
                   <div className="text-4xl mb-3">⚡</div>
                   <h4 className="text-white font-semibold mb-2">Velocidade</h4>
                   <p className="text-slate-400 text-sm">
-                    Go compila para código nativo, Redis mantém dados em memória. Resultado: &lt;100ms de resposta.
+                    Go + Redis + MongoDB = ~160ms em média. Cache inteligente em 3 camadas com processamento do servidor &lt;5ms.
                   </p>
                 </div>
                 <div className="text-center">
@@ -1057,9 +1059,9 @@ export default function HomePage() {
                   </li>
                 </ul>
                 <Link href="/painel/register" className="w-full">
-                  <Button className="w-full mt-6" variant="outline">
-                    Começar Agora
-                  </Button>
+                <Button className="w-full mt-6" variant="outline">
+                  Começar Agora
+                </Button>
                 </Link>
               </CardContent>
             </Card>
@@ -1133,9 +1135,9 @@ export default function HomePage() {
                   </li>
                 </ul>
                 <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="w-full">
-                  <Button className="w-full mt-6" variant="outline">
-                    Falar com Vendas
-                  </Button>
+                <Button className="w-full mt-6" variant="outline">
+                  Falar com Vendas
+                </Button>
                 </a>
               </CardContent>
             </Card>
