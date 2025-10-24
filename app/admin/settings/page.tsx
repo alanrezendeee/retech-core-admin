@@ -769,17 +769,19 @@ export default function AdminSettingsPage() {
                   <Input
                     id="playgroundReqPerDay"
                     type="number"
-                    value={settings.playground?.rateLimit.requestsPerDay || ''}
+                    value={settings.playground?.rateLimit?.requestsPerDay || ''}
                     onChange={(e) => {
                       const value = e.target.value === '' ? '' : parseInt(e.target.value);
                       setSettings(prev => ({
                         ...prev,
                         playground: {
-                          ...prev.playground!,
+                          enabled: prev.playground?.enabled || false,
+                          apiKey: prev.playground?.apiKey || 'rtc_demo_playground_2024',
                           rateLimit: {
-                            ...prev.playground!.rateLimit,
                             requestsPerDay: value,
+                            requestsPerMinute: prev.playground?.rateLimit?.requestsPerMinute || 10,
                           },
+                          allowedApis: prev.playground?.allowedApis || ['cep', 'cnpj', 'geo'],
                         },
                       }));
                     }}
@@ -788,11 +790,13 @@ export default function AdminSettingsPage() {
                         setSettings(prev => ({
                           ...prev,
                           playground: {
-                            ...prev.playground!,
+                            enabled: prev.playground?.enabled || false,
+                            apiKey: prev.playground?.apiKey || 'rtc_demo_playground_2024',
                             rateLimit: {
-                              ...prev.playground!.rateLimit,
                               requestsPerDay: 100,
+                              requestsPerMinute: prev.playground?.rateLimit?.requestsPerMinute || 10,
                             },
+                            allowedApis: prev.playground?.allowedApis || ['cep', 'cnpj', 'geo'],
                           },
                         }));
                       }
@@ -813,17 +817,19 @@ export default function AdminSettingsPage() {
                   <Input
                     id="playgroundReqPerMin"
                     type="number"
-                    value={settings.playground?.rateLimit.requestsPerMinute || ''}
+                    value={settings.playground?.rateLimit?.requestsPerMinute || ''}
                     onChange={(e) => {
                       const value = e.target.value === '' ? '' : parseInt(e.target.value);
                       setSettings(prev => ({
                         ...prev,
                         playground: {
-                          ...prev.playground!,
+                          enabled: prev.playground?.enabled || false,
+                          apiKey: prev.playground?.apiKey || 'rtc_demo_playground_2024',
                           rateLimit: {
-                            ...prev.playground!.rateLimit,
+                            requestsPerDay: prev.playground?.rateLimit?.requestsPerDay || 100,
                             requestsPerMinute: value,
                           },
+                          allowedApis: prev.playground?.allowedApis || ['cep', 'cnpj', 'geo'],
                         },
                       }));
                     }}
@@ -832,11 +838,13 @@ export default function AdminSettingsPage() {
                         setSettings(prev => ({
                           ...prev,
                           playground: {
-                            ...prev.playground!,
+                            enabled: prev.playground?.enabled || false,
+                            apiKey: prev.playground?.apiKey || 'rtc_demo_playground_2024',
                             rateLimit: {
-                              ...prev.playground!.rateLimit,
+                              requestsPerDay: prev.playground?.rateLimit?.requestsPerDay || 100,
                               requestsPerMinute: 10,
                             },
+                            allowedApis: prev.playground?.allowedApis || ['cep', 'cnpj', 'geo'],
                           },
                         }));
                       }
@@ -863,7 +871,7 @@ export default function AdminSettingsPage() {
                     >
                       <input
                         type="checkbox"
-                        checked={settings.playground?.allowedApis.includes(api) || false}
+                        checked={settings.playground?.allowedApis?.includes(api) || false}
                         onChange={(e) => {
                           const currentApis = settings.playground?.allowedApis || [];
                           const newApis = e.target.checked
@@ -872,7 +880,9 @@ export default function AdminSettingsPage() {
                           setSettings(prev => ({
                             ...prev,
                             playground: {
-                              ...prev.playground!,
+                              enabled: prev.playground?.enabled || false,
+                              apiKey: prev.playground?.apiKey || 'rtc_demo_playground_2024',
+                              rateLimit: prev.playground?.rateLimit || { requestsPerDay: 100, requestsPerMinute: 10 },
                               allowedApis: newApis,
                             },
                           }));
