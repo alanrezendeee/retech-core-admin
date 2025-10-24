@@ -50,7 +50,7 @@ export default function ConsultarCEPPage() {
     const startTime = performance.now();
 
     try {
-      const response = await fetch(`${apiBaseURL}/cep/${cleanCEP}`);
+      const response = await fetch(`${apiBaseURL}/public/cep/${cleanCEP}`);
       
       const endTime = performance.now();
       setResponseTime(Math.round(endTime - startTime));

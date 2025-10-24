@@ -95,7 +95,7 @@ export default function ValidarCNPJPage() {
     const startTime = performance.now();
 
     try {
-      const response = await fetch(`${apiBaseURL}/cnpj/${cleanCNPJ}`);
+      const response = await fetch(`${apiBaseURL}/public/cnpj/${cleanCNPJ}`);
       
       const endTime = performance.now();
       setResponseTime(Math.round(endTime - startTime));

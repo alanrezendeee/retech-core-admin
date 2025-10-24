@@ -33,11 +33,11 @@ export default function PlaygroundPage() {
     try {
       let url = '';
       if (selectedAPI === 'cep') {
-        url = `${apiBaseURL}/cep/${cepInput.replace(/\D/g, '')}`;
+        url = `${apiBaseURL}/public/cep/${cepInput.replace(/\D/g, '')}`;
       } else if (selectedAPI === 'cnpj') {
-        url = `${apiBaseURL}/cnpj/${cnpjInput.replace(/\D/g, '')}`;
+        url = `${apiBaseURL}/public/cnpj/${cnpjInput.replace(/\D/g, '')}`;
       } else {
-        url = `${apiBaseURL}/geo/ufs/${ufInput}`;
+        url = `${apiBaseURL}/public/geo/ufs/${ufInput}`;
       }
 
       const res = await fetch(url);

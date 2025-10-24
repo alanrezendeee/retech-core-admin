@@ -5,6 +5,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { 
   ArrowRight, 
   Zap, 
@@ -14,7 +20,8 @@ import {
   XCircle,
   Clock,
   Database,
-  Code2
+  Code2,
+  HelpCircle
 } from 'lucide-react';
 
 export default function APICEPPage() {
@@ -380,43 +387,73 @@ echo "Logradouro: " . $data['logradouro'];
       </section>
 
       {/* FAQ / SEO Content */}
-      <section className="py-16 px-4">
-        <div className="container max-w-4xl mx-auto prose prose-slate max-w-none">
-          <h2>Perguntas Frequentes sobre API de CEP</h2>
-          
-          <h3>O que é uma API de CEP?</h3>
-          <p>
-            Uma API de CEP é um serviço web que permite consultar endereços brasileiros a partir do 
-            Código de Endereçamento Postal (CEP). Nossa API consulta automaticamente múltiplas fontes 
-            (ViaCEP e Brasil API) e retorna dados completos como logradouro, bairro, cidade, estado e DDD.
-          </p>
+      <section className="py-16 px-4 bg-slate-50">
+        <div className="container max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <HelpCircle className="w-12 h-12 text-indigo-600 mx-auto mb-4" />
+            <h2 className="text-3xl font-bold mb-4">Perguntas Frequentes sobre API de CEP</h2>
+            <p className="text-slate-600">Tudo que você precisa saber antes de começar</p>
+          </div>
 
-          <h3>Qual a diferença entre Retech Core e ViaCEP?</h3>
-          <p>
-            Enquanto o ViaCEP é gratuito e sem limites, nossa API oferece <strong>cache inteligente</strong> 
-            (respostas 20x mais rápidas), <strong>fallback automático</strong> (se o ViaCEP cair, usamos Brasil API), 
-            <strong>dashboard de uso</strong>, e integração com outras APIs (CNPJ, CPF, Geografia) em uma única plataforma.
-          </p>
+          <Card className="shadow-lg">
+            <CardContent className="pt-6">
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="item-1">
+                  <AccordionTrigger className="text-left text-lg font-semibold">
+                    O que é uma API de CEP?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-slate-600">
+                    Uma API de CEP é um serviço web que permite consultar endereços brasileiros a partir do 
+                    Código de Endereçamento Postal (CEP). Nossa API consulta automaticamente múltiplas fontes 
+                    (ViaCEP e Brasil API) e retorna dados completos como logradouro, bairro, cidade, estado e DDD.
+                  </AccordionContent>
+                </AccordionItem>
 
-          <h3>Quantas requisições posso fazer por dia?</h3>
-          <p>
-            O plano gratuito oferece <strong>1.000 requisições por dia</strong>. Para volumes maiores, 
-            oferecemos planos Pro (10.000/dia) e Business (ilimitado). Entre em contato para planos empresariais.
-          </p>
+                <AccordionItem value="item-2">
+                  <AccordionTrigger className="text-left text-lg font-semibold">
+                    Qual a diferença entre Retech Core e ViaCEP?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-slate-600">
+                    Enquanto o ViaCEP é gratuito e sem limites, nossa API oferece <strong>cache inteligente</strong> 
+                    (respostas 20x mais rápidas), <strong>fallback automático</strong> (se o ViaCEP cair, usamos Brasil API), 
+                    <strong>dashboard de uso</strong>, e integração com outras APIs (CNPJ, CPF, Geografia) em uma única plataforma.
+                  </AccordionContent>
+                </AccordionItem>
 
-          <h3>Como funciona o cache?</h3>
-          <p>
-            Quando você consulta um CEP pela primeira vez, buscamos em tempo real no ViaCEP (~100ms). 
-            Este resultado fica em cache por 7 dias. Nas próximas consultas do mesmo CEP, a resposta 
-            vem do cache (~5ms), 20x mais rápido.
-          </p>
+                <AccordionItem value="item-3">
+                  <AccordionTrigger className="text-left text-lg font-semibold">
+                    Quantas requisições posso fazer por dia?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-slate-600">
+                    O plano gratuito oferece <strong>1.000 requisições por dia</strong>. Para volumes maiores, 
+                    oferecemos planos Pro (10.000/dia) e Business (ilimitado). Entre em contato para planos empresariais.
+                  </AccordionContent>
+                </AccordionItem>
 
-          <h3>A API é confiável?</h3>
-          <p>
-            Sim! Garantimos <strong>99.9% de uptime</strong> com infraestrutura na Railway. Temos 
-            fallback automático entre ViaCEP e Brasil API, então mesmo se uma fonte falhar, sua 
-            aplicação continua funcionando.
-          </p>
+                <AccordionItem value="item-4">
+                  <AccordionTrigger className="text-left text-lg font-semibold">
+                    Como funciona o cache?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-slate-600">
+                    Quando você consulta um CEP pela primeira vez, buscamos em tempo real no ViaCEP (~100ms). 
+                    Este resultado fica em cache por 7 dias. Nas próximas consultas do mesmo CEP, a resposta 
+                    vem do cache (~5ms), 20x mais rápido.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-5">
+                  <AccordionTrigger className="text-left text-lg font-semibold">
+                    A API é confiável?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-slate-600">
+                    Sim! Garantimos <strong>99.9% de uptime</strong> com infraestrutura na Railway. Temos 
+                    fallback automático entre ViaCEP e Brasil API, então mesmo se uma fonte falhar, sua 
+                    aplicação continua funcionando.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </CardContent>
+          </Card>
         </div>
       </section>
     </div>
