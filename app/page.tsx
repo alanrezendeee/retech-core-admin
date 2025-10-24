@@ -288,8 +288,37 @@ export default function HomePage() {
             O Hub Definitivo de APIs Brasileiras
           </h2>
           <p className="text-center text-slate-600 mb-12 max-w-3xl mx-auto">
-            Mais de <strong>30 APIs essenciais</strong> para desenvolvedores brasileiros. Uma única integração, infinitas possibilidades.
+            <strong>36 APIs essenciais</strong> para desenvolvedores brasileiros. Uma única integração, infinitas possibilidades.
           </p>
+          
+          {/* Progress Bar */}
+          <div className="max-w-2xl mx-auto mb-12">
+            <div className="flex items-center justify-between mb-2 text-sm">
+              <span className="text-slate-600 font-medium">Progresso Geral</span>
+              <span className="text-indigo-600 font-bold">25% (9/36 APIs)</span>
+            </div>
+            <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+              <div className="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 h-full rounded-full transition-all duration-1000" style={{ width: '25%' }}></div>
+            </div>
+            <div className="grid grid-cols-4 gap-2 mt-3 text-xs text-center">
+              <div>
+                <div className="font-bold text-green-600">100%</div>
+                <div className="text-slate-500">Fase 1</div>
+              </div>
+              <div>
+                <div className="font-bold text-blue-600">33%</div>
+                <div className="text-slate-500">Fase 2</div>
+              </div>
+              <div>
+                <div className="font-bold text-purple-600">0%</div>
+                <div className="text-slate-500">Fase 3</div>
+              </div>
+              <div>
+                <div className="font-bold text-slate-600">0%</div>
+                <div className="text-slate-500">Fase 4</div>
+              </div>
+            </div>
+          </div>
 
           {/* ========================================== */}
           {/* SEÇÃO DESTAQUE: APIs DISPONÍVEIS AGORA */}
@@ -411,7 +440,6 @@ export default function HomePage() {
               Dados Cadastrais & Validação
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-
               <Card className="border-2 border-purple-300 bg-purple-50/30 hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
@@ -445,25 +473,84 @@ export default function HomePage() {
                 </CardHeader>
               </Card>
 
-              <Card className="border-2 border-slate-300 bg-slate-50/30 hover:shadow-lg transition-shadow">
+              <Card className="border-2 border-purple-300 bg-purple-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">📞</div>
+                    <Badge className="bg-purple-600">Fase 3</Badge>
+                  </div>
+                  <CardTitle className="text-base">Operadora Telefone</CardTitle>
+                  <CardDescription className="text-sm">Tipo de linha + portabilidade</CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
+          </div>
+
+          {/* CATEGORIA: Validação Fiscal & Compliance */}
+          <div className="mb-16">
+            <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+              <span className="text-3xl">🧾</span>
+              Validação Fiscal & Compliance
+              <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs px-2 py-1">NOVO!</Badge>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card className="border-2 border-purple-300 bg-purple-50/30 hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
                     <div className="text-3xl">🧾</div>
-                    <Badge className="bg-slate-600">Futuro</Badge>
+                    <Badge className="bg-purple-600">Fase 3</Badge>
                   </div>
-                  <CardTitle className="text-base">Consulta NF-e</CardTitle>
-                  <CardDescription className="text-sm">Validação de chave de acesso</CardDescription>
+                  <CardTitle className="text-base">Validação de NF-e</CardTitle>
+                  <CardDescription className="text-sm">Consulta NF-e por chave de 44 dígitos</CardDescription>
                 </CardHeader>
               </Card>
 
-              <Card className="border-2 border-slate-300 bg-slate-50/30 hover:shadow-lg transition-shadow">
+              <Card className="border-2 border-purple-300 bg-purple-50/30 hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
-                    <div className="text-3xl">🏭</div>
-                    <Badge className="bg-slate-600">Futuro</Badge>
+                    <div className="text-3xl">📜</div>
+                    <Badge className="bg-purple-600">Fase 3</Badge>
                   </div>
-                  <CardTitle className="text-base">Inscrição Estadual</CardTitle>
-                  <CardDescription className="text-sm">Validação por estado</CardDescription>
+                  <CardTitle className="text-base">Certidões (CND/CNDT)</CardTitle>
+                  <CardDescription className="text-sm">Certidões negativas de débitos</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-purple-300 bg-purple-50/30 hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">🏛️</div>
+                    <Badge className="bg-purple-600">Fase 3</Badge>
+                  </div>
+                  <CardTitle className="text-base">Compras Governamentais</CardTitle>
+                  <CardDescription className="text-sm">Licitações e contratos por CNPJ</CardDescription>
+                </CardHeader>
+              </Card>
+
+              {/* Premium Features */}
+              <Card className="border-2 border-amber-400 bg-gradient-to-br from-amber-50 to-orange-50 hover:shadow-2xl transition-all">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">📂</div>
+                    <Badge className="bg-gradient-to-r from-amber-600 to-orange-600 text-white">Premium</Badge>
+                  </div>
+                  <CardTitle className="text-base">Meus Documentos Fiscais</CardTitle>
+                  <CardDescription className="text-sm">
+                    Sync automático de NF-e do seu CNPJ (Plano Business)
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="border-2 border-purple-400 bg-gradient-to-br from-purple-50 to-indigo-50 hover:shadow-2xl transition-all">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">🏦</div>
+                    <Badge className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white">Premium</Badge>
+                  </div>
+                  <CardTitle className="text-base">Meus Boletos (Open Finance)</CardTitle>
+                  <CardDescription className="text-sm">
+                    Dashboard unificado de boletos (Plano Business)
+                  </CardDescription>
                 </CardHeader>
               </Card>
             </div>
@@ -787,6 +874,10 @@ export default function HomePage() {
                   <div className="flex items-center gap-2">
                     <Badge className="bg-slate-600">Fase 4+</Badge>
                     <span className="text-slate-600">6+ meses</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-gradient-to-r from-amber-600 to-orange-600 text-white">Premium</Badge>
+                    <span className="text-slate-600">Plano Business</span>
                   </div>
                 </div>
               </CardContent>
