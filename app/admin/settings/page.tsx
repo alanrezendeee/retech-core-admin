@@ -270,8 +270,8 @@ export default function AdminSettingsPage() {
           enabled: settings.playground?.enabled || false,
           apiKey: settings.playground?.apiKey || 'rtc_demo_playground_2024',
           rateLimit: {
-            RequestsPerDay: playgroundReqPerDay,
-            RequestsPerMinute: playgroundReqPerMin,
+            requestsPerDay: playgroundReqPerDay,    // ✅ camelCase
+            requestsPerMinute: playgroundReqPerMin,  // ✅ camelCase
           },
           allowedApis: settings.playground?.allowedApis || ['cep', 'cnpj', 'geo'],
         },

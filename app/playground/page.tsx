@@ -33,7 +33,14 @@ export default function PlaygroundPage() {
 
   const checkPlaygroundStatus = async () => {
     try {
-      const res = await fetch(`${apiBaseURL}/public/playground/status`);
+      const res = await fetch(`${apiBaseURL}/public/playground/status`, {
+        cache: 'no-store',  // ✅ Desabilita cache do browser
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      });
       const data = await res.json();
       setIsPlaygroundEnabled(data.enabled);
       
@@ -42,6 +49,13 @@ export default function PlaygroundPage() {
         setDemoApiKey(data.apiKey);
         console.log('✅ API Key do playground carregada:', data.apiKey);
       }
+      
+      // 🔍 Debug: log completo do status
+      console.log('🎮 Playground status:', {
+        enabled: data.enabled,
+        apiKey: data.apiKey,
+        allowedApis: data.allowedApis
+      });
     } catch (error) {
       console.error('Erro ao verificar status do playground:', error);
       // Em caso de erro, assume que está habilitado (graceful degradation)
