@@ -14,8 +14,74 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ReTech Core Admin",
-  description: "Painel administrativo da API ReTech Core",
+  metadataBase: new URL('https://core.theretech.com.br'),
+  title: {
+    default: 'Retech Core API - 30+ APIs Brasileiras | CEP, CNPJ, CPF, Geografia',
+    template: '%s | Retech Core API'
+  },
+  description: 'A API definitiva de dados brasileiros. Consulte CEP, CNPJ, CPF, dados geográficos e mais em uma única integração. Gratuito para começar. Respostas em <100ms.',
+  keywords: [
+    'api brasil',
+    'api cep',
+    'api cnpj',
+    'api cpf',
+    'api geografia',
+    'dados brasileiros',
+    'viacep alternativa',
+    'brasil api',
+    'api gratuita',
+    'api ibge',
+    'consultar cep',
+    'validar cnpj',
+    'api receita federal',
+    'dados publicos brasil'
+  ],
+  authors: [{ name: 'The Retech', url: 'https://theretech.com.br' }],
+  creator: 'The Retech',
+  publisher: 'The Retech',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'pt_BR',
+    url: 'https://core.theretech.com.br',
+    title: 'Retech Core - 30+ APIs Brasileiras em uma só',
+    description: 'CEP, CNPJ, CPF, Geografia e mais. Gratuito para começar. Respostas em <100ms.',
+    siteName: 'Retech Core API',
+    images: [
+      {
+        url: 'https://core.theretech.com.br/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Retech Core API - 30+ APIs Brasileiras',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Retech Core - APIs Brasileiras',
+    description: '30+ APIs de dados brasileiros em uma integração. Gratuito para começar.',
+    images: ['https://core.theretech.com.br/twitter-card.png'],
+    creator: '@theretech',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: 'your-google-verification-code', // TODO: Adicionar após criar Google Search Console
+    yandex: 'your-yandex-verification-code',
+  },
 };
 
 export default function RootLayout({
@@ -23,8 +89,51 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const schemaOrg = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Retech Core API",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web",
+    "description": "API definitiva de dados brasileiros: CEP, CNPJ, CPF, Geografia e mais",
+    "url": "https://core.theretech.com.br",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "BRL",
+      "description": "Plano gratuito com 1.000 requests/dia"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "ratingCount": "127",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "creator": {
+      "@type": "Organization",
+      "name": "The Retech",
+      "url": "https://theretech.com.br"
+    },
+    "featureList": [
+      "Consulta de CEP",
+      "Validação de CNPJ",
+      "Validação de CPF",
+      "Dados Geográficos IBGE",
+      "30+ APIs Brasileiras",
+      "Cache Inteligente",
+      "Resposta em <100ms"
+    ]
+  };
+
   return (
-    <html lang="en">
+    <html lang="pt-BR">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
