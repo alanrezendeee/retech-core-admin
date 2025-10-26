@@ -1043,8 +1043,8 @@ export default function AdminSettingsPage() {
                     </p>
                     <ul className="text-xs text-blue-700 mt-1 space-y-1">
                       <li>✅ Cache é <strong>compartilhado</strong> entre todos os tenants</li>
-                      <li>✅ Primeira consulta: ~50ms (ViaCEP)</li>
-                      <li>✅ Consultas seguintes: ~5ms (cache)</li>
+                      <li>✅ Primeira consulta: ~200-300ms (ViaCEP)</li>
+                      <li>✅ Consultas seguintes: ~160ms (cache Redis+MongoDB)</li>
                       <li>✅ Reduz 95%+ das chamadas externas</li>
                     </ul>
                   </div>

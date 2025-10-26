@@ -84,14 +84,14 @@ echo "Logradouro: " . $data['logradouro'];
       <section className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white py-20 px-4">
         <div className="container max-w-6xl mx-auto text-center">
           <Badge className="mb-4 bg-blue-500/30 text-white border-blue-400">
-            ✨ Mais rápida que ViaCEP
+            ✨ Completa + Confiável + Rápida
           </Badge>
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
             API de CEP Gratuita
           </h1>
           <p className="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
             Consulte endereços brasileiros com <strong>cache inteligente</strong>, 
-            múltiplas fontes e resposta em <strong>&lt;50ms</strong>
+            múltiplas fontes e resposta em <strong>~160ms</strong>
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Button asChild size="lg" variant="secondary">
@@ -109,8 +109,8 @@ echo "Logradouro: " . $data['logradouro'];
           
           <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
             <div>
-              <div className="text-3xl font-bold">~5ms</div>
-              <div className="text-sm text-blue-200">com cache</div>
+              <div className="text-3xl font-bold">~160ms</div>
+              <div className="text-sm text-blue-200">média c/ cache Redis</div>
             </div>
             <div>
               <div className="text-3xl font-bold">3 fontes</div>
@@ -137,18 +137,18 @@ echo "Logradouro: " . $data['logradouro'];
             <Card>
               <CardHeader>
                 <Zap className="w-12 h-12 text-blue-600 mb-4" />
-                <CardTitle>Ultra-Rápido</CardTitle>
-                <CardDescription>Cache inteligente garante ~5ms de resposta</CardDescription>
+                <CardTitle>Performance Otimizada</CardTitle>
+                <CardDescription>Cache inteligente com Redis (~160ms média)</CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
-                    <span>Cache compartilhado (7 dias)</span>
+                    <span>Cache L1 (Redis) + L2 (MongoDB)</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
-                    <span>MongoDB otimizado</span>
+                    <span>Índices otimizados</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
@@ -259,10 +259,10 @@ echo "Logradouro: " . $data['logradouro'];
                 <tr className="border-b">
                   <td className="p-4 font-semibold">Tempo de Resposta</td>
                   <td className="p-4 text-center">
-                    <Badge className="bg-green-100 text-green-800">~5ms (cache)</Badge>
+                    <Badge className="bg-blue-100 text-blue-800">~160ms (c/ cache)</Badge>
                   </td>
-                  <td className="p-4 text-center">~100ms</td>
-                  <td className="p-4 text-center">~150ms</td>
+                  <td className="p-4 text-center">~200-300ms</td>
+                  <td className="p-4 text-center">~250-400ms</td>
                 </tr>
                 <tr className="border-b bg-slate-50">
                   <td className="p-4 font-semibold">Cache Inteligente</td>
@@ -414,8 +414,8 @@ echo "Logradouro: " . $data['logradouro'];
                     Qual a diferença entre Retech Core e ViaCEP?
                   </AccordionTrigger>
                   <AccordionContent className="text-slate-600">
-                    Enquanto o ViaCEP é gratuito e sem limites, nossa API oferece <strong>cache inteligente</strong> 
-                    (respostas 20x mais rápidas), <strong>fallback automático</strong> (se o ViaCEP cair, usamos Brasil API), 
+                    Enquanto o ViaCEP é gratuito e sem limites, nossa API oferece <strong>cache inteligente Redis + MongoDB</strong> 
+                    (performance otimizada ~160ms), <strong>fallback automático</strong> (se o ViaCEP cair, usamos Brasil API), 
                     <strong>dashboard de uso</strong>, e integração com outras APIs (CNPJ, CPF, Geografia) em uma única plataforma.
                   </AccordionContent>
                 </AccordionItem>
@@ -435,9 +435,9 @@ echo "Logradouro: " . $data['logradouro'];
                     Como funciona o cache?
                   </AccordionTrigger>
                   <AccordionContent className="text-slate-600">
-                    Quando você consulta um CEP pela primeira vez, buscamos em tempo real no ViaCEP (~100ms). 
-                    Este resultado fica em cache por 7 dias. Nas próximas consultas do mesmo CEP, a resposta 
-                    vem do cache (~5ms), 20x mais rápido.
+                    Quando você consulta um CEP pela primeira vez, buscamos em tempo real no ViaCEP (~200-300ms). 
+                    Este resultado fica em cache (Redis L1 + MongoDB L2) por 7 dias. Nas próximas consultas do mesmo CEP, a resposta 
+                    vem do cache (~160ms média), com performance otimizada.
                   </AccordionContent>
                 </AccordionItem>
 

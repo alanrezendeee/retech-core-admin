@@ -225,7 +225,7 @@ export default function HomePage() {
                     <CardDescription className="text-base">
                       <strong className="text-slate-700">Respostas em ~160ms com cache Redis</strong>
                       <br />
-                      Cache inteligente em 3 camadas + fallback automático entre fontes de dados. Processamento do servidor &lt;5ms.
+                      Cache inteligente em 3 camadas (Redis L1 + MongoDB L2 + API Externa L3) + fallback automático entre fontes de dados.
                     </CardDescription>
                   </div>
                 </div>
@@ -357,7 +357,7 @@ export default function HomePage() {
                       <li>✓ Cache Redis (~160ms)</li>
                       <li>✓ 3 fontes com fallback</li>
                       <li>✓ Coordenadas geográficas</li>
-                      <li>✓ Processamento &lt;5ms</li>
+                      <li>✓ Backend Go (performance nativa)</li>
                     </ul>
                   </div>
                 </CardHeader>
@@ -998,7 +998,7 @@ export default function HomePage() {
                   <div className="text-4xl mb-3">⚡</div>
                   <h4 className="text-white font-semibold mb-2">Velocidade</h4>
                   <p className="text-slate-400 text-sm">
-                    Go + Redis + MongoDB = ~160ms em média. Cache inteligente em 3 camadas com processamento do servidor &lt;5ms.
+                    Go + Redis + MongoDB = ~160ms em média. Cache inteligente em 3 camadas (Redis L1, MongoDB L2, API Externa L3) com performance otimizada.
                   </p>
                 </div>
                 <div className="text-center">

@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     default: 'Retech Core API - 30+ APIs Brasileiras | CEP, CNPJ, CPF, Geografia',
     template: '%s | Retech Core API'
   },
-  description: 'A API definitiva de dados brasileiros. Consulte CEP, CNPJ, CPF, dados geográficos e mais em uma única integração. Gratuito para começar. Respostas em <100ms.',
+  description: 'A API definitiva de dados brasileiros. Consulte CEP, CNPJ, CPF, dados geográficos e mais em uma única integração. Gratuito para começar. Respostas em ~160ms com cache Redis.',
   keywords: [
     'api brasil',
     'api cep',
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     locale: 'pt_BR',
     url: 'https://core.theretech.com.br',
     title: 'Retech Core - 30+ APIs Brasileiras em uma só',
-    description: 'CEP, CNPJ, CPF, Geografia e mais. Gratuito para começar. Respostas em <100ms.',
+    description: 'CEP, CNPJ, CPF, Geografia e mais. Gratuito para começar. Respostas em ~160ms com cache Redis.',
     siteName: 'Retech Core API',
     images: [
       {
@@ -122,7 +122,7 @@ export default function RootLayout({
       "Dados Geográficos IBGE",
       "30+ APIs Brasileiras",
       "Cache Inteligente",
-      "Resposta em <100ms"
+      "Resposta em ~160ms c/ cache"
     ]
   };
 
