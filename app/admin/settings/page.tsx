@@ -864,7 +864,7 @@ export default function AdminSettingsPage() {
               <div className="space-y-2">
                 <Label>APIs Disponíveis no Playground</Label>
                 <div className="flex flex-wrap gap-2">
-                  {['cep', 'cnpj', 'geo', 'ibge'].map((api) => (
+                  {['cep', 'cnpj', 'geo'].map((api) => (
                     <label
                       key={api}
                       className="flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors"
