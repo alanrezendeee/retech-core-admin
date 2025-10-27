@@ -902,15 +902,65 @@ export default function AdminSettingsPage() {
                 <div className="flex items-start gap-2">
                   <Info className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-purple-900">
-                      Como Funciona?
+                    <p className="text-sm font-medium text-purple-900 mb-2">
+                      🔒 Sistema de Segurança Multi-Camada
                     </p>
-                    <ul className="text-xs text-purple-700 mt-1 space-y-1">
-                      <li>✅ Frontend usa esta API Key automaticamente</li>
-                      <li>✅ Rate limits são aplicados por IP</li>
-                      <li>✅ Trocar chave se houver abuso</li>
-                      <li>✅ Desabilitar temporariamente se necessário</li>
-                    </ul>
+                    <div className="text-xs text-purple-700 space-y-3">
+                      <div>
+                        <p className="font-medium mb-1">Camada 1: Rate Limiting por IP</p>
+                        <ul className="ml-4 space-y-0.5">
+                          <li>• Limite diário e por minuto por endereço IP</li>
+                          <li>• Previne abuso mesmo com VPN/proxy</li>
+                          <li>• Configurável em "Requests por Dia/Minuto"</li>
+                        </ul>
+                      </div>
+                      
+                      <div>
+                        <p className="font-medium mb-1">Camada 2: Rate Limiting Global</p>
+                        <ul className="ml-4 space-y-0.5">
+                          <li>• Limite total: 10× o limite por IP</li>
+                          <li>• Ex: 100 IPs × 10 req/dia = 1000 req/dia total</li>
+                          <li>• Previne abuso massivo da API Key demo</li>
+                        </ul>
+                      </div>
+                      
+                      <div>
+                        <p className="font-medium mb-1">Camada 3: Browser Fingerprinting</p>
+                        <ul className="ml-4 space-y-0.5">
+                          <li>• Hash único por browser/device (anti-bot)</li>
+                          <li>• Canvas, WebGL, Audio, Fonts, Plugins</li>
+                          <li>• Dificulta automação maliciosa</li>
+                        </ul>
+                      </div>
+                      
+                      <div>
+                        <p className="font-medium mb-1">Camada 4: Throttling Anti-Spam</p>
+                        <ul className="ml-4 space-y-0.5">
+                          <li>• Delay mínimo de 2 segundos entre requests</li>
+                          <li>• Previne requests muito rápidos</li>
+                          <li>• Protege contra DDoS não intencional</li>
+                        </ul>
+                      </div>
+                      
+                      <div className="pt-2 border-t border-purple-200">
+                        <p className="font-medium mb-1">📊 Monitoramento Automático</p>
+                        <ul className="ml-4 space-y-0.5">
+                          <li>• Logs detalhados por IP e global</li>
+                          <li>• Headers X-RateLimit-* nas respostas</li>
+                          <li>• TTL automático (7 dias) para limpeza</li>
+                          <li>• Índices MongoDB otimizados</li>
+                        </ul>
+                      </div>
+                      
+                      <div className="pt-2 border-t border-purple-200">
+                        <p className="font-medium text-purple-900">✅ Gestão</p>
+                        <ul className="ml-4 space-y-0.5">
+                          <li>• Trocar API Key se houver abuso</li>
+                          <li>• Desabilitar temporariamente se necessário</li>
+                          <li>• Ajustar limites conforme demanda</li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
