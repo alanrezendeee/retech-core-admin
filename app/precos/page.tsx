@@ -24,45 +24,45 @@ export default function PrecosPage() {
 
       {/* Planos */}
       <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {/* Free */}
           <Card className="border-2 hover:shadow-xl transition-shadow">
             <CardHeader>
-              <CardTitle className="text-2xl">Free</CardTitle>
+              <CardTitle className="text-xl">Free</CardTitle>
               <CardDescription>Perfeito para testar e projetos pequenos</CardDescription>
               <div className="mt-4">
-                <div className="text-4xl font-bold">R$ 0</div>
-                <div className="text-slate-500">/mês</div>
+                <div className="text-3xl font-bold">R$ 0</div>
+                <div className="text-slate-500 text-sm">/mês</div>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <ul className="space-y-3">
+              <ul className="space-y-2 text-sm">
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <Check className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
                   <span><strong>1.000 requests/dia</strong></span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <span>Acesso a 3 APIs (CEP, CNPJ, Geografia)</span>
+                  <Check className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                  <span>3 APIs (CEP, CNPJ, Geografia)</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <span>Cache inteligente (3 camadas)</span>
+                  <Check className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                  <span>Cache 3 camadas</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <Check className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
                   <span>Dashboard de uso</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <Check className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
                   <span>Documentação completa</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <span>Suporte por email</span>
+                  <Check className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                  <span>Suporte via email</span>
                 </li>
               </ul>
-              <Button asChild className="w-full mt-6">
+              <Button asChild className="w-full mt-4" variant="outline">
                 <Link href="/painel/register">
                   Começar Grátis
                 </Link>
@@ -70,100 +70,140 @@ export default function PrecosPage() {
             </CardContent>
           </Card>
 
-          {/* Business */}
-          <Card className="border-4 border-blue-600 shadow-2xl relative hover:shadow-3xl transition-shadow">
-            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-              <Badge className="bg-blue-600 text-white px-4 py-1">Mais Popular</Badge>
+          {/* Pro */}
+          <Card className="border-2 border-blue-400 hover:shadow-xl transition-shadow relative">
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+              <Badge className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1">
+                Em Breve
+              </Badge>
             </div>
             <CardHeader>
-              <CardTitle className="text-2xl">Business</CardTitle>
-              <CardDescription>Para empresas em crescimento</CardDescription>
+              <CardTitle className="text-xl">Pro</CardTitle>
+              <CardDescription>Para aplicações em crescimento</CardDescription>
               <div className="mt-4">
-                <div className="text-4xl font-bold">R$ 99</div>
-                <div className="text-slate-500">/mês</div>
+                <div className="text-3xl font-bold">R$ 49</div>
+                <div className="text-slate-500 text-sm">/mês</div>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <ul className="space-y-3">
+              <ul className="space-y-2 text-sm">
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <span><strong>50.000 requests/dia</strong></span>
+                  <Check className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <span><strong>10.000 requests/dia</strong></span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <span>Acesso a TODAS as 36 APIs</span>
+                  <Check className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <span>Acesso a TODAS as APIs</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <span>Cache prioritário (Redis L1)</span>
+                  <Check className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <span>Cache prioritário</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <Check className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
                   <span>Dashboard avançado</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <Check className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
                   <span>Analytics em tempo real</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <span>Suporte prioritário (WhatsApp)</span>
+                  <Check className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <span>Suporte prioritário</span>
+                </li>
+              </ul>
+              <Button className="w-full mt-4" disabled>
+                Em Breve
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Business */}
+          <Card className="border-4 border-purple-600 shadow-2xl relative hover:shadow-3xl transition-shadow">
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+              <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1">
+                Mais Popular
+              </Badge>
+            </div>
+            <CardHeader>
+              <CardTitle className="text-xl">Business</CardTitle>
+              <CardDescription>Para empresas em crescimento</CardDescription>
+              <div className="mt-4">
+                <div className="text-3xl font-bold">R$ 149</div>
+                <div className="text-slate-500 text-sm">/mês</div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <span><strong>100.000 requests/dia</strong></span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <Check className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <span>TODAS as 36 APIs</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <span>Cache Redis L1 prioritário</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <span>APIs Premium (NF-e, Boletos)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <span>Suporte WhatsApp prioritário</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
                   <span>SLA de 99.5%</span>
                 </li>
               </ul>
-              <Button asChild className="w-full mt-6 bg-blue-600 hover:bg-blue-700">
-                <Link href="/painel/register">
-                  Começar Agora
-                </Link>
+              <Button className="w-full mt-4 bg-purple-600 hover:bg-purple-700" disabled>
+                Em Breve
               </Button>
             </CardContent>
           </Card>
 
           {/* Enterprise */}
-          <Card className="border-2 border-purple-600 hover:shadow-xl transition-shadow">
+          <Card className="border-2 border-slate-400 hover:shadow-xl transition-shadow">
             <CardHeader>
-              <CardTitle className="text-2xl">Enterprise</CardTitle>
+              <CardTitle className="text-xl">Enterprise</CardTitle>
               <CardDescription>Soluções personalizadas para grandes volumes</CardDescription>
               <div className="mt-4">
-                <div className="text-4xl font-bold">Customizado</div>
-                <div className="text-slate-500">sob consulta</div>
+                <div className="text-3xl font-bold">Custom</div>
+                <div className="text-slate-500 text-sm">sob consulta</div>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <ul className="space-y-3">
+              <ul className="space-y-2 text-sm">
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <Check className="w-4 h-4 text-slate-600 flex-shrink-0 mt-0.5" />
                   <span><strong>Requests ilimitados</strong></span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <Check className="w-4 h-4 text-slate-600 flex-shrink-0 mt-0.5" />
                   <span>Todas as 36 APIs</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <Check className="w-4 h-4 text-slate-600 flex-shrink-0 mt-0.5" />
                   <span>Infraestrutura dedicada</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <Check className="w-4 h-4 text-slate-600 flex-shrink-0 mt-0.5" />
                   <span>White-label disponível</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <Check className="w-4 h-4 text-slate-600 flex-shrink-0 mt-0.5" />
                   <span>Suporte 24/7</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <Check className="w-4 h-4 text-slate-600 flex-shrink-0 mt-0.5" />
                   <span>SLA de 99.9%</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
-                  <span>Consultoria técnica</span>
-                </li>
               </ul>
-              <Button asChild variant="outline" className="w-full mt-6 border-purple-600 text-purple-600 hover:bg-purple-50">
+              <Button asChild className="w-full mt-4" variant="outline">
                 <Link href="/contato">
                   Falar com Vendas
                 </Link>

@@ -1032,116 +1032,189 @@ export default function HomePage() {
             Planos e Preços
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {/* Free */}
-            <Card className="border-2 border-blue-200">
+            <Card className="border-2 hover:shadow-xl transition-shadow">
               <CardHeader>
-                <CardTitle>Free</CardTitle>
+                <CardTitle className="text-xl">Free</CardTitle>
+                <CardDescription>Perfeito para testar e projetos pequenos</CardDescription>
                 <div className="mt-4">
-                  <span className="text-4xl font-bold">R$ 0</span>
-                  <span className="text-slate-500">/mês</span>
+                  <div className="text-3xl font-bold">R$ 0</div>
+                  <div className="text-slate-500 text-sm">/mês</div>
                 </div>
-                <CardDescription>Perfeito para começar</CardDescription>
               </CardHeader>
-              <CardContent>
-                <ul className="space-y-3 text-sm">
-                  <li className="flex items-center">
-                    <span className="text-green-600 mr-2">✓</span>
-                    1.000 requests por dia
+              <CardContent className="space-y-4">
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span><strong>1.000 requests/dia</strong></span>
                   </li>
-                  <li className="flex items-center">
-                    <span className="text-green-600 mr-2">✓</span>
-                    Todos os endpoints GEO
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span>3 APIs (CEP, CNPJ, Geografia)</span>
                   </li>
-                  <li className="flex items-center">
-                    <span className="text-green-600 mr-2">✓</span>
-                    Suporte via email
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span>Cache 3 camadas</span>
                   </li>
-                  <li className="flex items-center">
-                    <span className="text-green-600 mr-2">✓</span>
-                    Dashboard de uso
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span>Dashboard de uso</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span>Documentação completa</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span>Suporte via email</span>
                   </li>
                 </ul>
                 <Link href="/painel/register" className="w-full">
-                <Button className="w-full mt-6" variant="outline">
-                  Começar Agora
-                </Button>
+                  <Button className="w-full mt-4" variant="outline">
+                    Começar Grátis
+                  </Button>
                 </Link>
               </CardContent>
             </Card>
 
-            {/* Pro - Coming soon */}
-            <Card className="border-2 border-purple-400 relative">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <Badge className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+            {/* Pro */}
+            <Card className="border-2 border-blue-400 hover:shadow-xl transition-shadow relative">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <Badge className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1">
                   Em Breve
                 </Badge>
               </div>
               <CardHeader>
-                <CardTitle>Pro</CardTitle>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">R$ 29</span>
-                  <span className="text-slate-500">/mês</span>
-                </div>
+                <CardTitle className="text-xl">Pro</CardTitle>
                 <CardDescription>Para aplicações em crescimento</CardDescription>
+                <div className="mt-4">
+                  <div className="text-3xl font-bold">R$ 49</div>
+                  <div className="text-slate-500 text-sm">/mês</div>
+                </div>
               </CardHeader>
-              <CardContent>
-                <ul className="space-y-3 text-sm">
-                  <li className="flex items-center">
-                    <span className="text-green-600 mr-2">✓</span>
-                    10.000 requests por dia
+              <CardContent className="space-y-4">
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-600 mt-0.5">✓</span>
+                    <span><strong>10.000 requests/dia</strong></span>
                   </li>
-                  <li className="flex items-center">
-                    <span className="text-green-600 mr-2">✓</span>
-                    Todos os endpoints
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-600 mt-0.5">✓</span>
+                    <span>Acesso a TODAS as APIs</span>
                   </li>
-                  <li className="flex items-center">
-                    <span className="text-green-600 mr-2">✓</span>
-                    Suporte prioritário
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-600 mt-0.5">✓</span>
+                    <span>Cache prioritário</span>
                   </li>
-                  <li className="flex items-center">
-                    <span className="text-green-600 mr-2">✓</span>
-                    Analytics avançado
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-600 mt-0.5">✓</span>
+                    <span>Dashboard avançado</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-600 mt-0.5">✓</span>
+                    <span>Analytics em tempo real</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-600 mt-0.5">✓</span>
+                    <span>Suporte prioritário</span>
                   </li>
                 </ul>
-                <Button className="w-full mt-6" disabled>
+                <Button className="w-full mt-4" disabled>
                   Em Breve
                 </Button>
               </CardContent>
             </Card>
 
-            {/* Business - Coming soon */}
-            <Card>
+            {/* Business */}
+            <Card className="border-4 border-purple-600 shadow-2xl relative hover:shadow-3xl transition-shadow">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1">
+                  Mais Popular
+                </Badge>
+              </div>
               <CardHeader>
-                <CardTitle>Business</CardTitle>
+                <CardTitle className="text-xl">Business</CardTitle>
+                <CardDescription>Para empresas em crescimento</CardDescription>
                 <div className="mt-4">
-                  <span className="text-4xl font-bold">Custom</span>
+                  <div className="text-3xl font-bold">R$ 149</div>
+                  <div className="text-slate-500 text-sm">/mês</div>
                 </div>
-                <CardDescription>Para empresas</CardDescription>
               </CardHeader>
-              <CardContent>
-                <ul className="space-y-3 text-sm">
-                  <li className="flex items-center">
-                    <span className="text-green-600 mr-2">✓</span>
-                    Requests ilimitados
+              <CardContent className="space-y-4">
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <span className="text-purple-600 mt-0.5">✓</span>
+                    <span><strong>100.000 requests/dia</strong></span>
                   </li>
-                  <li className="flex items-center">
-                    <span className="text-green-600 mr-2">✓</span>
-                    SLA garantido
+                  <li className="flex items-start gap-2">
+                    <span className="text-purple-600 mt-0.5">✓</span>
+                    <span>TODAS as 36 APIs</span>
                   </li>
-                  <li className="flex items-center">
-                    <span className="text-green-600 mr-2">✓</span>
-                    Suporte 24/7
+                  <li className="flex items-start gap-2">
+                    <span className="text-purple-600 mt-0.5">✓</span>
+                    <span>Cache Redis L1 prioritário</span>
                   </li>
-                  <li className="flex items-center">
-                    <span className="text-green-600 mr-2">✓</span>
-                    White label
+                  <li className="flex items-start gap-2">
+                    <span className="text-purple-600 mt-0.5">✓</span>
+                    <span>APIs Premium (NF-e, Boletos)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-purple-600 mt-0.5">✓</span>
+                    <span>Suporte WhatsApp prioritário</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-purple-600 mt-0.5">✓</span>
+                    <span>SLA de 99.5%</span>
+                  </li>
+                </ul>
+                <Button className="w-full mt-4 bg-purple-600 hover:bg-purple-700" disabled>
+                  Em Breve
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Enterprise */}
+            <Card className="border-2 border-slate-400 hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <CardTitle className="text-xl">Enterprise</CardTitle>
+                <CardDescription>Soluções personalizadas para grandes volumes</CardDescription>
+                <div className="mt-4">
+                  <div className="text-3xl font-bold">Custom</div>
+                  <div className="text-slate-500 text-sm">sob consulta</div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <span className="text-slate-600 mt-0.5">✓</span>
+                    <span><strong>Requests ilimitados</strong></span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-slate-600 mt-0.5">✓</span>
+                    <span>Todas as 36 APIs</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-slate-600 mt-0.5">✓</span>
+                    <span>Infraestrutura dedicada</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-slate-600 mt-0.5">✓</span>
+                    <span>White-label disponível</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-slate-600 mt-0.5">✓</span>
+                    <span>Suporte 24/7</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-slate-600 mt-0.5">✓</span>
+                    <span>SLA de 99.9%</span>
                   </li>
                 </ul>
                 <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="w-full">
-                <Button className="w-full mt-6" variant="outline">
-                  Falar com Vendas
-                </Button>
+                  <Button className="w-full mt-4" variant="outline">
+                    Falar com Vendas
+                  </Button>
                 </a>
               </CardContent>
             </Card>
