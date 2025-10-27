@@ -21,7 +21,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Settings as SettingsIcon, Save, RefreshCw, Shield, Globe, Database, Key, AlertTriangle, Info } from 'lucide-react';
+import { Settings as SettingsIcon, Save, RefreshCw, Shield, Globe, Database, Key, AlertTriangle, Info, Loader2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/api/client';
 
@@ -53,13 +53,19 @@ interface SystemSettings {
     email: string;
     phone: string;
   };
-  // Cache
+  // Cache (NOVO: controles independentes)
   cache?: {
-    enabled: boolean;
-    cepTtlDays: number | '';
-    cnpjTtlDays: number | '';
-    maxSizeMb: number;
-    autoCleanup: boolean;
+    // ✅ Controles independentes por serviço
+    cep: {
+      enabled: boolean;
+      ttlDays: number | '';
+      autoCleanup: boolean;
+    };
+    cnpj: {
+      enabled: boolean;
+      ttlDays: number | '';
+      autoCleanup: boolean;
+    };
   };
   // Playground
   playground?: {
@@ -99,11 +105,16 @@ export default function AdminSettingsPage() {
       phone: '+55 48 99961-6679',
     },
     cache: {
-      enabled: true,
-      cepTtlDays: 7,
-      cnpjTtlDays: 30,
-      maxSizeMb: 100,
-      autoCleanup: true,
+      cep: {
+        enabled: true,
+        ttlDays: 7,
+        autoCleanup: true,
+      },
+      cnpj: {
+        enabled: true,
+        ttlDays: 30,
+        autoCleanup: true,
+      },
     },
     playground: {
       enabled: false,
@@ -131,6 +142,17 @@ export default function AdminSettingsPage() {
     totalCached: number;
     recentCached: number;
   } | null>(null);
+  const [redisStats, setRedisStats] = useState<{
+    connected: boolean;
+    totalKeys: number;
+    cepKeys: number;
+    cnpjKeys: number;
+    geoKeys: number;
+    memoryUsedMB: string;
+    message: string;
+  } | null>(null);
+  const [isClearingRedis, setIsClearingRedis] = useState(false);
+  const [showClearRedisDialog, setShowClearRedisDialog] = useState(false);
 
   useEffect(() => {
     if (isReady) {
@@ -143,6 +165,9 @@ export default function AdminSettingsPage() {
       setIsLoading(true);
       const response = await api.get('/admin/settings');
       
+      console.log('📥 [loadSettings] Dados recebidos do backend:', response.data);
+      console.log('📥 [loadSettings] Cache recebido:', response.data.cache);
+      
       // Normalizar os dados do backend (Go usa PascalCase, frontend usa camelCase)
       const data = response.data;
       const normalized = {
@@ -151,6 +176,21 @@ export default function AdminSettingsPage() {
           requestsPerDay: data.defaultRateLimit?.RequestsPerDay || data.defaultRateLimit?.requestsPerDay || 1000,
           requestsPerMinute: data.defaultRateLimit?.RequestsPerMinute || data.defaultRateLimit?.requestsPerMinute || 60,
         },
+        // ✅ Normalizar cache (nova estrutura independente)
+        cache: data.cache ? {
+          cep: {
+            // 🔄 Migração automática: se tiver estrutura antiga, usar valores antigos
+            enabled: data.cache.cep?.enabled ?? (data.cache.enabled ?? true),
+            ttlDays: data.cache.cep?.ttlDays ?? (data.cache.cepTtlDays || 7),
+            autoCleanup: data.cache.cep?.autoCleanup ?? (data.cache.autoCleanup ?? true),
+          },
+          cnpj: {
+            // 🔄 Migração automática: se tiver estrutura antiga, usar valores antigos
+            enabled: data.cache.cnpj?.enabled ?? (data.cache.enabled ?? true),
+            ttlDays: data.cache.cnpj?.ttlDays ?? (data.cache.cnpjTtlDays || 30),
+            autoCleanup: data.cache.cnpj?.autoCleanup ?? (data.cache.autoCleanup ?? true),
+          },
+        } : undefined,
         // ✅ Normalizar playground.rateLimit também
         playground: data.playground ? {
           ...data.playground,
@@ -166,6 +206,7 @@ export default function AdminSettingsPage() {
       // ✅ Carregar stats APÓS settings carregar com sucesso
       loadCacheStats();
       loadCNPJCacheStats();
+      loadRedisStats();
     } catch (error: any) {
       console.error('Erro ao carregar configurações:', error);
       // Se não existir configuração, usa as padrões (já definidas no state)
@@ -204,6 +245,32 @@ export default function AdminSettingsPage() {
     }
   };
 
+  const loadRedisStats = async () => {
+    try {
+      const response = await api.get('/admin/cache/redis/stats');
+      setRedisStats({
+        connected: response.data.connected || false,
+        totalKeys: response.data.totalKeys || 0,
+        cepKeys: response.data.cepKeys || 0,
+        cnpjKeys: response.data.cnpjKeys || 0,
+        geoKeys: response.data.geoKeys || 0,
+        memoryUsedMB: response.data.memoryUsedMB || '0',
+        message: response.data.message || '',
+      });
+    } catch (error: any) {
+      console.error('Erro ao carregar stats do Redis:', error);
+      setRedisStats({
+        connected: false,
+        totalKeys: 0,
+        cepKeys: 0,
+        cnpjKeys: 0,
+        geoKeys: 0,
+        memoryUsedMB: '0',
+        message: 'Erro ao conectar com Redis',
+      });
+    }
+  };
+
   const handleClearCache = async () => {
     try {
       setIsClearing(true);
@@ -233,6 +300,24 @@ export default function AdminSettingsPage() {
       toast.error(error.response?.data?.error || 'Erro ao limpar cache de CNPJ');
     } finally {
       setIsClearingCNPJ(false);
+    }
+  };
+
+  const handleClearRedisCache = async () => {
+    try {
+      setIsClearingRedis(true);
+      setShowClearRedisDialog(false);
+      
+      const response = await api.delete('/admin/cache/redis');
+      toast.success('Cache do Redis limpo completamente!');
+      loadRedisStats(); // Recarregar stats
+      loadCacheStats(); // Recarregar CEP stats
+      loadCNPJCacheStats(); // Recarregar CNPJ stats
+    } catch (error: any) {
+      console.error('Erro ao limpar Redis:', error);
+      toast.error(error.response?.data?.error || 'Erro ao limpar cache do Redis');
+    } finally {
+      setIsClearingRedis(false);
     }
   };
 
@@ -299,6 +384,8 @@ export default function AdminSettingsPage() {
     try {
       setIsSaving(true);
       
+      console.log('🔍 [DEBUG] Estado atual do cache:', settings.cache);
+      
       // Garantir que valores vazios sejam convertidos para números padrão
       const requestsPerDay = settings.defaultRateLimit.requestsPerDay === '' 
         ? 1000 
@@ -307,9 +394,12 @@ export default function AdminSettingsPage() {
         ? 60 
         : Number(settings.defaultRateLimit.requestsPerMinute);
       
-      // Garantir que TTL do cache não seja vazio
-      const cepTtlDays = settings.cache?.cepTtlDays === '' ? 7 : Number(settings.cache?.cepTtlDays || 7);
-      const cnpjTtlDays = settings.cache?.cnpjTtlDays === '' ? 30 : Number(settings.cache?.cnpjTtlDays || 30);
+      // Garantir que TTL do cache não seja vazio (nova estrutura independente)
+      const cepTtlDays = settings.cache?.cep.ttlDays === '' ? 7 : Number(settings.cache?.cep.ttlDays || 7);
+      const cnpjTtlDays = settings.cache?.cnpj.ttlDays === '' ? 30 : Number(settings.cache?.cnpj.ttlDays || 30);
+      
+      console.log('🔍 [DEBUG] CEP TTL:', cepTtlDays, '| CNPJ TTL:', cnpjTtlDays);
+      console.log('🔍 [DEBUG] CEP enabled:', settings.cache?.cep.enabled, '| CNPJ enabled:', settings.cache?.cnpj.enabled);
       
       // Garantir que rate limits do playground não sejam vazios
       const playgroundReqPerDay = settings.playground?.rateLimit.requestsPerDay === '' 
@@ -330,9 +420,16 @@ export default function AdminSettingsPage() {
         api: settings.api,
         contact: settings.contact,
         cache: {
-          ...settings.cache,
-          cepTtlDays,
-          cnpjTtlDays,
+          cep: {
+            enabled: settings.cache?.cep.enabled ?? true,
+            ttlDays: cepTtlDays,
+            autoCleanup: settings.cache?.cep.autoCleanup ?? true,
+          },
+          cnpj: {
+            enabled: settings.cache?.cnpj.enabled ?? true,
+            ttlDays: cnpjTtlDays,
+            autoCleanup: settings.cache?.cnpj.autoCleanup ?? true,
+          },
         },
         playground: {
           enabled: settings.playground?.enabled || false,
@@ -344,6 +441,8 @@ export default function AdminSettingsPage() {
           allowedApis: settings.playground?.allowedApis || [],  // ✅ Permite vazio
         },
       };
+      
+      console.log('📤 [handleSaveSettings] Payload completo sendo enviado:', JSON.stringify(payload, null, 2));
       
       await api.put('/admin/settings', payload);
       
@@ -368,6 +467,25 @@ export default function AdminSettingsPage() {
         [field]: value,
       },
     }));
+  };
+
+  // Nova função para lidar com cache aninhado (cep/cnpj)
+  const handleCacheChange = (service: 'cep' | 'cnpj', field: string, value: any) => {
+    console.log(`🔧 [handleCacheChange] ${service}.${field} = ${value}`);
+    setSettings(prev => {
+      const newSettings = {
+        ...prev,
+        cache: {
+          ...prev.cache!,
+          [service]: {
+            ...prev.cache![service],
+            [field]: value,
+          },
+        },
+      };
+      console.log('📦 [handleCacheChange] Novo estado cache:', newSettings.cache);
+      return newSettings;
+    });
   };
 
   const handleArrayChange = (section: keyof SystemSettings, field: string, value: string) => {
@@ -811,15 +929,15 @@ export default function AdminSettingsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="playgroundApiKey">API Key Demo</Label>
+                <Label htmlFor="playgroundApiKey">API Key Demo (Segurança)</Label>
                 <div className="flex gap-2">
                   <Input
                     id="playgroundApiKey"
                     type="text"
                     placeholder="Clique em 'Gerar Nova' para criar"
-                    value={settings.playground?.apiKey || ''}
+                    value={settings.playground?.apiKey ? '🔒 ••••••••••••••••••••••••••••••••' : ''}
                     readOnly
-                    className="font-mono text-sm flex-1"
+                    className="font-mono text-sm flex-1 bg-slate-50"
                   />
                   {!settings.playground?.apiKey ? (
                     <Button
@@ -1026,8 +1144,8 @@ export default function AdminSettingsPage() {
                                 ? 60 
                                 : Number(settings.defaultRateLimit.requestsPerMinute);
                               
-                              const cepTtlDays = settings.cache?.cepTtlDays === '' ? 7 : Number(settings.cache?.cepTtlDays || 7);
-                              const cnpjTtlDays = settings.cache?.cnpjTtlDays === '' ? 30 : Number(settings.cache?.cnpjTtlDays || 30);
+                              const cepTtlDays = settings.cache?.cep.ttlDays === '' ? 7 : Number(settings.cache?.cep.ttlDays || 7);
+                              const cnpjTtlDays = settings.cache?.cnpj.ttlDays === '' ? 30 : Number(settings.cache?.cnpj.ttlDays || 30);
                               
                               await api.put('/admin/settings', {
                                 defaultRateLimit: {
@@ -1039,9 +1157,16 @@ export default function AdminSettingsPage() {
                                 api: settings.api,
                                 contact: settings.contact,
                                 cache: {
-                                  ...settings.cache,
-                                  cepTtlDays,
-                                  cnpjTtlDays,
+                                  cep: {
+                                    enabled: settings.cache?.cep.enabled ?? true,
+                                    ttlDays: cepTtlDays,
+                                    autoCleanup: settings.cache?.cep.autoCleanup ?? true,
+                                  },
+                                  cnpj: {
+                                    enabled: settings.cache?.cnpj.enabled ?? true,
+                                    ttlDays: cnpjTtlDays,
+                                    autoCleanup: settings.cache?.cnpj.autoCleanup ?? true,
+                                  },
                                 },
                                 playground: {
                                   enabled: settings.playground?.enabled || false,
@@ -1168,6 +1293,105 @@ export default function AdminSettingsPage() {
             </CardContent>
           </Card>
 
+          {/* Redis Cache (L1 - Hot Cache) */}
+          <Card className="border-red-200 col-span-2">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-red-100">
+                  <Database className="w-5 h-5 text-red-600" />
+                </div>
+                <div>
+                  <CardTitle>🔴 Redis Cache (L1 - Hot Cache)</CardTitle>
+                  <CardDescription>Cache em memória para máxima performance</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Status do Redis */}
+              {redisStats && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-red-50 rounded-lg mb-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-3 h-3 rounded-full ${redisStats.connected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                      <p className="text-sm font-medium text-red-900">
+                        Status: {redisStats.connected ? '🟢 Conectado' : '🔴 Desconectado'}
+                      </p>
+                    </div>
+                    <p className="text-sm text-red-700">
+                      💾 Memória: {redisStats.memoryUsedMB} MB
+                    </p>
+                    {redisStats.message && (
+                      <p className="text-xs text-red-600">{redisStats.message}</p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-red-900">📊 Total Keys: {redisStats.totalKeys}</p>
+                    <div className="text-xs text-red-700 space-y-1">
+                      <p>├─ 📮 CEP: {redisStats.cepKeys} keys</p>
+                      <p>├─ 🏢 CNPJ: {redisStats.cnpjKeys} keys</p>
+                      <p>└─ 🗺️ GEO: {redisStats.geoKeys} keys</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Botões de Controle */}
+              <div className="flex gap-2">
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => setShowClearRedisDialog(true)}
+                  disabled={isClearingRedis || !redisStats?.connected}
+                >
+                  {isClearingRedis ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Limpando...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Limpar Todo Redis
+                    </>
+                  )}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={loadRedisStats}
+                  disabled={isClearingRedis}
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Atualizar
+                </Button>
+              </div>
+
+              <div className="text-xs text-slate-500 bg-slate-50 p-3 rounded">
+                <p className="font-semibold text-slate-700 mb-2">📊 Como funciona o cache em cada request:</p>
+                <div className="space-y-2">
+                  <p className="flex items-start gap-2">
+                    <span className="font-semibold text-red-600">1️⃣ Redis (L1):</span>
+                    <span>Tenta buscar no cache em memória primeiro (~1ms). Se encontrar, retorna imediatamente.</span>
+                  </p>
+                  <p className="flex items-start gap-2">
+                    <span className="font-semibold text-blue-600">2️⃣ MongoDB (L2):</span>
+                    <span>Se Redis falhar ou estiver indisponível, busca no cache persistente (~10ms).</span>
+                  </p>
+                  <p className="flex items-start gap-2">
+                    <span className="font-semibold text-orange-600">3️⃣ API Externa (L3):</span>
+                    <span>Se ambos falharem, consulta a fonte original (~200ms) e salva nos dois caches.</span>
+                  </p>
+                  <p className="mt-2 pt-2 border-t border-slate-200 text-green-600">
+                    ✅ <strong>Graceful Degradation:</strong> Se Redis cair, o sistema continua funcionando usando MongoDB.
+                  </p>
+                  <p className="text-amber-600">
+                    ⚠️ Limpar Redis afeta TODOS os caches (CEP, CNPJ, GEO), mas MongoDB L2 mantém os dados.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Cache de CEP */}
           <Card className="border-blue-200">
             <CardHeader>
@@ -1176,8 +1400,8 @@ export default function AdminSettingsPage() {
                   <Database className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <CardTitle>Cache de CEP</CardTitle>
-                  <CardDescription>Configurações de cache para otimizar performance</CardDescription>
+                  <CardTitle>MongoDB Cache - CEP (L2)</CardTitle>
+                  <CardDescription>Cache persistente para otimizar performance</CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -1200,40 +1424,40 @@ export default function AdminSettingsPage() {
 
               <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                 <div>
-                  <Label htmlFor="cacheEnabled" className="font-medium text-slate-700">
-                    Habilitar Cache
+                  <Label htmlFor="cepCacheEnabled" className="font-medium text-slate-700">
+                    Habilitar Cache de CEP
                   </Label>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    Ativa cache global de CEP (melhora performance)
+                    Ativa cache de CEP independentemente (MongoDB L2 + Redis L1)
                   </p>
                 </div>
                 <Switch
-                  id="cacheEnabled"
-                  checked={settings.cache?.enabled || false}
-                  onCheckedChange={(checked) => handleInputChange('cache', 'enabled', checked)}
+                  id="cepCacheEnabled"
+                  checked={settings.cache?.cep.enabled || false}
+                  onCheckedChange={(checked) => handleCacheChange('cep', 'enabled', checked)}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="cacheTTL">TTL do Cache CEP (dias)</Label>
+                <Label htmlFor="cepCacheTTL">TTL do Cache CEP (dias)</Label>
                 <Input
-                  id="cacheTTL"
+                  id="cepCacheTTL"
                   type="number"
                   min="1"
                   max="365"
                   placeholder="7"
-                  value={settings.cache?.cepTtlDays ?? ''}
+                  value={settings.cache?.cep.ttlDays ?? ''}
                   onChange={(e) => {
                     const value = e.target.value === '' ? '' : parseInt(e.target.value);
-                    handleInputChange('cache', 'cepTtlDays', value);
+                    handleCacheChange('cep', 'ttlDays', value);
                   }}
                   onBlur={(e) => {
                     // Aplicar valor padrão ao sair do campo se estiver vazio ou inválido
                     const value = parseInt(e.target.value);
                     if (isNaN(value) || value < 1) {
-                      handleInputChange('cache', 'cepTtlDays', 7);
+                      handleCacheChange('cep', 'ttlDays', 7);
                     } else if (value > 365) {
-                      handleInputChange('cache', 'cepTtlDays', 365);
+                      handleCacheChange('cep', 'ttlDays', 365);
                     }
                   }}
                 />
@@ -1244,17 +1468,17 @@ export default function AdminSettingsPage() {
 
               <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                 <div>
-                  <Label htmlFor="autoCleanup" className="font-medium text-slate-700">
-                    Limpeza Automática
+                  <Label htmlFor="cepAutoCleanup" className="font-medium text-slate-700">
+                    Limpeza Automática de CEP
                   </Label>
                   <p className="text-xs text-slate-500 mt-0.5">
                     MongoDB remove CEPs expirados automaticamente (TTL Index)
                   </p>
                 </div>
                 <Switch
-                  id="autoCleanup"
-                  checked={settings.cache?.autoCleanup || false}
-                  onCheckedChange={(checked) => handleInputChange('cache', 'autoCleanup', checked)}
+                  id="cepAutoCleanup"
+                  checked={settings.cache?.cep.autoCleanup || false}
+                  onCheckedChange={(checked) => handleCacheChange('cep', 'autoCleanup', checked)}
                 />
               </div>
 
@@ -1314,8 +1538,8 @@ export default function AdminSettingsPage() {
                   </svg>
                 </div>
                 <div>
-                  <CardTitle>Cache de CNPJ</CardTitle>
-                  <CardDescription>Gerenciar cache de empresas consultadas</CardDescription>
+                  <CardTitle>MongoDB Cache - CNPJ (L2)</CardTitle>
+                  <CardDescription>Cache persistente de empresas consultadas</CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -1336,6 +1560,24 @@ export default function AdminSettingsPage() {
                 </div>
               )}
 
+              <Separator />
+
+              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                <div>
+                  <Label htmlFor="cnpjCacheEnabled" className="font-medium text-slate-700">
+                    Habilitar Cache de CNPJ
+                  </Label>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Ativa cache de CNPJ independentemente (MongoDB L2 + Redis L1)
+                  </p>
+                </div>
+                <Switch
+                  id="cnpjCacheEnabled"
+                  checked={settings.cache?.cnpj.enabled || false}
+                  onCheckedChange={(checked) => handleCacheChange('cnpj', 'enabled', checked)}
+                />
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="cnpjTTL">TTL do Cache CNPJ (dias)</Label>
                 <Input
@@ -1344,18 +1586,18 @@ export default function AdminSettingsPage() {
                   min="1"
                   max="365"
                   placeholder="30"
-                  value={settings.cache?.cnpjTtlDays ?? ''}
+                  value={settings.cache?.cnpj.ttlDays ?? ''}
                   onChange={(e) => {
                     const value = e.target.value === '' ? '' : parseInt(e.target.value);
-                    handleInputChange('cache', 'cnpjTtlDays', value);
+                    handleCacheChange('cnpj', 'ttlDays', value);
                   }}
                   onBlur={(e) => {
                     // Aplicar valor padrão ao sair do campo se estiver vazio ou inválido
                     const value = parseInt(e.target.value);
                     if (isNaN(value) || value < 1) {
-                      handleInputChange('cache', 'cnpjTtlDays', 30);
+                      handleCacheChange('cnpj', 'ttlDays', 30);
                     } else if (value > 365) {
-                      handleInputChange('cache', 'cnpjTtlDays', 365);
+                      handleCacheChange('cnpj', 'ttlDays', 365);
                     }
                   }}
                 />
@@ -1363,6 +1605,24 @@ export default function AdminSettingsPage() {
                   Tempo que um CNPJ fica em cache (1-365 dias). Padrão: 30 dias.
                 </p>
               </div>
+
+              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                <div>
+                  <Label htmlFor="cnpjAutoCleanup" className="font-medium text-slate-700">
+                    Limpeza Automática de CNPJ
+                  </Label>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    MongoDB remove CNPJs expirados automaticamente (TTL Index)
+                  </p>
+                </div>
+                <Switch
+                  id="cnpjAutoCleanup"
+                  checked={settings.cache?.cnpj.autoCleanup || false}
+                  onCheckedChange={(checked) => handleCacheChange('cnpj', 'autoCleanup', checked)}
+                />
+              </div>
+
+              <Separator />
 
               <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
                 <div className="flex items-start gap-2">
@@ -1457,6 +1717,40 @@ export default function AdminSettingsPage() {
               className="bg-red-600 hover:bg-red-700"
             >
               Sim, Limpar Cache
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Dialog de Confirmação para Limpar Redis */}
+      <AlertDialog open={showClearRedisDialog} onOpenChange={setShowClearRedisDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Limpar Todo o Cache do Redis?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação irá remover <strong>TODOS os caches</strong> do Redis:
+              <br /><br />
+              <div className="bg-red-50 p-3 rounded text-sm">
+                <p>📮 <strong>CEP:</strong> {redisStats?.cepKeys || 0} keys</p>
+                <p>🏢 <strong>CNPJ:</strong> {redisStats?.cnpjKeys || 0} keys</p>
+                <p>🗺️ <strong>GEO:</strong> {redisStats?.geoKeys || 0} keys</p>
+                <p className="font-semibold">📊 <strong>Total:</strong> {redisStats?.totalKeys || 0} keys</p>
+              </div>
+              <br />
+              <span className="text-red-600 font-semibold">⚠️ Esta ação não pode ser desfeita.</span>
+              <br /><br />
+              <span className="text-amber-600 font-medium">
+                💡 Dica: O sistema continuará funcionando, mas as próximas consultas serão mais lentas até o cache ser reconstruído.
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleClearRedisCache}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Sim, Limpar Todo Redis
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
