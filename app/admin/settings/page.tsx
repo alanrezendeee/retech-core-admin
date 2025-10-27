@@ -75,6 +75,7 @@ interface SystemSettings {
 
 export default function AdminSettingsPage() {
   const { isReady } = useRequireAuth('SUPER_ADMIN');
+  const [originsInputValue, setOriginsInputValue] = useState(''); // ✅ Estado para o input de origins
   const [settings, setSettings] = useState<SystemSettings>({
     defaultRateLimit: {
       requestsPerDay: 1000,
@@ -136,6 +137,11 @@ export default function AdminSettingsPage() {
       loadSettings(); // Carrega settings, que por sua vez chama loadCacheStats()
     }
   }, [isReady]);
+
+  // ✅ Sincronizar originsInputValue com settings.cors.allowedOrigins
+  useEffect(() => {
+    setOriginsInputValue(settings.cors.allowedOrigins.join(',\n'));
+  }, [settings.cors.allowedOrigins]);
 
   const loadSettings = async () => {
     try {
@@ -506,11 +512,11 @@ export default function AdminSettingsPage() {
                 </Label>
                 <textarea
                   id="allowedOrigins"
-                  value={settings.cors.allowedOrigins.join(',\n')}
-                  onChange={(e) => handleArrayChange('cors', 'allowedOrigins', e.target.value)}
-                  onKeyPress={(e) => {
-                    // ✅ FORÇAR aceitação de vírgula e ponto-e-vírgula
-                    // Não bloquear nada
+                  value={originsInputValue}
+                  onChange={(e) => setOriginsInputValue(e.target.value)}
+                  onBlur={(e) => {
+                    // ✅ Só processa quando sai do campo
+                    handleArrayChange('cors', 'allowedOrigins', e.target.value);
                   }}
                   placeholder="https://core.theretech.com.br,http://localhost:3000"
                   rows={4}
