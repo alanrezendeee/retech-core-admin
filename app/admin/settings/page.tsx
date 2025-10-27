@@ -274,12 +274,12 @@ export default function AdminSettingsPage() {
         },
         playground: {
           enabled: settings.playground?.enabled || false,
-          apiKey: settings.playground?.apiKey || 'rtc_demo_playground_2024',
+          apiKey: settings.playground?.apiKey || '',  // ✅ Permite vazio
           rateLimit: {
-            requestsPerDay: playgroundReqPerDay,    // ✅ camelCase
-            requestsPerMinute: playgroundReqPerMin,  // ✅ camelCase
+            requestsPerDay: playgroundReqPerDay,
+            requestsPerMinute: playgroundReqPerMin,
           },
-          allowedApis: settings.playground?.allowedApis || ['cep', 'cnpj', 'geo'],
+          allowedApis: settings.playground?.allowedApis || [],  // ✅ Permite array vazio
         },
       };
       
@@ -884,7 +884,7 @@ export default function AdminSettingsPage() {
               <div className="space-y-2">
                 <Label>APIs Disponíveis no Playground</Label>
                 <div className="flex flex-wrap gap-2">
-                  {['cep', 'cnpj', 'geo', 'ibge'].map((api) => (
+                  {['cep', 'cnpj', 'geo'].map((api) => (
                     <label
                       key={api}
                       className="flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors"
