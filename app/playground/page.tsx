@@ -55,6 +55,13 @@ export default function PlaygroundPage() {
       if (data.allowedApis && Array.isArray(data.allowedApis)) {
         setAllowedApis(data.allowedApis);
         console.log('✅ APIs permitidas:', data.allowedApis);
+        
+        // ✅ Selecionar automaticamente a primeira API disponível
+        if (data.allowedApis.length > 0) {
+          const firstAvailableAPI = data.allowedApis[0] as 'cep' | 'cnpj' | 'geo';
+          setSelectedAPI(firstAvailableAPI);
+          console.log('✅ API selecionada automaticamente:', firstAvailableAPI);
+        }
       }
       
       // 🔍 Debug: log completo do status
