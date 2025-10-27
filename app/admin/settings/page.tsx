@@ -795,11 +795,13 @@ export default function AdminSettingsPage() {
                       setSettings(prev => ({
                         ...prev,
                         playground: {
-                          ...prev.playground,  // ✅ Mantém todos os campos
+                          enabled: prev.playground?.enabled ?? false,
+                          apiKey: prev.playground?.apiKey ?? '',
                           rateLimit: {
-                            ...prev.playground?.rateLimit,  // ✅ Mantém o outro campo
                             requestsPerDay: value,
+                            requestsPerMinute: prev.playground?.rateLimit?.requestsPerMinute ?? 10,
                           },
+                          allowedApis: prev.playground?.allowedApis ?? [],
                         },
                       }));
                     }}
@@ -808,11 +810,13 @@ export default function AdminSettingsPage() {
                         setSettings(prev => ({
                           ...prev,
                           playground: {
-                            ...prev.playground,  // ✅ Mantém todos os campos
+                            enabled: prev.playground?.enabled ?? false,
+                            apiKey: prev.playground?.apiKey ?? '',
                             rateLimit: {
-                              ...prev.playground?.rateLimit,
-                              requestsPerDay: 100,  // Apenas reseta este campo
+                              requestsPerDay: 100,
+                              requestsPerMinute: prev.playground?.rateLimit?.requestsPerMinute ?? 10,
                             },
+                            allowedApis: prev.playground?.allowedApis ?? [],
                           },
                         }));
                       }
@@ -839,11 +843,13 @@ export default function AdminSettingsPage() {
                       setSettings(prev => ({
                         ...prev,
                         playground: {
-                          ...prev.playground,  // ✅ Mantém todos os campos
+                          enabled: prev.playground?.enabled ?? false,
+                          apiKey: prev.playground?.apiKey ?? '',
                           rateLimit: {
-                            ...prev.playground?.rateLimit,  // ✅ Mantém o outro campo
+                            requestsPerDay: prev.playground?.rateLimit?.requestsPerDay ?? 100,
                             requestsPerMinute: value,
                           },
+                          allowedApis: prev.playground?.allowedApis ?? [],
                         },
                       }));
                     }}
@@ -852,11 +858,13 @@ export default function AdminSettingsPage() {
                         setSettings(prev => ({
                           ...prev,
                           playground: {
-                            ...prev.playground,  // ✅ Mantém todos os campos
+                            enabled: prev.playground?.enabled ?? false,
+                            apiKey: prev.playground?.apiKey ?? '',
                             rateLimit: {
-                              ...prev.playground?.rateLimit,
-                              requestsPerMinute: 10,  // Apenas reseta este campo
+                              requestsPerDay: prev.playground?.rateLimit?.requestsPerDay ?? 100,
+                              requestsPerMinute: 10,
                             },
+                            allowedApis: prev.playground?.allowedApis ?? [],
                           },
                         }));
                       }
@@ -892,7 +900,9 @@ export default function AdminSettingsPage() {
                           setSettings(prev => ({
                             ...prev,
                             playground: {
-                              ...prev.playground,  // ✅ Mantém todos os campos
+                              enabled: prev.playground?.enabled ?? false,
+                              apiKey: prev.playground?.apiKey ?? '',
+                              rateLimit: prev.playground?.rateLimit ?? { requestsPerDay: 100, requestsPerMinute: 10 },
                               allowedApis: newApis,
                             },
                           }));
