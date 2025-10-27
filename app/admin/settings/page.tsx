@@ -122,6 +122,7 @@ export default function AdminSettingsPage() {
   const [showClearDialog, setShowClearDialog] = useState(false);
   const [showClearCNPJDialog, setShowClearCNPJDialog] = useState(false);
   const [isClearingCNPJ, setIsClearingCNPJ] = useState(false);
+  const [isGeneratingKey, setIsGeneratingKey] = useState(false);
   const [cacheStats, setCacheStats] = useState<{
     totalCached: number;
     recentCached: number;
@@ -232,6 +233,65 @@ export default function AdminSettingsPage() {
       toast.error(error.response?.data?.error || 'Erro ao limpar cache de CNPJ');
     } finally {
       setIsClearingCNPJ(false);
+    }
+  };
+
+  const handleGenerateAPIKey = async () => {
+    try {
+      setIsGeneratingKey(true);
+      const response = await api.post('/admin/playground/apikey/generate');
+      
+      // Atualizar o campo com a nova API Key
+      setSettings(prev => ({
+        ...prev,
+        playground: {
+          ...prev.playground,
+          enabled: prev.playground?.enabled ?? false,
+          apiKey: response.data.apiKey,
+          rateLimit: prev.playground?.rateLimit ?? { requestsPerDay: 100, requestsPerMinute: 10 },
+          allowedApis: prev.playground?.allowedApis ?? ['cep', 'cnpj', 'geo'],
+        },
+      }));
+      
+      toast.success(`API Key gerada com sucesso! Scopes: ${response.data.scopes.join(', ')}`);
+      
+      // Recarregar para confirmar
+      await loadSettings();
+    } catch (error: any) {
+      console.error('Erro ao gerar API Key:', error);
+      toast.error('Erro ao gerar API Key demo');
+    } finally {
+      setIsGeneratingKey(false);
+    }
+  };
+
+  const handleRotateAPIKey = async () => {
+    try {
+      setIsGeneratingKey(true);
+      const response = await api.post('/admin/playground/apikey/rotate');
+      
+      // Atualizar o campo com a nova API Key
+      setSettings(prev => ({
+        ...prev,
+        playground: {
+          ...prev.playground,
+          enabled: prev.playground?.enabled ?? false,
+          apiKey: response.data.newKey,
+          rateLimit: prev.playground?.rateLimit ?? { requestsPerDay: 100, requestsPerMinute: 10 },
+          allowedApis: prev.playground?.allowedApis ?? ['cep', 'cnpj', 'geo'],
+        },
+      }));
+      
+      toast.success(`API Key rotacionada! Scopes: ${response.data.scopes.join(', ')}`);
+      toast.info('Chave antiga desativada automaticamente', { duration: 5000 });
+      
+      // Recarregar para confirmar
+      await loadSettings();
+    } catch (error: any) {
+      console.error('Erro ao rotacionar API Key:', error);
+      toast.error('Erro ao rotacionar API Key demo');
+    } finally {
+      setIsGeneratingKey(false);
     }
   };
 
@@ -752,16 +812,55 @@ export default function AdminSettingsPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="playgroundApiKey">API Key Demo</Label>
-                <Input
-                  id="playgroundApiKey"
-                  type="text"
-                  placeholder="rtc_demo_playground_2024"
-                  value={settings.playground?.apiKey || ''}
-                  onChange={(e) => handleInputChange('playground', 'apiKey', e.target.value)}
-                  className="font-mono text-sm"
-                />
+                <div className="flex gap-2">
+                  <Input
+                    id="playgroundApiKey"
+                    type="text"
+                    placeholder="Clique em 'Gerar Nova' para criar"
+                    value={settings.playground?.apiKey || ''}
+                    readOnly
+                    className="font-mono text-sm flex-1"
+                  />
+                  {!settings.playground?.apiKey || settings.playground.apiKey === 'rtc_demo_playground_2024' ? (
+                    <Button
+                      type="button"
+                      variant="default"
+                      onClick={handleGenerateAPIKey}
+                      disabled={isGeneratingKey}
+                      className="whitespace-nowrap"
+                    >
+                      {isGeneratingKey ? (
+                        <>
+                          <span className="animate-spin mr-2">⏳</span>
+                          Gerando...
+                        </>
+                      ) : (
+                        <>🔑 Gerar Nova</>
+                      )}
+                    </Button>
+                  ) : (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleRotateAPIKey}
+                      disabled={isGeneratingKey}
+                      className="whitespace-nowrap"
+                    >
+                      {isGeneratingKey ? (
+                        <>
+                          <span className="animate-spin mr-2">⏳</span>
+                          Rotacionando...
+                        </>
+                      ) : (
+                        <>🔄 Rotacionar</>
+                      )}
+                    </Button>
+                  )}
+                </div>
                 <p className="text-xs text-slate-500">
-                  Chave usada no playground e ferramentas públicas. Trocar se houver abuso.
+                  {!settings.playground?.apiKey || settings.playground.apiKey === 'rtc_demo_playground_2024' 
+                    ? 'Gere uma API Key válida para o playground. Scopes baseados nas APIs selecionadas abaixo.'
+                    : 'Rotacione a chave se houver abuso. A chave antiga será desativada.'}
                 </p>
               </div>
 
