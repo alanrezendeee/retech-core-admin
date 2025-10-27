@@ -775,13 +775,15 @@ export default function AdminSettingsPage() {
                       setSettings(prev => ({
                         ...prev,
                         playground: {
-                          enabled: prev.playground?.enabled || false,
-                          apiKey: prev.playground?.apiKey || 'rtc_demo_playground_2024',
+                          ...prev.playground,
+                          enabled: prev.playground?.enabled ?? false,
+                          apiKey: prev.playground?.apiKey ?? 'rtc_demo_playground_2024',
                           rateLimit: {
+                            ...prev.playground?.rateLimit,
                             requestsPerDay: value,
-                            requestsPerMinute: prev.playground?.rateLimit?.requestsPerMinute || 10,
+                            requestsPerMinute: prev.playground?.rateLimit?.requestsPerMinute ?? 10,
                           },
-                          allowedApis: prev.playground?.allowedApis || ['cep', 'cnpj', 'geo'],
+                          allowedApis: prev.playground?.allowedApis ?? ['cep', 'cnpj', 'geo'],
                         },
                       }));
                     }}
@@ -790,13 +792,15 @@ export default function AdminSettingsPage() {
                         setSettings(prev => ({
                           ...prev,
                           playground: {
-                            enabled: prev.playground?.enabled || false,
-                            apiKey: prev.playground?.apiKey || 'rtc_demo_playground_2024',
+                            ...prev.playground,
+                            enabled: prev.playground?.enabled ?? false,
+                            apiKey: prev.playground?.apiKey ?? 'rtc_demo_playground_2024',
                             rateLimit: {
+                              ...prev.playground?.rateLimit,
                               requestsPerDay: 100,
-                              requestsPerMinute: prev.playground?.rateLimit?.requestsPerMinute || 10,
+                              requestsPerMinute: prev.playground?.rateLimit?.requestsPerMinute ?? 10,
                             },
-                            allowedApis: prev.playground?.allowedApis || ['cep', 'cnpj', 'geo'],
+                            allowedApis: prev.playground?.allowedApis ?? ['cep', 'cnpj', 'geo'],
                           },
                         }));
                       }
@@ -823,13 +827,15 @@ export default function AdminSettingsPage() {
                       setSettings(prev => ({
                         ...prev,
                         playground: {
-                          enabled: prev.playground?.enabled || false,
-                          apiKey: prev.playground?.apiKey || 'rtc_demo_playground_2024',
+                          ...prev.playground,
+                          enabled: prev.playground?.enabled ?? false,
+                          apiKey: prev.playground?.apiKey ?? 'rtc_demo_playground_2024',
                           rateLimit: {
-                            requestsPerDay: prev.playground?.rateLimit?.requestsPerDay || 100,
+                            ...prev.playground?.rateLimit,
+                            requestsPerDay: prev.playground?.rateLimit?.requestsPerDay ?? 100,
                             requestsPerMinute: value,
                           },
-                          allowedApis: prev.playground?.allowedApis || ['cep', 'cnpj', 'geo'],
+                          allowedApis: prev.playground?.allowedApis ?? ['cep', 'cnpj', 'geo'],
                         },
                       }));
                     }}
@@ -838,13 +844,15 @@ export default function AdminSettingsPage() {
                         setSettings(prev => ({
                           ...prev,
                           playground: {
-                            enabled: prev.playground?.enabled || false,
-                            apiKey: prev.playground?.apiKey || 'rtc_demo_playground_2024',
+                            ...prev.playground,
+                            enabled: prev.playground?.enabled ?? false,
+                            apiKey: prev.playground?.apiKey ?? 'rtc_demo_playground_2024',
                             rateLimit: {
-                              requestsPerDay: prev.playground?.rateLimit?.requestsPerDay || 100,
+                              ...prev.playground?.rateLimit,
+                              requestsPerDay: prev.playground?.rateLimit?.requestsPerDay ?? 100,
                               requestsPerMinute: 10,
                             },
-                            allowedApis: prev.playground?.allowedApis || ['cep', 'cnpj', 'geo'],
+                            allowedApis: prev.playground?.allowedApis ?? ['cep', 'cnpj', 'geo'],
                           },
                         }));
                       }
