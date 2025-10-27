@@ -9,14 +9,14 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Copy, Play, Sparkles, ArrowRight, AlertTriangle, Home } from 'lucide-react';
+import { Copy, Play, Sparkles, ArrowRight, AlertTriangle, Home, Shield } from 'lucide-react';
 import { toast } from 'sonner';
+import { useBrowserFingerprint } from './components/browser-fingerprint';
 
 export default function PlaygroundPage() {
   const [isPlaygroundEnabled, setIsPlaygroundEnabled] = useState(true);
   const [isCheckingStatus, setIsCheckingStatus] = useState(true);
   const [demoApiKey, setDemoApiKey] = useState('rtc_demo_playground_2024'); // Default, será atualizado
-  const [allowedApis, setAllowedApis] = useState<string[]>(['cep', 'cnpj', 'geo']); // ✅ APIs permitidas
   const [selectedAPI, setSelectedAPI] = useState<'cep' | 'cnpj' | 'geo'>('cep');
   const [cepInput, setCepInput] = useState('01310-100');
   const [cnpjInput, setCnpjInput] = useState('00000000000191');
@@ -24,6 +24,10 @@ export default function PlaygroundPage() {
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<any>(null);
   const [responseTime, setResponseTime] = useState<number | null>(null);
+  const [allowedApis, setAllowedApis] = useState<string[]>([]);
+
+  // 🔒 Browser fingerprinting para segurança
+  const { fingerprint, isGenerating: isGeneratingFingerprint, getFingerprintHash } = useBrowserFingerprint();
 
   const apiBaseURL = process.env.NEXT_PUBLIC_API_URL || 'https://api-core.theretech.com.br';
 
@@ -51,19 +55,6 @@ export default function PlaygroundPage() {
         console.log('✅ API Key do playground carregada:', data.apiKey);
       }
       
-      // ✅ Atualizar APIs permitidas do backend
-      if (data.allowedApis && Array.isArray(data.allowedApis)) {
-        setAllowedApis(data.allowedApis);
-        console.log('✅ APIs permitidas:', data.allowedApis);
-        
-        // ✅ Selecionar automaticamente a primeira API disponível
-        if (data.allowedApis.length > 0) {
-          const firstAvailableAPI = data.allowedApis[0] as 'cep' | 'cnpj' | 'geo';
-          setSelectedAPI(firstAvailableAPI);
-          console.log('✅ API selecionada automaticamente:', firstAvailableAPI);
-        }
-      }
-      
       // 🔍 Debug: log completo do status
       console.log('🎮 Playground status:', {
         enabled: data.enabled,
@@ -80,6 +71,17 @@ export default function PlaygroundPage() {
   };
 
   const handleTest = async () => {
+    if (!demoApiKey) {
+      toast.error('API Key não encontrada');
+      return;
+    }
+
+    // 🔒 Verificar se fingerprint está pronto
+    if (isGeneratingFingerprint) {
+      toast.error('Aguarde a verificação de segurança...');
+      return;
+    }
+
     setLoading(true);
     setResponse(null);
     setResponseTime(null);
@@ -89,18 +91,30 @@ export default function PlaygroundPage() {
     try {
       let url = '';
       if (selectedAPI === 'cep') {
-        url = `${apiBaseURL}/cep/${cepInput.replace(/\D/g, '')}`;
+        url = `${apiBaseURL}/public/cep/${cepInput.replace(/\D/g, '')}`;
       } else if (selectedAPI === 'cnpj') {
-        url = `${apiBaseURL}/cnpj/${cnpjInput.replace(/\D/g, '')}`;
+        url = `${apiBaseURL}/public/cnpj/${cnpjInput.replace(/\D/g, '')}`;
       } else {
-        url = `${apiBaseURL}/geo/ufs/${ufInput}`;
+        url = `${apiBaseURL}/public/geo/ufs/${ufInput}`;
+      }
+
+      // 🔒 Headers de segurança
+      const headers: Record<string, string> = {
+        'X-API-Key': demoApiKey,
+        'Content-Type': 'application/json',
+      };
+
+      // Adicionar fingerprint se disponível
+      if (fingerprint) {
+        headers['X-Browser-Fingerprint'] = getFingerprintHash();
+        headers['X-Client-IP'] = 'auto'; // Será extraído pelo backend
       }
 
       const res = await fetch(url, {
-        headers: {
-          'X-API-Key': demoApiKey // ✅ Usa API Key do backend
-        }
+        method: 'GET',
+        headers,
       });
+      
       const data = await res.json();
       
       const endTime = performance.now();
@@ -240,43 +254,6 @@ curl -X GET '${apiBaseURL}${endpoint}' \\
     );
   }
 
-  // ✅ Se não há APIs permitidas, mostrar mensagem
-  if (isPlaygroundEnabled && allowedApis.length === 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
-        <Card className="max-w-md w-full border-yellow-200 shadow-lg">
-          <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="p-4 bg-yellow-100 rounded-full">
-                <AlertTriangle className="w-12 h-12 text-yellow-600" />
-              </div>
-            </div>
-            <CardTitle className="text-2xl mb-2">Playground sem APIs Configuradas</CardTitle>
-            <CardDescription>
-              O playground está habilitado, mas nenhuma API foi configurada para uso público.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="p-4 bg-slate-50 rounded-lg">
-              <p className="text-sm text-slate-700 mb-2">
-                <strong>Para administradores:</strong>
-              </p>
-              <p className="text-sm text-slate-600">
-                Acesse <strong>/admin/settings</strong> e selecione quais APIs devem estar disponíveis no playground público (CEP, CNPJ, Geografia).
-              </p>
-            </div>
-            <Link href="/">
-              <Button className="w-full" variant="outline">
-                <Home className="w-4 h-4 mr-2" />
-                Voltar para Home
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4">
       <div className="container max-w-7xl mx-auto">
@@ -292,9 +269,17 @@ curl -X GET '${apiBaseURL}${endpoint}' \\
           <p className="text-xl text-slate-600 mb-2">
             Teste nossas APIs <strong>sem cadastro</strong>, diretamente no navegador
           </p>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 mb-3">
             ⚡ Respostas em ~160ms com cache Redis • 🔄 3 fontes com fallback • 🎁 Totalmente gratuito
           </p>
+          
+          {/* 🔒 Indicador de Segurança */}
+          <div className="flex items-center justify-center gap-2 text-xs text-slate-500">
+            <Shield className="w-4 h-4" />
+            <span>
+              {isGeneratingFingerprint ? 'Verificando segurança...' : 'Protegido por rate limiting e fingerprinting'}
+            </span>
+          </div>
         </div>
 
         {/* API Selector */}
@@ -304,61 +289,46 @@ curl -X GET '${apiBaseURL}${endpoint}' \\
             <CardDescription>Selecione qual endpoint você quer experimentar</CardDescription>
           </CardHeader>
           <CardContent>
-            {allowedApis.length === 0 ? (
-              <Alert>
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  Nenhuma API disponível no playground. Configure em /admin/settings.
-                </AlertDescription>
-              </Alert>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {allowedApis.includes('cep') && (
-                  <button
-                    onClick={() => setSelectedAPI('cep')}
-                    className={`p-6 rounded-lg border-2 transition-all ${
-                      selectedAPI === 'cep'
-                        ? 'border-indigo-600 bg-indigo-50'
-                        : 'border-slate-200 hover:border-slate-300'
-                    }`}
-                  >
-                    <div className="text-4xl mb-2">📮</div>
-                    <h3 className="font-semibold text-lg mb-1">CEP</h3>
-                    <p className="text-sm text-slate-600">Consulta de endereços</p>
-                  </button>
-                )}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <button
+                onClick={() => setSelectedAPI('cep')}
+                className={`p-6 rounded-lg border-2 transition-all ${
+                  selectedAPI === 'cep'
+                    ? 'border-indigo-600 bg-indigo-50'
+                    : 'border-slate-200 hover:border-slate-300'
+                }`}
+              >
+                <div className="text-4xl mb-2">📮</div>
+                <h3 className="font-semibold text-lg mb-1">CEP</h3>
+                <p className="text-sm text-slate-600">Consulta de endereços</p>
+              </button>
 
-                {allowedApis.includes('cnpj') && (
-                  <button
-                    onClick={() => setSelectedAPI('cnpj')}
-                    className={`p-6 rounded-lg border-2 transition-all ${
-                      selectedAPI === 'cnpj'
-                        ? 'border-indigo-600 bg-indigo-50'
-                        : 'border-slate-200 hover:border-slate-300'
-                    }`}
-                  >
-                    <div className="text-4xl mb-2">🏢</div>
-                    <h3 className="font-semibold text-lg mb-1">CNPJ</h3>
-                    <p className="text-sm text-slate-600">Dados de empresas</p>
-                  </button>
-                )}
+              <button
+                onClick={() => setSelectedAPI('cnpj')}
+                className={`p-6 rounded-lg border-2 transition-all ${
+                  selectedAPI === 'cnpj'
+                    ? 'border-indigo-600 bg-indigo-50'
+                    : 'border-slate-200 hover:border-slate-300'
+                }`}
+              >
+                <div className="text-4xl mb-2">🏢</div>
+                <h3 className="font-semibold text-lg mb-1">CNPJ</h3>
+                <p className="text-sm text-slate-600">Dados de empresas</p>
+              </button>
 
-                {allowedApis.includes('geo') && (
-                  <button
-                    onClick={() => setSelectedAPI('geo')}
-                    className={`p-6 rounded-lg border-2 transition-all ${
-                      selectedAPI === 'geo'
-                        ? 'border-indigo-600 bg-indigo-50'
-                        : 'border-slate-200 hover:border-slate-300'
-                    }`}
-                  >
-                    <div className="text-4xl mb-2">🗺️</div>
-                    <h3 className="font-semibold text-lg mb-1">Geografia</h3>
-                    <p className="text-sm text-slate-600">Estados e municípios</p>
-                  </button>
-                )}
-              </div>
-            )}
+              <button
+                onClick={() => setSelectedAPI('geo')}
+                className={`p-6 rounded-lg border-2 transition-all ${
+                  selectedAPI === 'geo'
+                    ? 'border-indigo-600 bg-indigo-50'
+                    : 'border-slate-200 hover:border-slate-300'
+                }`}
+              >
+                <div className="text-4xl mb-2">🗺️</div>
+                <h3 className="font-semibold text-lg mb-1">Geografia</h3>
+                <p className="text-sm text-slate-600">Estados e municípios</p>
+              </button>
+            </div>
           </CardContent>
         </Card>
 

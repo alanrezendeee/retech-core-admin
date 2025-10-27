@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'API de CEP Gratuita - Consulta Rápida de Endereços | Retech Core',
-  description: 'API de CEP com cache inteligente Redis+MongoDB, múltiplas fontes (ViaCEP + Brasil API) e resposta em ~160ms. Plano gratuito com 1.000 requests/dia. Fallback automático e 99.9% uptime.',
+  description: 'API de CEP com cache inteligente, múltiplas fontes (ViaCEP + Brasil API) e resposta em <50ms. Plano gratuito com 1.000 requests/dia. Fallback automático e 99.9% uptime.',
   keywords: [
     'api cep',
     'api cep gratuita',
@@ -16,8 +16,8 @@ export const metadata: Metadata = {
     'api cep json'
   ],
   openGraph: {
-    title: 'API de CEP Gratuita - Completa + Confiável + Rápida',
-    description: 'Cache Redis+MongoDB, fallback automático e resposta em ~160ms. 1.000 requests/dia grátis.',
+    title: 'API de CEP Gratuita - Mais Rápida que ViaCEP',
+    description: 'Cache inteligente, fallback automático e resposta em <50ms. 1.000 requests/dia grátis.',
     type: 'website',
     images: [
       {

@@ -220,38 +220,19 @@ export default function AdminAnalyticsPage() {
                   {usage.byDay.map((item: any, index: number) => {
                     const maxCount = Math.max(...usage.byDay.map((d: any) => d.count));
                     const percentage = (item.count / maxCount) * 100;
-                    
-                    // ✅ Verificar se é hoje comparando no timezone local (Brasil)
-                    const now = new Date();
-                    const todayLocal = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-                    const isToday = item._id === todayLocal;
-                    
-                    // ✅ Formatar data de forma amigável
-                    const date = new Date(item._id + 'T00:00:00');
-                    const formattedDate = date.toLocaleDateString('pt-BR', {
-                      day: '2-digit',
-                      month: 'short'
-                    });
-                    
-                    // ✅ Se for ontem ou hoje, mostrar relativo
-                    const yesterday = new Date(now);
-                    yesterday.setDate(yesterday.getDate() - 1);
-                    const yesterdayLocal = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
-                    const isYesterday = item._id === yesterdayLocal;
-                    
-                    const displayDate = isToday ? 'Hoje' : isYesterday ? 'Ontem' : formattedDate;
+                    const isToday = index === 0;
 
                     return (
                       <div key={item._id} className="space-y-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <span className={`text-sm font-medium ${isToday ? 'text-blue-700' : 'text-slate-700'}`}>
-                              {displayDate}
+                              {item._id}
                             </span>
-                            {!isToday && !isYesterday && (
-                              <span className="text-xs text-slate-500">
-                                ({item._id})
-                              </span>
+                            {isToday && (
+                              <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                                Hoje
+                              </Badge>
                             )}
                           </div>
                           <span className="text-sm font-semibold text-slate-900">

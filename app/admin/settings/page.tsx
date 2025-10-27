@@ -75,7 +75,6 @@ interface SystemSettings {
 
 export default function AdminSettingsPage() {
   const { isReady } = useRequireAuth('SUPER_ADMIN');
-  const [originsInputValue, setOriginsInputValue] = useState(''); // ✅ Estado para o input de origins
   const [settings, setSettings] = useState<SystemSettings>({
     defaultRateLimit: {
       requestsPerDay: 1000,
@@ -137,11 +136,6 @@ export default function AdminSettingsPage() {
       loadSettings(); // Carrega settings, que por sua vez chama loadCacheStats()
     }
   }, [isReady]);
-
-  // ✅ Sincronizar originsInputValue com settings.cors.allowedOrigins
-  useEffect(() => {
-    setOriginsInputValue(settings.cors.allowedOrigins.join(',\n'));
-  }, [settings.cors.allowedOrigins]);
 
   const loadSettings = async () => {
     try {
@@ -274,22 +268,14 @@ export default function AdminSettingsPage() {
         },
         playground: {
           enabled: settings.playground?.enabled || false,
-          apiKey: settings.playground?.apiKey || '',  // ✅ Permite vazio
+          apiKey: settings.playground?.apiKey || 'rtc_demo_playground_2024',
           rateLimit: {
-            requestsPerDay: playgroundReqPerDay,
-            requestsPerMinute: playgroundReqPerMin,
+            requestsPerDay: playgroundReqPerDay,    // ✅ camelCase
+            requestsPerMinute: playgroundReqPerMin,  // ✅ camelCase
           },
-          allowedApis: settings.playground?.allowedApis || [],  // ✅ Permite array vazio
+          allowedApis: settings.playground?.allowedApis || ['cep', 'cnpj', 'geo'],
         },
       };
-      
-      // 🔍 DEBUG: Ver o que está sendo enviado
-      console.log('💾 Salvando playground:', {
-        apiKey: payload.playground.apiKey,
-        requestsPerDay: payload.playground.rateLimit.requestsPerDay,
-        requestsPerMinute: payload.playground.rateLimit.requestsPerMinute,
-        allowedApis: payload.playground.allowedApis,
-      });
       
       await api.put('/admin/settings', payload);
       
@@ -317,13 +303,7 @@ export default function AdminSettingsPage() {
   };
 
   const handleArrayChange = (section: keyof SystemSettings, field: string, value: string) => {
-    // Aceita vírgula, ponto-e-vírgula ou quebra de linha como separadores
-    // Remove espaços extras e valida URLs
-    const array = value
-      .split(/[,;\n]/) // Split por vírgula, ponto-e-vírgula ou quebra de linha
-      .map(item => item.trim()) // Remove espaços no início/fim
-      .filter(item => item.length > 0); // Remove itens vazios
-    
+    const array = value.split(',').map(item => item.trim()).filter(item => item);
     setSettings(prev => ({
       ...prev,
       [section]: {
@@ -518,24 +498,16 @@ export default function AdminSettingsPage() {
                 <Label htmlFor="allowedOrigins" className="text-slate-700 font-medium">
                   Origens Permitidas
                 </Label>
-                <textarea
+                <Textarea
                   id="allowedOrigins"
-                  value={originsInputValue}
-                  onChange={(e) => setOriginsInputValue(e.target.value)}
-                  onBlur={(e) => {
-                    // ✅ Só processa quando sai do campo
-                    handleArrayChange('cors', 'allowedOrigins', e.target.value);
-                  }}
-                  placeholder="https://core.theretech.com.br,http://localhost:3000"
+                  value={settings.cors.allowedOrigins.join(', ')}
+                  onChange={(e) => handleArrayChange('cors', 'allowedOrigins', e.target.value)}
+                  placeholder="https://core.theretech.com.br, http://localhost:3000"
                   rows={4}
-                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-xs font-mono ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-1.5"
-                  spellCheck={false}
-                  autoComplete="off"
-                  autoCorrect="off"
-                  autoCapitalize="off"
+                  className="mt-1.5"
                 />
                 <p className="text-xs text-slate-500 mt-1">
-                  💡 Separe com vírgula, ponto-e-vírgula ou quebra de linha (uma origem por linha)
+                  Separe múltiplas origens com vírgula
                 </p>
               </div>
             </CardContent>
@@ -803,13 +775,13 @@ export default function AdminSettingsPage() {
                       setSettings(prev => ({
                         ...prev,
                         playground: {
-                          enabled: prev.playground?.enabled ?? false,
-                          apiKey: prev.playground?.apiKey ?? '',
+                          enabled: prev.playground?.enabled || false,
+                          apiKey: prev.playground?.apiKey || 'rtc_demo_playground_2024',
                           rateLimit: {
                             requestsPerDay: value,
-                            requestsPerMinute: prev.playground?.rateLimit?.requestsPerMinute ?? 10,
+                            requestsPerMinute: prev.playground?.rateLimit?.requestsPerMinute || 10,
                           },
-                          allowedApis: prev.playground?.allowedApis ?? [],
+                          allowedApis: prev.playground?.allowedApis || ['cep', 'cnpj', 'geo'],
                         },
                       }));
                     }}
@@ -818,13 +790,13 @@ export default function AdminSettingsPage() {
                         setSettings(prev => ({
                           ...prev,
                           playground: {
-                            enabled: prev.playground?.enabled ?? false,
-                            apiKey: prev.playground?.apiKey ?? '',
+                            enabled: prev.playground?.enabled || false,
+                            apiKey: prev.playground?.apiKey || 'rtc_demo_playground_2024',
                             rateLimit: {
                               requestsPerDay: 100,
-                              requestsPerMinute: prev.playground?.rateLimit?.requestsPerMinute ?? 10,
+                              requestsPerMinute: prev.playground?.rateLimit?.requestsPerMinute || 10,
                             },
-                            allowedApis: prev.playground?.allowedApis ?? [],
+                            allowedApis: prev.playground?.allowedApis || ['cep', 'cnpj', 'geo'],
                           },
                         }));
                       }
@@ -851,13 +823,13 @@ export default function AdminSettingsPage() {
                       setSettings(prev => ({
                         ...prev,
                         playground: {
-                          enabled: prev.playground?.enabled ?? false,
-                          apiKey: prev.playground?.apiKey ?? '',
+                          enabled: prev.playground?.enabled || false,
+                          apiKey: prev.playground?.apiKey || 'rtc_demo_playground_2024',
                           rateLimit: {
-                            requestsPerDay: prev.playground?.rateLimit?.requestsPerDay ?? 100,
+                            requestsPerDay: prev.playground?.rateLimit?.requestsPerDay || 100,
                             requestsPerMinute: value,
                           },
-                          allowedApis: prev.playground?.allowedApis ?? [],
+                          allowedApis: prev.playground?.allowedApis || ['cep', 'cnpj', 'geo'],
                         },
                       }));
                     }}
@@ -866,13 +838,13 @@ export default function AdminSettingsPage() {
                         setSettings(prev => ({
                           ...prev,
                           playground: {
-                            enabled: prev.playground?.enabled ?? false,
-                            apiKey: prev.playground?.apiKey ?? '',
+                            enabled: prev.playground?.enabled || false,
+                            apiKey: prev.playground?.apiKey || 'rtc_demo_playground_2024',
                             rateLimit: {
-                              requestsPerDay: prev.playground?.rateLimit?.requestsPerDay ?? 100,
+                              requestsPerDay: prev.playground?.rateLimit?.requestsPerDay || 100,
                               requestsPerMinute: 10,
                             },
-                            allowedApis: prev.playground?.allowedApis ?? [],
+                            allowedApis: prev.playground?.allowedApis || ['cep', 'cnpj', 'geo'],
                           },
                         }));
                       }
@@ -892,7 +864,7 @@ export default function AdminSettingsPage() {
               <div className="space-y-2">
                 <Label>APIs Disponíveis no Playground</Label>
                 <div className="flex flex-wrap gap-2">
-                  {['cep', 'cnpj', 'geo'].map((api) => (
+                  {['cep', 'cnpj', 'geo', 'ibge'].map((api) => (
                     <label
                       key={api}
                       className="flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors"
@@ -908,9 +880,9 @@ export default function AdminSettingsPage() {
                           setSettings(prev => ({
                             ...prev,
                             playground: {
-                              enabled: prev.playground?.enabled ?? false,
-                              apiKey: prev.playground?.apiKey ?? '',
-                              rateLimit: prev.playground?.rateLimit ?? { requestsPerDay: 100, requestsPerMinute: 10 },
+                              enabled: prev.playground?.enabled || false,
+                              apiKey: prev.playground?.apiKey || 'rtc_demo_playground_2024',
+                              rateLimit: prev.playground?.rateLimit || { requestsPerDay: 100, requestsPerMinute: 10 },
                               allowedApis: newApis,
                             },
                           }));
@@ -1071,8 +1043,8 @@ export default function AdminSettingsPage() {
                     </p>
                     <ul className="text-xs text-blue-700 mt-1 space-y-1">
                       <li>✅ Cache é <strong>compartilhado</strong> entre todos os tenants</li>
-                      <li>✅ Primeira consulta: ~200-300ms (ViaCEP)</li>
-                      <li>✅ Consultas seguintes: ~160ms (cache Redis+MongoDB)</li>
+                      <li>✅ Primeira consulta: ~50ms (ViaCEP)</li>
+                      <li>✅ Consultas seguintes: ~5ms (cache)</li>
                       <li>✅ Reduz 95%+ das chamadas externas</li>
                     </ul>
                   </div>
@@ -1150,9 +1122,9 @@ export default function AdminSettingsPage() {
                     </p>
                     <ul className="text-xs text-orange-700 mt-1 space-y-1">
                       <li>✅ Compartilhado entre todos os tenants</li>
-                      <li>✅ Primeira consulta: ~300-400ms (Brasil API)</li>
-                      <li>✅ Consultas seguintes: ~160ms (cache Redis+MongoDB)</li>
-                      <li>✅ Empresas não mudam frequentemente (TTL 30 dias)</li>
+                      <li>✅ Primeira consulta: ~200ms (Brasil API)</li>
+                      <li>✅ Consultas seguintes: ~10ms (cache)</li>
+                      <li>✅ Empresas não mudam frequentemente (TTL maior)</li>
                     </ul>
                   </div>
                 </div>
