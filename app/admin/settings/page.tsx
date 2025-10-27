@@ -283,6 +283,14 @@ export default function AdminSettingsPage() {
         },
       };
       
+      // 🔍 DEBUG: Ver o que está sendo enviado
+      console.log('💾 Salvando playground:', {
+        apiKey: payload.playground.apiKey,
+        requestsPerDay: payload.playground.rateLimit.requestsPerDay,
+        requestsPerMinute: payload.playground.rateLimit.requestsPerMinute,
+        allowedApis: payload.playground.allowedApis,
+      });
+      
       await api.put('/admin/settings', payload);
       
       toast.success('Configurações salvas com sucesso!');

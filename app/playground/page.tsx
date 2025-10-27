@@ -16,6 +16,7 @@ export default function PlaygroundPage() {
   const [isPlaygroundEnabled, setIsPlaygroundEnabled] = useState(true);
   const [isCheckingStatus, setIsCheckingStatus] = useState(true);
   const [demoApiKey, setDemoApiKey] = useState('rtc_demo_playground_2024'); // Default, será atualizado
+  const [allowedApis, setAllowedApis] = useState<string[]>(['cep', 'cnpj', 'geo']); // ✅ APIs permitidas
   const [selectedAPI, setSelectedAPI] = useState<'cep' | 'cnpj' | 'geo'>('cep');
   const [cepInput, setCepInput] = useState('01310-100');
   const [cnpjInput, setCnpjInput] = useState('00000000000191');
@@ -48,6 +49,12 @@ export default function PlaygroundPage() {
       if (data.apiKey) {
         setDemoApiKey(data.apiKey);
         console.log('✅ API Key do playground carregada:', data.apiKey);
+      }
+      
+      // ✅ Atualizar APIs permitidas do backend
+      if (data.allowedApis && Array.isArray(data.allowedApis)) {
+        setAllowedApis(data.allowedApis);
+        console.log('✅ APIs permitidas:', data.allowedApis);
       }
       
       // 🔍 Debug: log completo do status
@@ -253,46 +260,61 @@ curl -X GET '${apiBaseURL}${endpoint}' \\
             <CardDescription>Selecione qual endpoint você quer experimentar</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <button
-                onClick={() => setSelectedAPI('cep')}
-                className={`p-6 rounded-lg border-2 transition-all ${
-                  selectedAPI === 'cep'
-                    ? 'border-indigo-600 bg-indigo-50'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
-              >
-                <div className="text-4xl mb-2">📮</div>
-                <h3 className="font-semibold text-lg mb-1">CEP</h3>
-                <p className="text-sm text-slate-600">Consulta de endereços</p>
-              </button>
+            {allowedApis.length === 0 ? (
+              <Alert>
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  Nenhuma API disponível no playground. Configure em /admin/settings.
+                </AlertDescription>
+              </Alert>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {allowedApis.includes('cep') && (
+                  <button
+                    onClick={() => setSelectedAPI('cep')}
+                    className={`p-6 rounded-lg border-2 transition-all ${
+                      selectedAPI === 'cep'
+                        ? 'border-indigo-600 bg-indigo-50'
+                        : 'border-slate-200 hover:border-slate-300'
+                    }`}
+                  >
+                    <div className="text-4xl mb-2">📮</div>
+                    <h3 className="font-semibold text-lg mb-1">CEP</h3>
+                    <p className="text-sm text-slate-600">Consulta de endereços</p>
+                  </button>
+                )}
 
-              <button
-                onClick={() => setSelectedAPI('cnpj')}
-                className={`p-6 rounded-lg border-2 transition-all ${
-                  selectedAPI === 'cnpj'
-                    ? 'border-indigo-600 bg-indigo-50'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
-              >
-                <div className="text-4xl mb-2">🏢</div>
-                <h3 className="font-semibold text-lg mb-1">CNPJ</h3>
-                <p className="text-sm text-slate-600">Dados de empresas</p>
-              </button>
+                {allowedApis.includes('cnpj') && (
+                  <button
+                    onClick={() => setSelectedAPI('cnpj')}
+                    className={`p-6 rounded-lg border-2 transition-all ${
+                      selectedAPI === 'cnpj'
+                        ? 'border-indigo-600 bg-indigo-50'
+                        : 'border-slate-200 hover:border-slate-300'
+                    }`}
+                  >
+                    <div className="text-4xl mb-2">🏢</div>
+                    <h3 className="font-semibold text-lg mb-1">CNPJ</h3>
+                    <p className="text-sm text-slate-600">Dados de empresas</p>
+                  </button>
+                )}
 
-              <button
-                onClick={() => setSelectedAPI('geo')}
-                className={`p-6 rounded-lg border-2 transition-all ${
-                  selectedAPI === 'geo'
-                    ? 'border-indigo-600 bg-indigo-50'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
-              >
-                <div className="text-4xl mb-2">🗺️</div>
-                <h3 className="font-semibold text-lg mb-1">Geografia</h3>
-                <p className="text-sm text-slate-600">Estados e municípios</p>
-              </button>
-            </div>
+                {allowedApis.includes('geo') && (
+                  <button
+                    onClick={() => setSelectedAPI('geo')}
+                    className={`p-6 rounded-lg border-2 transition-all ${
+                      selectedAPI === 'geo'
+                        ? 'border-indigo-600 bg-indigo-50'
+                        : 'border-slate-200 hover:border-slate-300'
+                    }`}
+                  >
+                    <div className="text-4xl mb-2">🗺️</div>
+                    <h3 className="font-semibold text-lg mb-1">Geografia</h3>
+                    <p className="text-sm text-slate-600">Estados e municípios</p>
+                  </button>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 
