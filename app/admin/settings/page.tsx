@@ -150,6 +150,14 @@ export default function AdminSettingsPage() {
           requestsPerDay: data.defaultRateLimit?.RequestsPerDay || data.defaultRateLimit?.requestsPerDay || 1000,
           requestsPerMinute: data.defaultRateLimit?.RequestsPerMinute || data.defaultRateLimit?.requestsPerMinute || 60,
         },
+        // ✅ Normalizar playground.rateLimit também
+        playground: data.playground ? {
+          ...data.playground,
+          rateLimit: {
+            requestsPerDay: data.playground.rateLimit?.RequestsPerDay || data.playground.rateLimit?.requestsPerDay || 100,
+            requestsPerMinute: data.playground.rateLimit?.RequestsPerMinute || data.playground.rateLimit?.requestsPerMinute || 10,
+          },
+        } : undefined,
       };
       
       setSettings(normalized);
