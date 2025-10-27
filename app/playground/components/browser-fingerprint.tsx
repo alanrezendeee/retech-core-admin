@@ -31,7 +31,8 @@ export function useBrowserFingerprint() {
     try {
       setIsGenerating(true);
 
-      const fp: BrowserFingerprint = {
+      // ✅ Gerar fingerprint básico primeiro (rápido)
+      const basicFp: BrowserFingerprint = {
         userAgent: navigator.userAgent,
         language: navigator.language,
         platform: navigator.platform,
@@ -42,17 +43,44 @@ export function useBrowserFingerprint() {
         sessionStorage: testSessionStorage(),
         canvas: generateCanvasFingerprint(),
         webgl: generateWebGLFingerprint(),
-        audio: await generateAudioFingerprint(),
-        fonts: detectFonts(),
-        plugins: detectPlugins(),
+        audio: 'generating...', // Será gerado depois
+        fonts: [],
+        plugins: [],
         timestamp: Date.now(),
       };
 
-      setFingerprint(fp);
-      console.log('🔒 [BROWSER FINGERPRINT] Gerado:', fp);
+      // ✅ Liberar a UI imediatamente com fingerprint básico
+      setFingerprint(basicFp);
+      setIsGenerating(false);
+      console.log('🔒 [BROWSER FINGERPRINT] Básico gerado:', basicFp);
+
+      // ✅ Gerar partes pesadas em background (não bloqueia UI)
+      setTimeout(async () => {
+        try {
+          const audio = await Promise.race([
+            generateAudioFingerprint(),
+            new Promise<string>((resolve) => setTimeout(() => resolve('audio-timeout'), 2000))
+          ]);
+          
+          const fonts = detectFonts();
+          const plugins = detectPlugins();
+
+          const completeFp: BrowserFingerprint = {
+            ...basicFp,
+            audio,
+            fonts,
+            plugins,
+          };
+
+          setFingerprint(completeFp);
+          console.log('🔒 [BROWSER FINGERPRINT] Completo:', completeFp);
+        } catch (error) {
+          console.error('❌ [BROWSER FINGERPRINT] Erro nas partes pesadas:', error);
+        }
+      }, 100);
     } catch (error) {
       console.error('❌ [BROWSER FINGERPRINT] Erro:', error);
-    } finally {
+      // ✅ Mesmo com erro, libera a UI
       setIsGenerating(false);
     }
   };
