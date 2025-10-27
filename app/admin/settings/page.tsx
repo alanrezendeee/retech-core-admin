@@ -504,22 +504,21 @@ export default function AdminSettingsPage() {
                 <Label htmlFor="allowedOrigins" className="text-slate-700 font-medium">
                   Origens Permitidas
                 </Label>
-                <Textarea
+                <textarea
                   id="allowedOrigins"
                   value={settings.cors.allowedOrigins.join(',\n')}
                   onChange={(e) => handleArrayChange('cors', 'allowedOrigins', e.target.value)}
-                  onKeyDown={(e) => {
-                    // ✅ GARANTIR que vírgula seja aceita
-                    if (e.key === ',' || e.key === ';') {
-                      // Não prevenir - deixar digitar
-                      return;
-                    }
+                  onKeyPress={(e) => {
+                    // ✅ FORÇAR aceitação de vírgula e ponto-e-vírgula
+                    // Não bloquear nada
                   }}
                   placeholder="https://core.theretech.com.br,http://localhost:3000"
                   rows={4}
-                  className="mt-1.5 font-mono text-xs"
+                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-xs font-mono ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-1.5"
                   spellCheck={false}
                   autoComplete="off"
+                  autoCorrect="off"
+                  autoCapitalize="off"
                 />
                 <p className="text-xs text-slate-500 mt-1">
                   💡 Separe com vírgula, ponto-e-vírgula ou quebra de linha (uma origem por linha)
