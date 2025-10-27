@@ -341,13 +341,12 @@ export default function ConsultarCEPPage() {
             <Link href="/playground" className="text-indigo-600 hover:underline">API de CEP</Link> oferece:
           </p>
           <ul className="list-disc list-inside text-slate-600 space-y-2 mb-4">
-            <li>Respostas em menos de 50ms (com cache)</li>
+            <li>Cache em 3 camadas: Redis (~1ms), MongoDB (~10ms), API Externa (~160ms)</li>
             <li>Fallback automático entre ViaCEP e Brasil API</li>
             <li>1.000 requests gratuitos por dia</li>
             <li>Documentação completa com exemplos em JavaScript, Python e PHP</li>
             <li>Suporte para integração REST simples</li>
-          </ul>
-        </div>
+          </ul>        </div>
       </div>
     </div>
   );

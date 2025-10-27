@@ -549,7 +549,7 @@ curl -X GET '${apiBaseURL}${endpoint}' \\
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white/30">
-                <Link href="/painel/docs">
+                <Link href={process.env.NEXT_PUBLIC_DOCS_URL || 'https://api-core.theretech.com.br/docs'} target="_blank" rel="noopener noreferrer">
                   Ver Documentação
                 </Link>
               </Button>

@@ -90,8 +90,8 @@ echo "Logradouro: " . $data['logradouro'];
             API de CEP Gratuita
           </h1>
           <p className="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
-            Consulte endereços brasileiros com <strong>cache inteligente</strong>, 
-            múltiplas fontes e resposta em <strong>&lt;50ms</strong>
+            Consulte endereços brasileiros com <strong>cache inteligente em 3 camadas</strong>, 
+            múltiplas fontes e resposta de <strong>~1ms a ~160ms</strong>
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Button asChild size="lg" variant="secondary">
@@ -414,8 +414,8 @@ echo "Logradouro: " . $data['logradouro'];
                     Qual a diferença entre Retech Core e ViaCEP?
                   </AccordionTrigger>
                   <AccordionContent className="text-slate-600">
-                    Enquanto o ViaCEP é gratuito e sem limites, nossa API oferece <strong>cache inteligente</strong> 
-                    (respostas 20x mais rápidas), <strong>fallback automático</strong> (se o ViaCEP cair, usamos Brasil API), 
+                    Enquanto o ViaCEP é gratuito e sem limites, nossa API oferece <strong>cache inteligente em 3 camadas</strong> 
+                    (Redis L1, MongoDB L2, API Externa L3), <strong>fallback automático</strong> (se o ViaCEP cair, usamos Brasil API), 
                     <strong>dashboard de uso</strong>, e integração com outras APIs (CNPJ, CPF, Geografia) em uma única plataforma.
                   </AccordionContent>
                 </AccordionItem>

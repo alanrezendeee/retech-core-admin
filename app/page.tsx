@@ -58,7 +58,11 @@ export default function HomePage() {
             </div>
           </div>
           
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+          <div className="mb-4">
+            <p className="text-2xl md:text-3xl font-bold text-blue-400 mb-2">The Retech Core</p>
+          </div>
+          
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
             O Hub Definitivo de APIs Brasileiras
           </h1>
           <p className="text-xl md:text-2xl text-slate-300 mb-4 max-w-3xl mx-auto">
@@ -1221,7 +1225,7 @@ export default function HomePage() {
             </div>
 
             <div className="text-center mt-8">
-              <Link href="/painel/docs">
+              <Link href={process.env.NEXT_PUBLIC_DOCS_URL || 'https://api-core.theretech.com.br/docs'} target="_blank" rel="noopener noreferrer">
                 <Button variant="outline" size="lg" className="text-blue-600 border-blue-600 hover:bg-blue-50">
                   📚 Ver Documentação Completa
                 </Button>
@@ -1253,36 +1257,42 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <h3 className="text-white font-bold mb-4">Retech Core</h3>
+              <h3 className="text-white font-bold mb-4">The Retech Core</h3>
               <p className="text-sm">
-                APIs de dados geográficos do Brasil para desenvolvedores.
+                APIs de dados brasileiros de alta performance para desenvolvedores.
               </p>
             </div>
             <div>
               <h4 className="text-white font-semibold mb-4">Produto</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="/painel/docs" className="hover:text-white">Documentação</a></li>
-                <li><a href="/painel/pricing" className="hover:text-white">Preços</a></li>
-                <li><a href="/status" className="hover:text-white">Status</a></li>
+                <li><Link href={process.env.NEXT_PUBLIC_DOCS_URL || 'https://api-core.theretech.com.br/docs'} target="_blank" className="hover:text-white">Documentação</Link></li>
+                <li><Link href="/precos" className="hover:text-white">Preços</Link></li>
+                <li><Link href="/status" className="hover:text-white">Status</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-white font-semibold mb-4">Empresa</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="/sobre" className="hover:text-white">Sobre</a></li>
-                <li><a href="/contato" className="hover:text-white">Contato</a></li>
+                <li><Link href="/sobre" className="hover:text-white">Sobre</Link></li>
+                <li><Link href="/contato" className="hover:text-white">Contato</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-white font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="/termos" className="hover:text-white">Termos de Uso</a></li>
-                <li><a href="/privacidade" className="hover:text-white">Privacidade</a></li>
+                <li><Link href="/legal/termos" className="hover:text-white">Termos de Uso</Link></li>
+                <li><Link href="/legal/privacidade" className="hover:text-white">Privacidade</Link></li>
               </ul>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-slate-800 text-center text-sm">
-            <p>&copy; 2025 The Retech. Todos os direitos reservados.</p>
+          <div className="mt-8 pt-8 border-t border-slate-800 text-center text-sm space-y-2">
+            <p className="text-slate-500">
+              Criado por <strong className="text-white">Alan Rezende</strong>, CEO da The Retech
+            </p>
+            <p className="text-slate-500">
+              📍 Florianópolis, SC • 📱 WhatsApp: {contact?.whatsapp ? `+55 ${contact.whatsapp}` : '+55 48 99961-6679'}
+            </p>
+            <p className="mt-4">&copy; 2025 The Retech. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>
