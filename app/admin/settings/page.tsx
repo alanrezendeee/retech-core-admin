@@ -106,8 +106,8 @@ export default function AdminSettingsPage() {
       autoCleanup: true,
     },
     playground: {
-      enabled: true,
-      apiKey: 'rtc_demo_playground_2024',
+      enabled: false,
+      apiKey: '',
       rateLimit: {
         requestsPerDay: 100,
         requestsPerMinute: 10,
@@ -249,7 +249,7 @@ export default function AdminSettingsPage() {
           enabled: prev.playground?.enabled ?? false,
           apiKey: response.data.apiKey,
           rateLimit: prev.playground?.rateLimit ?? { requestsPerDay: 100, requestsPerMinute: 10 },
-          allowedApis: prev.playground?.allowedApis ?? ['cep', 'cnpj', 'geo'],
+          allowedApis: prev.playground?.allowedApis ?? [],
         },
       }));
       
@@ -278,7 +278,7 @@ export default function AdminSettingsPage() {
           enabled: prev.playground?.enabled ?? false,
           apiKey: response.data.newKey,
           rateLimit: prev.playground?.rateLimit ?? { requestsPerDay: 100, requestsPerMinute: 10 },
-          allowedApis: prev.playground?.allowedApis ?? ['cep', 'cnpj', 'geo'],
+          allowedApis: prev.playground?.allowedApis ?? [],
         },
       }));
       
@@ -336,12 +336,12 @@ export default function AdminSettingsPage() {
         },
         playground: {
           enabled: settings.playground?.enabled || false,
-          apiKey: settings.playground?.apiKey || 'rtc_demo_playground_2024',
+          apiKey: settings.playground?.apiKey || '',  // ✅ Permite vazio
           rateLimit: {
-            requestsPerDay: playgroundReqPerDay,    // ✅ camelCase
-            requestsPerMinute: playgroundReqPerMin,  // ✅ camelCase
+            requestsPerDay: playgroundReqPerDay,
+            requestsPerMinute: playgroundReqPerMin,
           },
-          allowedApis: settings.playground?.allowedApis || ['cep', 'cnpj', 'geo'],
+          allowedApis: settings.playground?.allowedApis || [],  // ✅ Permite vazio
         },
       };
       
@@ -821,7 +821,7 @@ export default function AdminSettingsPage() {
                     readOnly
                     className="font-mono text-sm flex-1"
                   />
-                  {!settings.playground?.apiKey || settings.playground.apiKey === 'rtc_demo_playground_2024' ? (
+                  {!settings.playground?.apiKey ? (
                     <Button
                       type="button"
                       variant="default"
@@ -858,7 +858,7 @@ export default function AdminSettingsPage() {
                   )}
                 </div>
                 <p className="text-xs text-slate-500">
-                  {!settings.playground?.apiKey || settings.playground.apiKey === 'rtc_demo_playground_2024' 
+                  {!settings.playground?.apiKey 
                     ? 'Gere uma API Key válida para o playground. Scopes baseados nas APIs selecionadas abaixo.'
                     : 'Rotacione a chave se houver abuso. A chave antiga será desativada.'}
                 </p>
@@ -884,13 +884,13 @@ export default function AdminSettingsPage() {
                         playground: {
                           ...prev.playground,
                           enabled: prev.playground?.enabled ?? false,
-                          apiKey: prev.playground?.apiKey ?? 'rtc_demo_playground_2024',
+                          apiKey: prev.playground?.apiKey ?? '',
                           rateLimit: {
                             ...prev.playground?.rateLimit,
                             requestsPerDay: value,
                             requestsPerMinute: prev.playground?.rateLimit?.requestsPerMinute ?? 10,
                           },
-                          allowedApis: prev.playground?.allowedApis ?? ['cep', 'cnpj', 'geo'],
+                          allowedApis: prev.playground?.allowedApis ?? [],
                         },
                       }));
                     }}
@@ -901,13 +901,13 @@ export default function AdminSettingsPage() {
                           playground: {
                             ...prev.playground,
                             enabled: prev.playground?.enabled ?? false,
-                            apiKey: prev.playground?.apiKey ?? 'rtc_demo_playground_2024',
+                            apiKey: prev.playground?.apiKey ?? '',
                             rateLimit: {
                               ...prev.playground?.rateLimit,
                               requestsPerDay: 100,
                               requestsPerMinute: prev.playground?.rateLimit?.requestsPerMinute ?? 10,
                             },
-                            allowedApis: prev.playground?.allowedApis ?? ['cep', 'cnpj', 'geo'],
+                            allowedApis: prev.playground?.allowedApis ?? [],
                           },
                         }));
                       }
@@ -936,13 +936,13 @@ export default function AdminSettingsPage() {
                         playground: {
                           ...prev.playground,
                           enabled: prev.playground?.enabled ?? false,
-                          apiKey: prev.playground?.apiKey ?? 'rtc_demo_playground_2024',
+                          apiKey: prev.playground?.apiKey ?? '',
                           rateLimit: {
                             ...prev.playground?.rateLimit,
                             requestsPerDay: prev.playground?.rateLimit?.requestsPerDay ?? 100,
                             requestsPerMinute: value,
                           },
-                          allowedApis: prev.playground?.allowedApis ?? ['cep', 'cnpj', 'geo'],
+                          allowedApis: prev.playground?.allowedApis ?? [],
                         },
                       }));
                     }}
@@ -953,13 +953,13 @@ export default function AdminSettingsPage() {
                           playground: {
                             ...prev.playground,
                             enabled: prev.playground?.enabled ?? false,
-                            apiKey: prev.playground?.apiKey ?? 'rtc_demo_playground_2024',
+                            apiKey: prev.playground?.apiKey ?? '',
                             rateLimit: {
                               ...prev.playground?.rateLimit,
                               requestsPerDay: prev.playground?.rateLimit?.requestsPerDay ?? 100,
                               requestsPerMinute: 10,
                             },
-                            allowedApis: prev.playground?.allowedApis ?? ['cep', 'cnpj', 'geo'],
+                            allowedApis: prev.playground?.allowedApis ?? [],
                           },
                         }));
                       }
@@ -979,32 +979,107 @@ export default function AdminSettingsPage() {
               <div className="space-y-2">
                 <Label>APIs Disponíveis no Playground</Label>
                 <div className="flex flex-wrap gap-2">
-                  {['cep', 'cnpj', 'geo'].map((api) => (
+                  {['cep', 'cnpj', 'geo'].map((apiName) => (
                     <label
-                      key={api}
+                      key={apiName}
                       className="flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors"
                     >
                       <input
                         type="checkbox"
-                        checked={settings.playground?.allowedApis?.includes(api) || false}
-                        onChange={(e) => {
+                        checked={settings.playground?.allowedApis?.includes(apiName) || false}
+                        onChange={async (e) => {
                           const currentApis = settings.playground?.allowedApis || [];
                           const newApis = e.target.checked
-                            ? [...currentApis, api]
-                            : currentApis.filter(a => a !== api);
+                            ? [...currentApis, apiName]
+                            : currentApis.filter(a => a !== apiName);
+                          
+                          // ✅ Atualizar estado local
                           setSettings(prev => ({
                             ...prev,
                             playground: {
                               enabled: prev.playground?.enabled || false,
-                              apiKey: prev.playground?.apiKey || 'rtc_demo_playground_2024',
+                              apiKey: prev.playground?.apiKey || '',
                               rateLimit: prev.playground?.rateLimit || { requestsPerDay: 100, requestsPerMinute: 10 },
                               allowedApis: newApis,
                             },
                           }));
+
+                          // ✅ Se tem API Key válida, atualizar settings e rotacionar para atualizar scopes
+                          if (settings.playground?.apiKey && settings.playground.apiKey !== '') {
+                            try {
+                              setIsGeneratingKey(true);
+                              toast.info('Atualizando scopes da API Key...', { duration: 2000 });
+                              
+                              // 1. PRIMEIRO: Atualizar allowedApis no MongoDB
+                              // ✅ Enviar settings COMPLETO para não zerar outros campos
+                              const playgroundReqPerDay = settings.playground?.rateLimit?.requestsPerDay === '' 
+                                ? 100 
+                                : Number(settings.playground?.rateLimit?.requestsPerDay || 100);
+                              const playgroundReqPerMin = settings.playground?.rateLimit?.requestsPerMinute === '' 
+                                ? 10 
+                                : Number(settings.playground?.rateLimit?.requestsPerMinute || 10);
+                              
+                              const requestsPerDay = settings.defaultRateLimit.requestsPerDay === '' 
+                                ? 1000 
+                                : Number(settings.defaultRateLimit.requestsPerDay);
+                              const requestsPerMinute = settings.defaultRateLimit.requestsPerMinute === '' 
+                                ? 60 
+                                : Number(settings.defaultRateLimit.requestsPerMinute);
+                              
+                              const cepTtlDays = settings.cache?.cepTtlDays === '' ? 7 : Number(settings.cache?.cepTtlDays || 7);
+                              const cnpjTtlDays = settings.cache?.cnpjTtlDays === '' ? 30 : Number(settings.cache?.cnpjTtlDays || 30);
+                              
+                              await api.put('/admin/settings', {
+                                defaultRateLimit: {
+                                  RequestsPerDay: requestsPerDay,
+                                  RequestsPerMinute: requestsPerMinute,
+                                },
+                                cors: settings.cors,
+                                jwt: settings.jwt,
+                                api: settings.api,
+                                contact: settings.contact,
+                                cache: {
+                                  ...settings.cache,
+                                  cepTtlDays,
+                                  cnpjTtlDays,
+                                },
+                                playground: {
+                                  enabled: settings.playground?.enabled || false,
+                                  apiKey: settings.playground?.apiKey || '',
+                                  rateLimit: {
+                                    requestsPerDay: playgroundReqPerDay,
+                                    requestsPerMinute: playgroundReqPerMin,
+                                  },
+                                  allowedApis: newApis,  // ✅ Novos scopes
+                                },
+                              });
+                              
+                              // 2. DEPOIS: Rotacionar API Key (vai ler os novos allowedApis)
+                              const response = await api.post('/admin/playground/apikey/rotate');
+                              
+                              setSettings(prev => ({
+                                ...prev,
+                                playground: {
+                                  ...prev.playground,
+                                  enabled: prev.playground?.enabled ?? false,
+                                  apiKey: response.data.newKey,
+                                  rateLimit: prev.playground?.rateLimit ?? { requestsPerDay: 100, requestsPerMinute: 10 },
+                                  allowedApis: newApis,
+                                },
+                              }));
+                              
+                              toast.success(`Scopes atualizados: ${response.data.scopes.join(', ')}`);
+                            } catch (error) {
+                              console.error('Erro ao rotacionar API Key:', error);
+                              toast.error('Erro ao atualizar scopes');
+                            } finally {
+                              setIsGeneratingKey(false);
+                            }
+                          }
                         }}
                         className="rounded"
                       />
-                      <span className="text-sm font-mono uppercase">{api}</span>
+                      <span className="text-sm font-mono uppercase">{apiName}</span>
                     </label>
                   ))}
                 </div>
@@ -1068,11 +1143,22 @@ export default function AdminSettingsPage() {
                       </div>
                       
                       <div className="pt-2 border-t border-purple-200">
+                        <p className="font-medium text-purple-900">🛠️ Onde é Usada</p>
+                        <ul className="ml-4 space-y-0.5">
+                          <li>• <strong>/playground</strong> - API Playground interativo</li>
+                          <li>• <strong>/ferramentas/consultar-cep</strong> - Ferramenta de CEP</li>
+                          <li>• <strong>/ferramentas/validar-cnpj</strong> - Ferramenta de CNPJ</li>
+                          <li>• Todas as rotas <code>/public/*</code></li>
+                        </ul>
+                      </div>
+                      
+                      <div className="pt-2 border-t border-purple-200">
                         <p className="font-medium text-purple-900">✅ Gestão</p>
                         <ul className="ml-4 space-y-0.5">
-                          <li>• Trocar API Key se houver abuso</li>
-                          <li>• Desabilitar temporariamente se necessário</li>
-                          <li>• Ajustar limites conforme demanda</li>
+                          <li>• Gerar nova API Key com botão "Gerar Nova"</li>
+                          <li>• Rotacionar se houver abuso (desativa antiga)</li>
+                          <li>• Auto-rotaciona ao mudar APIs selecionadas</li>
+                          <li>• Scopes baseados nas APIs marcadas</li>
                         </ul>
                       </div>
                     </div>

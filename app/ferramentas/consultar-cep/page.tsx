@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,9 +29,32 @@ export default function ConsultarCEPPage() {
   const [data, setData] = useState<CEPData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [responseTime, setResponseTime] = useState<number | null>(null);
+  const [demoApiKey, setDemoApiKey] = useState('');
 
   const apiBaseURL = process.env.NEXT_PUBLIC_API_URL || 'https://api-core.theretech.com.br';
-  const DEMO_API_KEY = process.env.NEXT_PUBLIC_DEMO_API_KEY || 'rtc_demo_playground_2024';
+
+  // ✅ Buscar API Key demo do backend (mesma lógica do playground)
+  useEffect(() => {
+    const fetchPlaygroundConfig = async () => {
+      try {
+        const res = await fetch(`${apiBaseURL}/public/playground/status`, {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
+        const data = await res.json();
+        if (data.apiKey) {
+          setDemoApiKey(data.apiKey);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar API Key demo:', error);
+      }
+    };
+    fetchPlaygroundConfig();
+  }, []);
 
   const handleConsulta = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,9 +74,9 @@ export default function ConsultarCEPPage() {
     const startTime = performance.now();
 
     try {
-      const response = await fetch(`${apiBaseURL}/cep/${cleanCEP}`, {
+      const response = await fetch(`${apiBaseURL}/public/cep/${cleanCEP}`, {
         headers: {
-          'X-API-Key': DEMO_API_KEY
+          'X-API-Key': demoApiKey  // ✅ API Key do settings
         }
       });
       

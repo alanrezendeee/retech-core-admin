@@ -109,8 +109,8 @@ echo "Logradouro: " . $data['logradouro'];
           
           <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
             <div>
-              <div className="text-3xl font-bold">~5ms</div>
-              <div className="text-sm text-blue-200">com cache</div>
+              <div className="text-3xl font-bold">~160ms</div>
+              <div className="text-sm text-blue-200">média total</div>
             </div>
             <div>
               <div className="text-3xl font-bold">3 fontes</div>
@@ -138,7 +138,7 @@ echo "Logradouro: " . $data['logradouro'];
               <CardHeader>
                 <Zap className="w-12 h-12 text-blue-600 mb-4" />
                 <CardTitle>Ultra-Rápido</CardTitle>
-                <CardDescription>Cache inteligente garante ~5ms de resposta</CardDescription>
+                <CardDescription>Respostas em ~160ms com cache Redis em 3 camadas</CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm">
@@ -259,10 +259,10 @@ echo "Logradouro: " . $data['logradouro'];
                 <tr className="border-b">
                   <td className="p-4 font-semibold">Tempo de Resposta</td>
                   <td className="p-4 text-center">
-                    <Badge className="bg-green-100 text-green-800">~5ms (cache)</Badge>
+                    <Badge className="bg-green-100 text-green-800">~160ms (médio)</Badge>
                   </td>
-                  <td className="p-4 text-center">~100ms</td>
-                  <td className="p-4 text-center">~150ms</td>
+                  <td className="p-4 text-center">~200ms</td>
+                  <td className="p-4 text-center">~300ms+</td>
                 </tr>
                 <tr className="border-b bg-slate-50">
                   <td className="p-4 font-semibold">Cache Inteligente</td>
@@ -435,9 +435,9 @@ echo "Logradouro: " . $data['logradouro'];
                     Como funciona o cache?
                   </AccordionTrigger>
                   <AccordionContent className="text-slate-600">
-                    Quando você consulta um CEP pela primeira vez, buscamos em tempo real no ViaCEP (~100ms). 
-                    Este resultado fica em cache por 7 dias. Nas próximas consultas do mesmo CEP, a resposta 
-                    vem do cache (~5ms), 20x mais rápido.
+                    Nossa API usa cache Redis em 3 camadas (L1, L2, L3), garantindo respostas rápidas (~160ms em média). 
+                    CEPs populares ficam em cache por 7 dias. Sistema com fallback automático entre múltiplas fontes 
+                    (ViaCEP, Brasil API) para máxima confiabilidade.
                   </AccordionContent>
                 </AccordionItem>
 
