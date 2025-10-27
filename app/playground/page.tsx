@@ -233,6 +233,43 @@ curl -X GET '${apiBaseURL}${endpoint}' \\
     );
   }
 
+  // ✅ Se não há APIs permitidas, mostrar mensagem
+  if (isPlaygroundEnabled && allowedApis.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
+        <Card className="max-w-md w-full border-yellow-200 shadow-lg">
+          <CardHeader className="text-center">
+            <div className="flex justify-center mb-4">
+              <div className="p-4 bg-yellow-100 rounded-full">
+                <AlertTriangle className="w-12 h-12 text-yellow-600" />
+              </div>
+            </div>
+            <CardTitle className="text-2xl mb-2">Playground sem APIs Configuradas</CardTitle>
+            <CardDescription>
+              O playground está habilitado, mas nenhuma API foi configurada para uso público.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="p-4 bg-slate-50 rounded-lg">
+              <p className="text-sm text-slate-700 mb-2">
+                <strong>Para administradores:</strong>
+              </p>
+              <p className="text-sm text-slate-600">
+                Acesse <strong>/admin/settings</strong> e selecione quais APIs devem estar disponíveis no playground público (CEP, CNPJ, Geografia).
+              </p>
+            </div>
+            <Link href="/">
+              <Button className="w-full" variant="outline">
+                <Home className="w-4 h-4 mr-2" />
+                Voltar para Home
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4">
       <div className="container max-w-7xl mx-auto">
