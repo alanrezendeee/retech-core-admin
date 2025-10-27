@@ -303,7 +303,13 @@ export default function AdminSettingsPage() {
   };
 
   const handleArrayChange = (section: keyof SystemSettings, field: string, value: string) => {
-    const array = value.split(',').map(item => item.trim()).filter(item => item);
+    // Aceita vírgula, ponto-e-vírgula ou quebra de linha como separadores
+    // Remove espaços extras e valida URLs
+    const array = value
+      .split(/[,;\n]/) // Split por vírgula, ponto-e-vírgula ou quebra de linha
+      .map(item => item.trim()) // Remove espaços no início/fim
+      .filter(item => item.length > 0); // Remove itens vazios
+    
     setSettings(prev => ({
       ...prev,
       [section]: {
@@ -500,14 +506,23 @@ export default function AdminSettingsPage() {
                 </Label>
                 <Textarea
                   id="allowedOrigins"
-                  value={settings.cors.allowedOrigins.join(', ')}
+                  value={settings.cors.allowedOrigins.join(',\n')}
                   onChange={(e) => handleArrayChange('cors', 'allowedOrigins', e.target.value)}
-                  placeholder="https://core.theretech.com.br, http://localhost:3000"
+                  onKeyDown={(e) => {
+                    // ✅ GARANTIR que vírgula seja aceita
+                    if (e.key === ',' || e.key === ';') {
+                      // Não prevenir - deixar digitar
+                      return;
+                    }
+                  }}
+                  placeholder="https://core.theretech.com.br,http://localhost:3000"
                   rows={4}
-                  className="mt-1.5"
+                  className="mt-1.5 font-mono text-xs"
+                  spellCheck={false}
+                  autoComplete="off"
                 />
                 <p className="text-xs text-slate-500 mt-1">
-                  Separe múltiplas origens com vírgula
+                  💡 Separe com vírgula, ponto-e-vírgula ou quebra de linha (uma origem por linha)
                 </p>
               </div>
             </CardContent>
@@ -1122,9 +1137,9 @@ export default function AdminSettingsPage() {
                     </p>
                     <ul className="text-xs text-orange-700 mt-1 space-y-1">
                       <li>✅ Compartilhado entre todos os tenants</li>
-                      <li>✅ Primeira consulta: ~200ms (Brasil API)</li>
-                      <li>✅ Consultas seguintes: ~10ms (cache)</li>
-                      <li>✅ Empresas não mudam frequentemente (TTL maior)</li>
+                      <li>✅ Primeira consulta: ~300-400ms (Brasil API)</li>
+                      <li>✅ Consultas seguintes: ~160ms (cache Redis+MongoDB)</li>
+                      <li>✅ Empresas não mudam frequentemente (TTL 30 dias)</li>
                     </ul>
                   </div>
                 </div>
