@@ -220,7 +220,8 @@ export default function AdminAnalyticsPage() {
                   {usage.byDay.map((item: any, index: number) => {
                     const maxCount = Math.max(...usage.byDay.map((d: any) => d.count));
                     const percentage = (item.count / maxCount) * 100;
-                    const isToday = index === 0;
+                    // ✅ FIX: Último item (mais recente) é "Hoje", não o primeiro!
+                    const isToday = index === usage.byDay.length - 1;
 
                     return (
                       <div key={item._id} className="space-y-2">
