@@ -1,0 +1,399 @@
+openapi: 3.0.3
+info:
+  title: Retech Core API - Public Endpoints (No Auth Required)
+  version: 1.0.0
+  description: |
+    **Free Brazilian Data API - No Authentication Required**
+    
+    Test our API without signup! These public endpoints are perfect for:
+    - Quick prototyping
+    - Demos and proof-of-concepts
+    - Free tools and utilities
+    - Educational projects
+    
+    **Features:**
+    - ⚡ Fast: ~160ms average response (1ms with cache)
+    - 🔄 Reliable: Automatic fallback between 3 data sources
+    - 🆓 Free: No API key required for these endpoints
+    - 📊 High quality: Same data as authenticated endpoints
+    
+    **Need more?** Get a free API key (1,000 requests/day): https://core.theretech.com.br/painel/register
+    
+  contact:
+    name: Retech Support
+    email: suporte@theretech.com.br
+    url: https://core.theretech.com.br
+  license:
+    name: Proprietary
+    url: https://core.theretech.com.br/legal/termos
+
+servers:
+  - url: https://api-core.theretech.com.br
+    description: Production server
+
+tags:
+  - name: CEP (Public)
+    description: Brazilian postal code lookup - No auth required
+  - name: CNPJ (Public)
+    description: Brazilian business registry - No auth required
+  - name: Geography (Public)
+    description: Brazilian states and municipalities - No auth required
+  - name: Playground
+    description: Playground configuration and demo
+
+paths:
+  /public/cep/{cep}:
+    get:
+      tags: [CEP (Public)]
+      summary: Get address by CEP (No Auth)
+      description: |
+        Get complete Brazilian address from 8-digit postal code.
+        
+        **No API key required!** Perfect for testing and demos.
+        
+        **Returns:** street, neighborhood, city, state, area code, IBGE code
+        **Sources:** ViaCEP + Brasil API with automatic fallback
+        **Cache:** 3-layer for ~1ms response
+        
+      parameters:
+        - name: cep
+          in: path
+          required: true
+          description: 8-digit Brazilian postal code (with or without hyphen)
+          schema:
+            type: string
+            pattern: '^\d{5}-?\d{3}$'
+          examples:
+            sao_paulo:
+              value: '01310100'
+              summary: São Paulo (Av. Paulista)
+            rio:
+              value: '20040020'
+              summary: Rio de Janeiro (Centro)
+            brasilia:
+              value: '70040902'
+              summary: Brasília (Esplanada)
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cep:
+                    type: string
+                    example: '01310-100'
+                  logradouro:
+                    type: string
+                    example: 'Avenida Paulista'
+                  complemento:
+                    type: string
+                    example: 'lado ímpar'
+                  bairro:
+                    type: string
+                    example: 'Bela Vista'
+                  localidade:
+                    type: string
+                    example: 'São Paulo'
+                  uf:
+                    type: string
+                    example: 'SP'
+                  ibge:
+                    type: string
+                    example: '3550308'
+                  ddd:
+                    type: string
+                    example: '11'
+                  source:
+                    type: string
+                    enum: [cache, viacep, brasilapi]
+                    example: 'cache'
+              examples:
+                cached:
+                  summary: Cached response (very fast)
+                  value:
+                    cep: '01310-100'
+                    logradouro: 'Avenida Paulista'
+                    complemento: 'lado ímpar'
+                    bairro: 'Bela Vista'
+                    localidade: 'São Paulo'
+                    uf: 'SP'
+                    ibge: '3550308'
+                    ddd: '11'
+                    source: 'cache'
+        '400':
+          description: Invalid CEP format
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'CEP inválido'
+                  message:
+                    type: string
+                    example: 'CEP deve ter 8 dígitos'
+        '404':
+          description: CEP not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'CEP não encontrado'
+
+  /public/cnpj/{cnpj}:
+    get:
+      tags: [CNPJ (Public)]
+      summary: Get company data by CNPJ (No Auth)
+      description: |
+        Get complete Brazilian company data from business registry.
+        
+        **No API key required!** Perfect for quick lookups.
+        
+        **Returns:** legal name, trade name, status, shareholders, activities, address
+        **Source:** Official Receita Federal data
+        **Cache:** 30 days
+        
+      parameters:
+        - name: cnpj
+          in: path
+          required: true
+          description: 14-digit CNPJ (numbers only, no formatting)
+          schema:
+            type: string
+            pattern: '^\d{14}$'
+          examples:
+            banco_brasil:
+              value: '00000000000191'
+              summary: Banco do Brasil
+            petrobras:
+              value: '33000167000101'
+              summary: Petrobras
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cnpj:
+                    type: string
+                    example: '00.000.000/0001-91'
+                  razao_social:
+                    type: string
+                    example: 'BANCO DO BRASIL S.A.'
+                  nome_fantasia:
+                    type: string
+                    example: 'BANCO DO BRASIL'
+                  situacao_cadastral:
+                    type: string
+                    example: 'ATIVA'
+                  endereco:
+                    type: object
+                    properties:
+                      logradouro:
+                        type: string
+                        example: 'Quadra SBS Quadra 1 Bloco A'
+                      municipio:
+                        type: string
+                        example: 'Brasília'
+                      uf:
+                        type: string
+                        example: 'DF'
+                      cep:
+                        type: string
+                        example: '70073-901'
+                  source:
+                    type: string
+                    example: 'cache'
+        '400':
+          description: Invalid CNPJ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'CNPJ inválido'
+
+  /public/geo/estados:
+    get:
+      tags: [Geography (Public)]
+      summary: List all Brazilian states (No Auth)
+      description: |
+        Returns all 27 Brazilian states with IBGE data.
+        
+        **No API key required!**
+        
+        **Returns:** state code (UF), full name, region
+        **Total:** 27 states
+        **Cache:** Permanent (static data)
+        
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  estados:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        sigla:
+                          type: string
+                          example: 'SP'
+                        nome:
+                          type: string
+                          example: 'São Paulo'
+                        regiao:
+                          type: string
+                          example: 'Sudeste'
+                  total:
+                    type: integer
+                    example: 27
+              examples:
+                estados:
+                  summary: All Brazilian states
+                  value:
+                    estados:
+                      - sigla: 'SP'
+                        nome: 'São Paulo'
+                        regiao: 'Sudeste'
+                      - sigla: 'RJ'
+                        nome: 'Rio de Janeiro'
+                        regiao: 'Sudeste'
+                      - sigla: 'MG'
+                        nome: 'Minas Gerais'
+                        regiao: 'Sudeste'
+                      - sigla: 'RS'
+                        nome: 'Rio Grande do Sul'
+                        regiao: 'Sul'
+                      - sigla: 'SC'
+                        nome: 'Santa Catarina'
+                        regiao: 'Sul'
+                    total: 27
+
+  /public/geo/municipios/{uf}:
+    get:
+      tags: [Geography (Public)]
+      summary: List municipalities by state (No Auth)
+      description: |
+        Returns all municipalities of a specific Brazilian state.
+        
+        **No API key required!**
+        
+        **Total:** 5,570 municipalities across Brazil
+        **Returns:** IBGE code, name, state
+        
+      parameters:
+        - name: uf
+          in: path
+          required: true
+          description: State code (2 letters, uppercase)
+          schema:
+            type: string
+            minLength: 2
+            maxLength: 2
+            pattern: '^[A-Z]{2}$'
+          examples:
+            sao_paulo:
+              value: 'SP'
+              summary: São Paulo (645 municipalities)
+            rio:
+              value: 'RJ'
+              summary: Rio de Janeiro (92 municipalities)
+            santa_catarina:
+              value: 'SC'
+              summary: Santa Catarina (295 municipalities)
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  municipios:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: '3550308'
+                        nome:
+                          type: string
+                          example: 'São Paulo'
+                        uf:
+                          type: string
+                          example: 'SP'
+                  total:
+                    type: integer
+                    example: 645
+                  uf:
+                    type: string
+                    example: 'SP'
+              examples:
+                sp_municipios:
+                  summary: São Paulo municipalities (sample)
+                  value:
+                    municipios:
+                      - id: '3550308'
+                        nome: 'São Paulo'
+                        uf: 'SP'
+                      - id: '3509502'
+                        nome: 'Campinas'
+                        uf: 'SP'
+                      - id: '3518800'
+                        nome: 'Guarulhos'
+                        uf: 'SP'
+                    total: 645
+                    uf: 'SP'
+
+  /public/playground/status:
+    get:
+      tags: [Playground]
+      summary: Get playground configuration
+      description: |
+        Returns demo API key and playground status.
+        
+        **Use this to get a demo API key** for testing without signup!
+        
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  enabled:
+                    type: boolean
+                    example: true
+                  apiKey:
+                    type: string
+                    example: 'rtc_demo_playground_123abc'
+                  message:
+                    type: string
+                    example: 'Playground habilitado'
+              examples:
+                playground_active:
+                  summary: Playground enabled
+                  value:
+                    enabled: true
+                    apiKey: 'rtc_demo_playground_abc123'
+                    message: 'Playground habilitado com API Key demo'
+
+components:
+  schemas: {}
+
