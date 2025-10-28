@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
-import GoogleAnalytics from "./components/GoogleAnalytics";
+import Script from "next/script";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -141,7 +141,22 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <GoogleAnalytics />
+        {/* Google Analytics 4 */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-D858LKG5N9"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-D858LKG5N9', {
+              page_path: window.location.pathname,
+            });
+          `}
+        </Script>
+        
         {children}
         <Toaster />
       </body>
