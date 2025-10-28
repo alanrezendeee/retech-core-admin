@@ -10,6 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Search, MapPin, Clock, Share2, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
+import FAQSchema from '@/app/components/schemas/FAQSchema';
+import BreadcrumbSchema from '@/app/components/schemas/BreadcrumbSchema';
 
 interface CEPData {
   cep: string;
@@ -114,8 +116,39 @@ export default function ConsultarCEPPage() {
     return `${clean.slice(0, 5)}-${clean.slice(5, 8)}`;
   };
 
+  // FAQs para schema SEO
+  const faqs = [
+    {
+      question: "Como consultar CEP gratuitamente?",
+      answer: "Basta digitar o CEP no formato XXXXX-XXX ou XXXXXXXX e clicar em Consultar. A busca é ilimitada e gratuita, sem necessidade de cadastro."
+    },
+    {
+      question: "De onde vêm os dados de CEP?",
+      answer: "Utilizamos ViaCEP e Brasil API com fallback automático entre múltiplas fontes, garantindo 99.9% de disponibilidade e dados sempre atualizados."
+    },
+    {
+      question: "Qual a velocidade de resposta?",
+      answer: "A consulta tem resposta média de ~160ms. Quando o CEP está em cache, a resposta é quase instantânea (<5ms)."
+    },
+    {
+      question: "Preciso de API Key?",
+      answer: "Não! Esta é uma ferramenta pública e gratuita. Se você precisa integrar CEP no seu sistema, confira nossa API com 1.000 requests/dia grátis."
+    }
+  ];
+
+  // Breadcrumbs para schema SEO
+  const breadcrumbs = [
+    { name: "Home", url: "https://core.theretech.com.br" },
+    { name: "Ferramentas", url: "https://core.theretech.com.br/ferramentas" },
+    { name: "Consultar CEP", url: "https://core.theretech.com.br/ferramentas/consultar-cep" }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
+      {/* Schemas SEO */}
+      <FAQSchema faqs={faqs} />
+      <BreadcrumbSchema items={breadcrumbs} />
+      
       <div className="container max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">

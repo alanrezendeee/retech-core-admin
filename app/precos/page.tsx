@@ -5,10 +5,42 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Check, Zap, Shield, TrendingUp } from 'lucide-react';
+import FAQSchema from '@/app/components/schemas/FAQSchema';
+import BreadcrumbSchema from '@/app/components/schemas/BreadcrumbSchema';
 
 export default function PrecosPage() {
+  // FAQs para schema SEO
+  const faqs = [
+    {
+      question: "Posso mudar de plano a qualquer momento?",
+      answer: "Sim! Você pode fazer upgrade ou downgrade a qualquer momento. O valor é cobrado proporcionalmente ao tempo de uso."
+    },
+    {
+      question: "O que acontece se eu exceder o limite de requests?",
+      answer: "No plano Free, requests adicionais são bloqueadas até o dia seguinte. Nos planos pagos, você pode configurar limites maiores ou pagar por excedente (R$ 0,001 por request adicional)."
+    },
+    {
+      question: "Quais as formas de pagamento?",
+      answer: "Aceitamos cartão de crédito, boleto e Pix. Pagamento mensal ou anual com 10% de desconto."
+    },
+    {
+      question: "Tem contrato de fidelidade?",
+      answer: "Não! Você pode cancelar a qualquer momento. Sem multas ou taxas de cancelamento."
+    }
+  ];
+
+  // Breadcrumbs para schema SEO
+  const breadcrumbs = [
+    { name: "Home", url: "https://core.theretech.com.br" },
+    { name: "Preços", url: "https://core.theretech.com.br/precos" }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      {/* Schemas SEO */}
+      <FAQSchema faqs={faqs} />
+      <BreadcrumbSchema items={breadcrumbs} />
+
       {/* Header */}
       <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 text-white py-16">
         <div className="container mx-auto px-4 text-center">

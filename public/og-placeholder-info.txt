@@ -1,0 +1,151 @@
+# 🖼️ IMAGENS OPEN GRAPH - PENDENTES
+
+## 📋 Imagens que precisam ser criadas:
+
+Tamanho: **1200x630px** (formato padrão Open Graph)
+Formato: PNG ou JPG
+Ferramenta recomendada: Canva.com (templates prontos)
+
+---
+
+### 1. **og-image.png** (Imagem Geral)
+**Usar em:** Homepage
+**Conteúdo sugerido:**
+- Logo da Retech Core
+- Texto: "30+ APIs Brasileiras"
+- Subtexto: "CEP, CNPJ, Geografia e mais"
+- Background: Gradiente azul/roxo
+- Ícone: Raio (⚡) ou código (</>)
+
+---
+
+### 2. **twitter-card.png** (Card do Twitter)
+**Usar em:** Compartilhamentos Twitter/X
+**Conteúdo sugerido:**
+- Pode ser igual à `og-image.png`
+- OU versão simplificada com menos texto
+
+---
+
+### 3. **og-api-cep.png** (API de CEP)
+**Usar em:** /apis/cep
+**Conteúdo sugerido:**
+- Texto: "API de CEP"
+- Subtexto: "Mais rápida que ViaCEP"
+- Ícone: 📍 (pin de localização)
+- Dados: "~160ms | Cache 3 camadas"
+
+---
+
+### 4. **og-api-cnpj.png** (API de CNPJ)
+**Usar em:** /apis/cnpj (quando criar a página)
+**Conteúdo sugerido:**
+- Texto: "API de CNPJ"
+- Subtexto: "Dados da Receita Federal"
+- Ícone: 🏢 (prédio)
+- Dados: "Validação oficial"
+
+---
+
+### 5. **og-playground.png** (Playground)
+**Usar em:** /playground
+**Conteúdo sugerido:**
+- Texto: "API Playground"
+- Subtexto: "Teste sem cadastro"
+- Ícone: ⚡ (código)
+- Elementos: Snippets de código (JS, Python)
+
+---
+
+### 6. **og-ferramentas.png** (Ferramentas Públicas)
+**Usar em:** /ferramentas/*
+**Conteúdo sugerido:**
+- Texto: "Ferramentas Gratuitas"
+- Subtexto: "CEP, CNPJ e mais"
+- Ícone: 🔧 (ferramenta)
+- Dados: "100% grátis | Sem limites"
+
+---
+
+## 🎨 Paleta de Cores Retech Core
+
+**Primárias:**
+- Azul: #2563EB (blue-600)
+- Roxo: #7C3AED (purple-600)
+- Índigo: #4F46E5 (indigo-600)
+
+**Acessórias:**
+- Slate: #1E293B (slate-900)
+- Branco: #FFFFFF
+
+---
+
+## 🚀 Como Criar (Passo a Passo)
+
+### Opção 1: Canva (Recomendado)
+1. Acessar: https://canva.com
+2. Buscar: "Open Graph Image" ou "Social Media Post"
+3. Selecionar tamanho: 1200x630px
+4. Usar template pronto e personalizar
+5. Baixar como PNG
+
+### Opção 2: Figma
+1. Criar artboard 1200x630px
+2. Adicionar gradiente de fundo
+3. Adicionar logo + textos
+4. Exportar como PNG
+
+### Opção 3: Ferramenta Online
+- https://og-image.vercel.app/
+- https://www.opengraph.xyz/
+
+---
+
+## 📁 Onde Salvar
+
+Após criar, salvar na pasta:
+```
+/Users/alanleitederezende/source/theretech/projetos-producao/retech-core-admin/public/
+```
+
+Nomes dos arquivos:
+```
+public/
+  ├── og-image.png          ✅ Criar
+  ├── twitter-card.png      ✅ Criar
+  ├── og-api-cep.png        ✅ Criar
+  ├── og-api-cnpj.png       ✅ Criar
+  ├── og-playground.png     ✅ Criar
+  └── og-ferramentas.png    ✅ Criar
+```
+
+---
+
+## ✅ Após Criar as Imagens
+
+1. **Deploy:** As imagens já estão referenciadas no código
+2. **Testar:** Usar Facebook Debugger
+   - https://developers.facebook.com/tools/debug/
+3. **Validar:** Twitter Card Validator
+   - https://cards-dev.twitter.com/validator
+
+---
+
+## 📊 Impacto Esperado
+
+**Antes (sem imagens):**
+- ❌ Compartilhamentos ficam sem preview
+- ❌ CTR baixo nos links
+- ❌ Aparência não profissional
+
+**Depois (com imagens):**
+- ✅ Preview bonito no Facebook/LinkedIn/Twitter
+- ✅ CTR aumenta em 2-3x
+- ✅ Branding profissional
+- ✅ Mais cliques orgânicos
+
+---
+
+**Status:** ⏳ PENDENTE - Aguardando criação das imagens
+**Prioridade:** ALTA (mas não bloqueia deploy)
+

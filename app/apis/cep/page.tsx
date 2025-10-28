@@ -23,8 +23,16 @@ import {
   Code2,
   HelpCircle
 } from 'lucide-react';
+import BreadcrumbSchema from '@/app/components/schemas/BreadcrumbSchema';
 
 export default function APICEPPage() {
+  // Breadcrumbs para schema SEO
+  const breadcrumbs = [
+    { name: "Home", url: "https://core.theretech.com.br" },
+    { name: "APIs", url: "https://core.theretech.com.br/apis" },
+    { name: "API de CEP", url: "https://core.theretech.com.br/apis/cep" }
+  ];
+
   const codeExamples = {
     javascript: `// Node.js / JavaScript
 const axios = require('axios');
@@ -80,6 +88,9 @@ echo "Logradouro: " . $data['logradouro'];
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Schema SEO */}
+      <BreadcrumbSchema items={breadcrumbs} />
+
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white py-20 px-4">
         <div className="container max-w-6xl mx-auto text-center">
