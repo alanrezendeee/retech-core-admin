@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://core.theretech.com.br'),
   title: {
-    default: 'Retech Core API - 30+ APIs Brasileiras | CEP, CNPJ, CPF, Geografia',
+    default: 'Retech Core - APIs Brasileiras | CEP, CNPJ, Geografia',
     template: '%s | Retech Core API'
   },
   description: 'A API definitiva de dados brasileiros. Consulte CEP, CNPJ, CPF, dados geográficos e mais em uma única integração. Gratuito para começar. Respostas em <100ms.',
@@ -81,6 +81,9 @@ export const metadata: Metadata = {
   verification: {
     google: 'your-google-verification-code', // TODO: Adicionar após criar Google Search Console
     yandex: 'your-yandex-verification-code',
+  },
+  alternates: {
+    canonical: 'https://core.theretech.com.br',
   },
 };
 

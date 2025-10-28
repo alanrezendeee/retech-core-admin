@@ -1,0 +1,15 @@
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Uso da API - Portal do Desenvolvedor | Retech Core',
+  description: 'Visualize gráficos detalhados do seu consumo de API, endpoints mais usados e estatísticas de performance.',
+};
+
+export default function UsageLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return children;
+}
+
