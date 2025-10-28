@@ -80,7 +80,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'your-google-verification-code', // TODO: Adicionar após criar Google Search Console
+    google: '0Odx0AYoSmLkNUPdhi3hdq_v8r2CzNcpMlUuf0Kaac0',
     yandex: 'your-yandex-verification-code',
   },
   alternates: {
