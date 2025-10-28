@@ -1,0 +1,1027 @@
+openapi: 3.0.3
+info:
+  title: Retech Core API
+  version: 1.0.0
+  description: |
+    # 🚀 Retech Core API
+    
+    A API definitiva de dados brasileiros para desenvolvedores.
+    
+    ## 🎯 Características
+    
+    - ⚡ **Performance**: Respostas em <100ms
+    - 🔒 **Segurança**: API Key + Rate Limiting
+    - 📊 **Dados**: Geografia, CEP, CNPJ, CPF e mais
+    - 🎁 **Gratuito**: 1.000 requests/dia no plano Free
+    
+    ## 🔐 Autenticação
+    
+    Use o header `X-API-Key` com sua chave de API:
+    
+    ```bash
+    curl https://api-core.theretech.com.br/geo/ufs \
+      -H "X-API-Key: sua_api_key_aqui"
+    ```
+    
+    ## 📈 Rate Limiting
+    
+    - **Plano Free**: 1.000 requests/dia, 60/min
+    - **Plano Pro**: 10.000 requests/dia, 200/min
+    - **Plano Business**: Custom
+    
+    ## 📚 Mais Informações
+    
+    - **Portal do Desenvolvedor**: https://core.theretech.com.br
+    - **Documentação Completa**: https://core.theretech.com.br/painel/docs
+    - **Status**: https://status.theretech.com.br
+    
+  contact:
+    name: Retech Support
+    email: suporte@theretech.com.br
+    url: https://core.theretech.com.br
+  license:
+    name: Proprietary
+    url: https://core.theretech.com.br/termos
+
+servers:
+  - url: https://api-core.theretech.com.br
+
+tags:
+  - name: Infraestrutura
+    description: Health checks e informações do sistema
+  - name: CEP
+    description: Consulta de CEP com cache e múltiplas fontes
+  - name: CNPJ
+    description: Consulta de CNPJ com dados da Receita Federal
+  - name: Geografia
+    description: Estados, municípios e dados geográficos do Brasil
+
+paths:
+  # ==========================================
+  # INFRAESTRUTURA
+  # ==========================================
+  /health:
+    get:
+      tags: [Infraestrutura]
+      summary: Health Check
+      description: Verifica se a API está funcionando
+      responses:
+        '200':
+          description: API funcionando normalmente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+
+  /version:
+    get:
+      tags: [Infraestrutura]
+      summary: Versão da API
+      description: Retorna informações sobre a versão atual
+      responses:
+        '200':
+          description: Informações da versão
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: string
+                    example: "1.0.0"
+                  environment:
+                    type: string
+                    example: "production"
+
+  # ==========================================
+  # CEP
+  # ==========================================
+  /cep/{codigo}:
+    get:
+      tags: [CEP]
+      summary: Consultar CEP
+      description: |
+        Consulta um CEP brasileiro. 
+        
+        **Fontes de Dados:**
+        - 🥇 **ViaCEP** (principal)
+        - 🥈 **Brasil API** (fallback)
+        - 💾 **Cache** (7 dias)
+        
+        **Performance:**
+        - Cache: < 10ms
+        - ViaCEP: ~50ms
+        - Brasil API: ~100ms
+        
+        **Formato aceito:**
+        - Com traço: `01310-100`
+        - Sem traço: `01310100`
+        
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: codigo
+          in: path
+          required: true
+          description: "CEP brasileiro (com ou sem traço)"
+          schema:
+            type: string
+            example: "01310-100"
+      responses:
+        '200':
+          description: CEP encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CEP'
+              examples:
+                avenida_paulista:
+                  summary: "Av. Paulista - São Paulo"
+                  value:
+                    cep: "01310-100"
+                    logradouro: "Avenida Paulista"
+                    complemento: "de 612 a 1510 - lado par"
+                    bairro: "Bela Vista"
+                    localidade: "São Paulo"
+                    uf: "SP"
+                    ibge: "3550308"
+                    ddd: "11"
+                    source: "viacep"
+                    cachedAt: "2025-10-23T15:30:00Z"
+                copacabana:
+                  summary: "Copacabana - Rio de Janeiro"
+                  value:
+                    cep: "22021-001"
+                    logradouro: "Avenida Atlântica"
+                    bairro: "Copacabana"
+                    localidade: "Rio de Janeiro"
+                    uf: "RJ"
+                    ibge: "3304557"
+                    ddd: "21"
+                    source: "cache"
+                    cachedAt: "2025-10-20T10:15:00Z"
+        '400':
+          description: CEP inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                type: "https://retech-core/errors/validation"
+                title: "Invalid CEP"
+                status: 400
+                detail: "CEP deve ter 8 dígitos"
+        '404':
+          description: CEP não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                type: "https://retech-core/errors/not-found"
+                title: "CEP Not Found"
+                status: 404
+                detail: "CEP 99999999 não encontrado"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '503':
+          $ref: '#/components/responses/Maintenance'
+
+  /cep/buscar:
+    get:
+      tags: [CEP]
+      summary: Buscar CEP por Endereço (Busca Reversa)
+      description: |
+        🆕 **Busca reversa de CEP**: encontra CEPs a partir do endereço.
+        
+        Digite a rua, cidade e estado para descobrir até **50 CEPs** correspondentes.
+        
+        **Fontes de Dados:**
+        - 🥇 **ViaCEP** (busca por endereço)
+        - 💾 **Cache** (7 dias)
+        
+        **Performance:**
+        - Cache: ~1-10ms
+        - ViaCEP: ~100-200ms
+        
+        **Validações:**
+        - ✅ UF deve ter 2 caracteres (ex: SP, RJ)
+        - ✅ Cidade deve ter no mínimo 3 caracteres
+        - ✅ Logradouro deve ter no mínimo 3 caracteres
+        
+        **Limitações:**
+        - 📋 Retorna até 50 CEPs por busca
+        - 🔍 Quanto mais específico, melhor o resultado
+        - 📝 Busca por aproximação de nome
+        
+        **Exemplos de uso:**
+        ```bash
+        # Com acentos (recomendado - mais preciso)
+        curl "https://api-core.theretech.com.br/cep/buscar?uf=SP&cidade=São+Paulo&logradouro=Paulista" \
+          -H "X-API-Key: sua_api_key_aqui"
+        
+        # Sem acentos (funciona, mas menos preciso)
+        curl "https://api-core.theretech.com.br/cep/buscar?uf=SP&cidade=Sao+Paulo&logradouro=Paulista" \
+          -H "X-API-Key: sua_api_key_aqui"
+        
+        # URL encoded (também funciona)
+        curl "https://api-core.theretech.com.br/cep/buscar?uf=RS&cidade=Porto%20Alegre&logradouro=Andradas" \
+          -H "X-API-Key: sua_api_key_aqui"
+        ```
+        
+        **📝 Dicas de Formatação:**
+        - ✅ **Acentos:** Pode enviar com acentos! A API normaliza automaticamente.
+        - ✅ **Espaços:** Use `+` ou `%20` (ambos funcionam)
+        - ✅ **Case:** Maiúsculas/minúsculas não importam (exceto UF que deve ser MAIÚSCULO)
+        - ⚡ **Encoding:** Feito automaticamente pelo backend
+        
+        **Casos de uso:**
+        - 📝 Autocomplete de endereços
+        - ✅ Validação de formulários
+        - 🔄 Preenchimento automático de CEP
+        - 🔍 Busca quando usuário não sabe o CEP
+        
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: uf
+          in: query
+          required: true
+          description: "Sigla do estado (2 caracteres)"
+          schema:
+            type: string
+            minLength: 2
+            maxLength: 2
+            example: "SP"
+        - name: cidade
+          in: query
+          required: true
+          description: |
+            Nome da cidade (mínimo 3 caracteres)
+            
+            **✅ Aceita acentos:** "São Paulo", "João Pessoa", "Brasília"
+            
+            **Encoding:** A API faz URL encoding automaticamente. Você pode enviar:
+            - Com acentos: `cidade=São Paulo` (recomendado)
+            - Sem acentos: `cidade=Sao Paulo` (funciona, mas menos preciso)
+            - URL encoded: `cidade=S%C3%A3o%20Paulo` (também funciona)
+          schema:
+            type: string
+            minLength: 3
+            example: "São Paulo"
+        - name: logradouro
+          in: query
+          required: true
+          description: |
+            Nome da rua/avenida (mínimo 3 caracteres)
+            
+            **✅ Aceita acentos:** "João Pessoa", "São José", "Cristóvão"
+            
+            **Dica:** Quanto mais específico, melhor o resultado.
+            - ✅ Bom: "Paulista"
+            - ✅ Melhor: "Avenida Paulista"
+            - ❌ Muito genérico: "Rua" (pode retornar muitos resultados)
+          schema:
+            type: string
+            minLength: 3
+            example: "Paulista"
+      responses:
+        '200':
+          description: CEPs encontrados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CEP'
+                    description: Lista de CEPs encontrados (até 50)
+                  count:
+                    type: integer
+                    description: Número de resultados retornados
+                    example: 12
+                  source:
+                    type: string
+                    description: Fonte dos dados
+                    enum: [viacep, redis-cache, mongodb-cache]
+                    example: "viacep"
+              examples:
+                paulista_sp:
+                  summary: "Avenida Paulista - São Paulo/SP"
+                  value:
+                    results:
+                      - cep: "01310100"
+                        logradouro: "Avenida Paulista"
+                        complemento: "de 612 a 1510 - lado par"
+                        bairro: "Bela Vista"
+                        localidade: "São Paulo"
+                        uf: "SP"
+                        ibge: "3550308"
+                        ddd: "11"
+                        source: "viacep"
+                      - cep: "01311000"
+                        logradouro: "Avenida Paulista"
+                        complemento: "de 1865 a 2265 - lado ímpar"
+                        bairro: "Bela Vista"
+                        localidade: "São Paulo"
+                        uf: "SP"
+                        ibge: "3550308"
+                        ddd: "11"
+                        source: "viacep"
+                      - cep: "01311100"
+                        logradouro: "Avenida Paulista"
+                        complemento: "de 1537 a 1863 - lado ímpar"
+                        bairro: "Bela Vista"
+                        localidade: "São Paulo"
+                        uf: "SP"
+                        ibge: "3550308"
+                        ddd: "11"
+                        source: "viacep"
+                    count: 3
+                    source: "viacep"
+                from_cache:
+                  summary: "Resultado do cache (rápido)"
+                  value:
+                    results:
+                      - cep: "90010150"
+                        logradouro: "Rua dos Andradas"
+                        bairro: "Centro Histórico"
+                        localidade: "Porto Alegre"
+                        uf: "RS"
+                        ibge: "4314902"
+                        ddd: "51"
+                        source: "redis-cache"
+                    count: 1
+                    source: "redis-cache"
+        '400':
+          description: Parâmetros inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                missing_params:
+                  summary: "Parâmetros obrigatórios ausentes"
+                  value:
+                    type: "https://retech-core/errors/validation"
+                    title: "Invalid Parameters"
+                    status: 400
+                    detail: "Parâmetros obrigatórios: uf, cidade, logradouro"
+                min_length:
+                  summary: "Tamanho mínimo não atingido"
+                  value:
+                    type: "https://retech-core/errors/validation"
+                    title: "Invalid Parameters"
+                    status: 400
+                    detail: "Cidade e logradouro devem ter no mínimo 3 caracteres"
+                invalid_uf:
+                  summary: "UF inválida"
+                  value:
+                    type: "https://retech-core/errors/validation"
+                    title: "Invalid UF"
+                    status: 400
+                    detail: "UF deve ter 2 caracteres (ex: SP, RJ, RS)"
+        '404':
+          description: Nenhum CEP encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                type: "https://retech-core/errors/not-found"
+                title: "CEPs Not Found"
+                status: 404
+                detail: "Nenhum CEP encontrado para o endereço informado"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '503':
+          $ref: '#/components/responses/Maintenance'
+
+  # ==========================================
+  # CNPJ
+  # ==========================================
+  /cnpj/{numero}:
+    get:
+      tags: [CNPJ]
+      summary: Consultar CNPJ
+      description: |
+        Consulta dados completos de uma empresa pelo CNPJ.
+        
+        **Fontes de Dados:**
+        - 🥇 **Brasil API** (principal - Receita Federal)
+        - 🥈 **ReceitaWS** (fallback)
+        - 💾 **Cache** (30 dias)
+        
+        **Performance:**
+        - Cache: < 10ms
+        - Brasil API: ~200-500ms
+        - ReceitaWS: ~500-1000ms
+        
+        **Formato aceito:**
+        - Com formatação: `00.000.000/0001-91`
+        - Sem formatação: `00000000000191`
+        
+        **Validação:**
+        - ✅ Dígito verificador obrigatório
+        - ❌ CNPJs inválidos retornam 400
+        
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: numero
+          in: path
+          required: true
+          description: "CNPJ brasileiro (com ou sem formatação)"
+          schema:
+            type: string
+            example: "00.000.000/0001-91"
+      responses:
+        '200':
+          description: CNPJ encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CNPJ'
+              examples:
+                banco_do_brasil:
+                  summary: "Banco do Brasil S.A."
+                  value:
+                    cnpj: "00000000000191"
+                    razaoSocial: "BANCO DO BRASIL SA"
+                    nomeFantasia: "BANCO DO BRASIL"
+                    situacao: "ATIVA"
+                    dataSituacao: "2005-11-03"
+                    dataAbertura: "1966-08-30"
+                    porte: "DEMAIS"
+                    naturezaJuridica: "Sociedade de Economia Mista"
+                    capitalSocial: 81250000000.00
+                    endereco:
+                      logradouro: "SBS Quadra 1 Bloco G"
+                      numero: "S/N"
+                      complemento: "LOJA LOJA 1 SUBSOLO 1"
+                      bairro: "ASA SUL"
+                      cep: "70073901"
+                      municipio: "Brasília"
+                      uf: "DF"
+                    telefones: ["(61) 3493-9002"]
+                    email: "prov@bb.com.br"
+                    atividadePrincipal:
+                      codigo: "64.21-2-00"
+                      descricao: "Bancos comerciais"
+                    atividadesSecundarias:
+                      - codigo: "66.19-3-99"
+                        descricao: "Outras atividades auxiliares dos serviços financeiros"
+                    qsa:
+                      - nome: "EXEMPLO NOME SOCIO"
+                        qualificacao: "Diretor"
+                    source: "brasilapi"
+                    cachedAt: "2025-10-23T22:30:00Z"
+        '400':
+          description: CNPJ inválido (dígito verificador errado)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                type: "https://retech-core/errors/validation"
+                title: "CNPJ Inválido"
+                status: 400
+                detail: "CNPJ deve ter 14 dígitos válidos"
+        '404':
+          description: CNPJ não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                type: "https://retech-core/errors/not-found"
+                title: "CNPJ Not Found"
+                status: 404
+                detail: "CNPJ 99999999999999 não encontrado ou indisponível"
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+  # ==========================================
+  # GEOGRAFIA
+  # ==========================================
+  /geo/ufs:
+    get:
+      tags: [Geografia]
+      summary: Listar Estados
+      description: |
+        Retorna todos os 27 estados brasileiros com informações completas.
+        
+        **Exemplo de uso:**
+        ```bash
+        curl https://api-core.theretech.com.br/geo/ufs \
+          -H "X-API-Key: sua_api_key_aqui"
+        ```
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Lista de estados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  estados:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Estado'
+              example:
+                estados:
+                  - id: 26
+                    sigla: "PE"
+                    nome: "Pernambuco"
+                    regiao:
+                      id: 2
+                      sigla: "NE"
+                      nome: "Nordeste"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '503':
+          $ref: '#/components/responses/Maintenance'
+
+  /geo/ufs/{sigla}:
+    get:
+      tags: [Geografia]
+      summary: Buscar Estado por Sigla
+      description: |
+        Retorna detalhes de um estado específico pela sigla.
+        
+        **Exemplo de uso:**
+        ```bash
+        curl https://api-core.theretech.com.br/geo/ufs/PE \
+          -H "X-API-Key: sua_api_key_aqui"
+        ```
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: sigla
+          in: path
+          required: true
+          description: "Sigla do estado (ex: SP, RJ, PE)"
+          schema:
+            type: string
+            example: "PE"
+      responses:
+        '200':
+          description: Detalhes do estado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Estado'
+              example:
+                id: 26
+                sigla: "PE"
+                nome: "Pernambuco"
+                regiao:
+                  id: 2
+                  sigla: "NE"
+                  nome: "Nordeste"
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /geo/municipios:
+    get:
+      tags: [Geografia]
+      summary: Listar Municípios
+      description: |
+        Retorna todos os municípios ou filtra por UF/nome.
+        
+        **Exemplo de uso:**
+        ```bash
+        # Todos os municípios
+        curl https://api-core.theretech.com.br/geo/municipios \
+          -H "X-API-Key: sua_api_key_aqui"
+        
+        # Filtrar por UF
+        curl "https://api-core.theretech.com.br/geo/municipios?uf=PE" \
+          -H "X-API-Key: sua_api_key_aqui"
+        
+        # Buscar por nome
+        curl "https://api-core.theretech.com.br/geo/municipios?q=Recife" \
+          -H "X-API-Key: sua_api_key_aqui"
+        ```
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: uf
+          in: query
+          description: "Filtrar por UF (ex: PE, SP)"
+          schema:
+            type: string
+            example: "PE"
+        - name: q
+          in: query
+          description: Buscar por nome
+          schema:
+            type: string
+            example: "Recife"
+      responses:
+        '200':
+          description: Lista de municípios
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  municipios:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Municipio'
+
+  /geo/municipios/{uf}:
+    get:
+      tags: [Geografia]
+      summary: Municípios de um Estado
+      description: |
+        Retorna todos os municípios de um estado específico.
+        
+        **Exemplo de uso:**
+        ```bash
+        curl https://api-core.theretech.com.br/geo/municipios/PE \
+          -H "X-API-Key: sua_api_key_aqui"
+        ```
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: uf
+          in: path
+          required: true
+          description: Sigla do estado
+          schema:
+            type: string
+            example: "PE"
+      responses:
+        '200':
+          description: Lista de municípios do estado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  municipios:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Municipio'
+
+components:
+  schemas:
+    CEP:
+      type: object
+      description: Representa um endereço completo a partir de um CEP
+      properties:
+        cep:
+          type: string
+          description: CEP formatado
+          example: "01310-100"
+        logradouro:
+          type: string
+          description: Nome da rua/avenida
+          example: "Avenida Paulista"
+        complemento:
+          type: string
+          description: Complemento do endereço (ex. "de 612 a 1510 - lado par")
+          example: "de 612 a 1510 - lado par"
+        bairro:
+          type: string
+          description: Nome do bairro
+          example: "Bela Vista"
+        localidade:
+          type: string
+          description: Nome da cidade
+          example: "São Paulo"
+        uf:
+          type: string
+          description: Sigla do estado
+          example: "SP"
+        ibge:
+          type: string
+          description: Código IBGE do município
+          example: "3550308"
+        ddd:
+          type: string
+          description: Código DDD
+          example: "11"
+        latitude:
+          type: number
+          format: float
+          description: Latitude (quando disponível)
+          example: -23.5617
+        longitude:
+          type: number
+          format: float
+          description: Longitude (quando disponível)
+          example: -46.6562
+        source:
+          type: string
+          description: Fonte dos dados
+          enum: [viacep, brasilapi, cache]
+          example: "viacep"
+        cachedAt:
+          type: string
+          format: date-time
+          description: Data/hora do cache (quando aplicável)
+          example: "2025-10-23T15:30:00Z"
+
+    CNPJ:
+      type: object
+      description: Representa uma empresa brasileira com dados da Receita Federal
+      properties:
+        cnpj:
+          type: string
+          description: CNPJ (apenas números)
+          example: "00000000000191"
+        razaoSocial:
+          type: string
+          description: Razão social (nome legal)
+          example: "BANCO DO BRASIL SA"
+        nomeFantasia:
+          type: string
+          description: Nome fantasia (marca)
+          example: "BANCO DO BRASIL"
+        situacao:
+          type: string
+          description: Situação cadastral
+          enum: [ATIVA, BAIXADA, SUSPENSA, INAPTA, NULA]
+          example: "ATIVA"
+        dataSituacao:
+          type: string
+          format: date
+          description: Data da situação cadastral
+          example: "2005-11-03"
+        dataAbertura:
+          type: string
+          format: date
+          description: Data de abertura/constituição
+          example: "1966-08-30"
+        porte:
+          type: string
+          description: Porte da empresa
+          enum: [MEI, MICRO EMPRESA, EMPRESA DE PEQUENO PORTE, DEMAIS]
+          example: "DEMAIS"
+        naturezaJuridica:
+          type: string
+          description: Natureza jurídica
+          example: "Sociedade de Economia Mista"
+        capitalSocial:
+          type: number
+          format: double
+          description: Capital social em reais
+          example: 81250000000.00
+        endereco:
+          $ref: '#/components/schemas/CNPJEndereco'
+        telefones:
+          type: array
+          items:
+            type: string
+          description: Lista de telefones
+          example: ["(61) 3493-9002"]
+        email:
+          type: string
+          format: email
+          description: E-mail da empresa
+          example: "prov@bb.com.br"
+        atividadePrincipal:
+          $ref: '#/components/schemas/CNPJAtividade'
+        atividadesSecundarias:
+          type: array
+          items:
+            $ref: '#/components/schemas/CNPJAtividade'
+          description: Lista de CNAEs secundários
+        qsa:
+          type: array
+          items:
+            $ref: '#/components/schemas/CNPJSocio'
+          description: Quadro de Sócios e Administradores
+        source:
+          type: string
+          description: Fonte dos dados
+          enum: [brasilapi, receitaws, cache]
+          example: "brasilapi"
+        cachedAt:
+          type: string
+          format: date-time
+          description: Data/hora do cache
+          example: "2025-10-23T22:30:00Z"
+
+    CNPJEndereco:
+      type: object
+      description: Endereço da empresa
+      properties:
+        logradouro:
+          type: string
+          example: "SBS Quadra 1 Bloco G"
+        numero:
+          type: string
+          example: "S/N"
+        complemento:
+          type: string
+          example: "LOJA LOJA 1 SUBSOLO 1"
+        bairro:
+          type: string
+          example: "ASA SUL"
+        cep:
+          type: string
+          example: "70073901"
+        municipio:
+          type: string
+          example: "Brasília"
+        uf:
+          type: string
+          example: "DF"
+
+    CNPJAtividade:
+      type: object
+      description: Atividade econômica (CNAE)
+      properties:
+        codigo:
+          type: string
+          description: Código CNAE
+          example: "64.21-2-00"
+        descricao:
+          type: string
+          description: Descrição da atividade
+          example: "Bancos comerciais"
+
+    CNPJSocio:
+      type: object
+      description: Sócio ou administrador
+      properties:
+        nome:
+          type: string
+          description: Nome completo
+          example: "JOÃO DA SILVA"
+        qualificacao:
+          type: string
+          description: Cargo/qualificação
+          example: "Diretor"
+
+    Estado:
+      type: object
+      description: Representa um estado brasileiro
+      properties:
+        id:
+          type: integer
+          description: Código IBGE do estado
+          example: 26
+        sigla:
+          type: string
+          description: Sigla UF (2 caracteres)
+          example: "PE"
+        nome:
+          type: string
+          description: Nome do estado
+          example: "Pernambuco"
+        regiao:
+          $ref: '#/components/schemas/Regiao'
+
+    Regiao:
+      type: object
+      description: Região geográfica brasileira
+      properties:
+        id:
+          type: integer
+          description: Código IBGE da região
+          example: 2
+        sigla:
+          type: string
+          description: Sigla da região
+          example: "NE"
+        nome:
+          type: string
+          description: Nome da região
+          example: "Nordeste"
+
+    Municipio:
+      type: object
+      description: Representa um município brasileiro
+      properties:
+        id:
+          type: integer
+          description: Código IBGE do município
+          example: 2611606
+        nome:
+          type: string
+          description: Nome do município
+          example: "Recife"
+        microrregiao:
+          type: object
+          description: Microrregião do IBGE
+        regiao-imediata:
+          type: object
+          description: Região imediata (nova divisão IBGE)
+
+    Error:
+      type: object
+      description: Resposta de erro padronizada (RFC 7807)
+      properties:
+        type:
+          type: string
+          description: URI que identifica o tipo de erro
+          example: "https://retech-core/errors/not-found"
+        title:
+          type: string
+          description: Resumo do erro
+          example: "Not Found"
+        status:
+          type: integer
+          description: Código HTTP
+          example: 404
+        detail:
+          type: string
+          description: Explicação detalhada do erro
+          example: "Recurso não encontrado"
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: |
+        ## Como usar sua API Key
+        
+        Todas as requisições para endpoints `/geo/*` requerem autenticação via API Key.
+        
+        **Passo 1: Obter sua API Key**
+        
+        Acesse o [Portal do Desenvolvedor](https://core.theretech.com.br/painel/apikeys) e gere uma nova chave.
+        
+        **Passo 2: Usar no header**
+        
+        ```bash
+        curl https://api-core.theretech.com.br/geo/ufs \
+          -H "X-API-Key: sua_api_key_aqui"
+        ```
+        
+        **Rate Limits:**
+        - Plano Free: 1.000 requests/dia, 60/min
+        - Plano Pro: 10.000 requests/dia, 200/min
+
+  responses:
+    Unauthorized:
+      description: Não autorizado - API Key inválida ou ausente
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: "https://retech-core/errors/unauthorized"
+            title: "Unauthorized"
+            status: 401
+            detail: "API Key inválida ou ausente. Use o header X-API-Key com uma chave válida."
+
+    NotFound:
+      description: Recurso não encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: "https://retech-core/errors/not-found"
+            title: "Not Found"
+            status: 404
+            detail: "O recurso solicitado não foi encontrado."
+
+    TooManyRequests:
+      description: Rate limit excedido
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: "https://retech-core/errors/rate-limit"
+            title: "Too Many Requests"
+            status: 429
+            detail: "Você excedeu o limite de requisições. Tente novamente mais tarde."
+
+    Maintenance:
+      description: API em manutenção
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: "https://retech-core/errors/maintenance"
+            title: "API em Manutenção"
+            status: 503
+            detail: "A API está temporariamente indisponível para manutenção. Por favor, tente novamente mais tarde."
