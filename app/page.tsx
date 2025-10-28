@@ -146,6 +146,29 @@ export default function HomePage() {
               </Card>
             </Link>
 
+            {/* NEW: Buscar CEP por Endereço */}
+            <Link href="/ferramentas/buscar-cep">
+              <Card className="border-2 border-cyan-200 hover:border-cyan-400 hover:shadow-2xl transition-all cursor-pointer h-full group relative">
+                <div className="absolute -top-2 -right-2">
+                  <Badge className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-xs">
+                    NOVO
+                  </Badge>
+                </div>
+                <CardHeader className="text-center">
+                  <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">🔍</div>
+                  <CardTitle className="text-xl mb-2 text-cyan-600">Buscar CEP</CardTitle>
+                  <CardDescription className="text-sm">
+                    <strong>Busca reversa:</strong> encontre o CEP pelo endereço (rua + cidade)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Badge className="w-full justify-center bg-cyan-100 text-cyan-800 hover:bg-cyan-200">
+                    Buscar Agora →
+                  </Badge>
+                </CardContent>
+              </Card>
+            </Link>
+
             {/* CNPJ Validator */}
             <Link href="/ferramentas/validar-cnpj">
               <Card className="border-2 border-emerald-200 hover:border-emerald-400 hover:shadow-2xl transition-all cursor-pointer h-full group">
@@ -163,20 +186,26 @@ export default function HomePage() {
                 </CardContent>
               </Card>
             </Link>
+          </div>
 
-            {/* API CEP */}
+          {/* Link to API CEP below */}
+          <div className="max-w-7xl mx-auto mb-8">
             <Link href="/apis/cep">
-              <Card className="border-2 border-purple-200 hover:border-purple-400 hover:shadow-2xl transition-all cursor-pointer h-full group">
+              <Card className="border-2 border-purple-200 hover:border-purple-400 hover:shadow-2xl transition-all cursor-pointer group">
                 <CardHeader className="text-center">
-                  <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">⚡</div>
-                  <CardTitle className="text-xl mb-2 text-purple-600">API de CEP</CardTitle>
-                  <CardDescription className="text-sm">
-                    <strong>3 fontes</strong> com fallback automático, cache Redis, <strong>~160ms</strong>
-                  </CardDescription>
+                  <div className="flex items-center justify-center gap-4">
+                    <div className="text-5xl group-hover:scale-110 transition-transform">⚡</div>
+                    <div>
+                      <CardTitle className="text-2xl mb-2 text-purple-600">API de CEP Completa</CardTitle>
+                      <CardDescription className="text-base">
+                        <strong>3 fontes</strong> com fallback automático, cache Redis, <strong>~160ms</strong> • Integre no seu sistema agora
+                      </CardDescription>
+                    </div>
+                  </div>
                 </CardHeader>
-                <CardContent>
-                  <Badge className="w-full justify-center bg-purple-100 text-purple-800 hover:bg-purple-200">
-                    Ver Detalhes →
+                <CardContent className="text-center">
+                  <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-200 px-6 py-2 text-base">
+                    Ver Documentação da API →
                   </Badge>
                 </CardContent>
               </Card>
@@ -343,7 +372,7 @@ export default function HomePage() {
                 </p>
               </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
               {/* CEP */}
               <Card className="border-2 border-green-400 bg-white hover:shadow-2xl transition-all duration-300 hover:scale-105">
                 <CardHeader>
@@ -353,15 +382,43 @@ export default function HomePage() {
                   </div>
                   <CardTitle className="text-xl mb-2">Busca de CEP</CardTitle>
                   <CardDescription className="text-base">
-                    Consulta completa de endereços brasileiros com cache inteligente e múltiplas fontes (ViaCEP + Brasil API).
+                    Consulta completa de endereços brasileiros por CEP com cache inteligente e múltiplas fontes.
                   </CardDescription>
                   <div className="mt-4 pt-4 border-t border-green-200">
                     <p className="text-sm text-slate-600 mb-2 font-medium">Recursos:</p>
                     <ul className="text-xs text-slate-600 space-y-1">
-                      <li>✓ Cache Redis (~160ms)</li>
+                      <li>✓ Cache Redis (~1ms)</li>
                       <li>✓ 3 fontes com fallback</li>
                       <li>✓ Coordenadas geográficas</li>
                       <li>✓ Processamento &lt;5ms</li>
+                    </ul>
+                  </div>
+                </CardHeader>
+              </Card>
+
+              {/* Busca Reversa CEP - NOVO */}
+              <Card className="border-2 border-cyan-400 bg-gradient-to-br from-cyan-50 to-blue-50 hover:shadow-2xl transition-all duration-300 hover:scale-105 relative">
+                <div className="absolute -top-2 -right-2 z-10">
+                  <Badge className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg animate-pulse">
+                    ✨ NOVO!
+                  </Badge>
+                </div>
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="text-4xl">🔍</div>
+                    <Badge className="bg-green-600 text-white">✓ Disponível</Badge>
+                  </div>
+                  <CardTitle className="text-xl mb-2">Busca Reversa de CEP</CardTitle>
+                  <CardDescription className="text-base">
+                    Encontre o CEP a partir do endereço! Digite rua, cidade e estado para descobrir até 50 CEPs.
+                  </CardDescription>
+                  <div className="mt-4 pt-4 border-t border-cyan-200">
+                    <p className="text-sm text-slate-600 mb-2 font-medium">Recursos:</p>
+                    <ul className="text-xs text-slate-600 space-y-1">
+                      <li>✓ Endereço → CEP</li>
+                      <li>✓ Até 50 resultados</li>
+                      <li>✓ Cache inteligente</li>
+                      <li>✓ ~1-100ms de resposta</li>
                     </ul>
                   </div>
                 </CardHeader>

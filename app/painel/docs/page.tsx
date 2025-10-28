@@ -352,6 +352,57 @@ print(response.json())`;
             </div>
           </CardContent>
         </Card>
+
+        {/* Dicas de Formatação */}
+        <Card className="border-green-200 bg-green-50/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-green-900">
+              <Code2 className="h-5 w-5" />
+              📝 Dicas de Formatação
+            </CardTitle>
+            <CardDescription className="text-green-700">
+              Como enviar dados para a API
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4 text-sm">
+              <div>
+                <h4 className="font-semibold text-green-900 mb-2">✅ Acentos</h4>
+                <ul className="space-y-1 text-green-800">
+                  <li>• <strong>Pode enviar com acentos!</strong> A API trata automaticamente</li>
+                  <li>• Exemplo: <code className="bg-green-100 px-1 rounded">cidade=São Paulo</code> (recomendado)</li>
+                  <li>• Também funciona sem: <code className="bg-green-100 px-1 rounded">cidade=Sao Paulo</code> (menos preciso)</li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-green-900 mb-2">✅ Maiúsculas/Minúsculas</h4>
+                <ul className="space-y-1 text-green-800">
+                  <li>• Maioria dos campos: tanto faz (case-insensitive)</li>
+                  <li>• <strong>UF deve ser MAIÚSCULO:</strong> <code className="bg-green-100 px-1 rounded">SP</code> não <code className="bg-red-100 px-1 rounded">sp</code></li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-green-900 mb-2">✅ Formatação de Dados</h4>
+                <ul className="space-y-1 text-green-800">
+                  <li>• <strong>CEP:</strong> com ou sem traço (<code className="bg-green-100 px-1 rounded">01310-100</code> ou <code className="bg-green-100 px-1 rounded">01310100</code>)</li>
+                  <li>• <strong>CNPJ:</strong> com ou sem formatação (<code className="bg-green-100 px-1 rounded">00.000.000/0001-91</code> ou <code className="bg-green-100 px-1 rounded">00000000000191</code>)</li>
+                  <li>• <strong>Busca CEP:</strong> aceita acentos e espaços normalmente</li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-green-900 mb-2">⚡ URL Encoding</h4>
+                <ul className="space-y-1 text-green-800">
+                  <li>• <strong>Automático!</strong> Você não precisa fazer encoding manual</li>
+                  <li>• Espaços: use <code className="bg-green-100 px-1 rounded">+</code> ou <code className="bg-green-100 px-1 rounded">%20</code></li>
+                  <li>• A API normaliza automaticamente para você</li>
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </PainelLayout>
   );
