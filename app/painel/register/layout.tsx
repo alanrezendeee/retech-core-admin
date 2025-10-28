@@ -7,6 +7,9 @@ export const metadata: Metadata = {
     title: 'Criar Conta Grátis - Retech Core API',
     description: '1.000 requests/dia grátis • Sem cartão de crédito • APIs de CEP, CNPJ e Geografia',
   },
+  alternates: {
+    canonical: 'https://core.theretech.com.br/painel/register',
+  },
 };
 
 export default function RegisterLayout({

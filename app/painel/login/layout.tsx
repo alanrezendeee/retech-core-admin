@@ -7,6 +7,9 @@ export const metadata: Metadata = {
     title: 'Login - Portal do Desenvolvedor | Retech Core API',
     description: 'Acesse sua conta de desenvolvedor na Retech Core API',
   },
+  alternates: {
+    canonical: 'https://core.theretech.com.br/painel/login',
+  },
 };
 
 export default function LoginLayout({

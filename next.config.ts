@@ -14,6 +14,22 @@ const nextConfig: NextConfig = {
     ];
   },
 
+  // Redirects permanentes (SEO-friendly)
+  async redirects() {
+    return [
+      {
+        source: '/termos',
+        destination: '/legal/termos',
+        permanent: true, // 301 redirect - passa autoridade SEO
+      },
+      {
+        source: '/privacidade',
+        destination: '/legal/privacidade',
+        permanent: true, // 301 redirect
+      },
+    ];
+  },
+
   // Headers de segurança
   async headers() {
     return [

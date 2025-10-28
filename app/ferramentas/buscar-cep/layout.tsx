@@ -3,6 +3,9 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Buscar CEP por Endereço - Retech Core',
   description: 'Busca reversa de CEP: encontre o CEP a partir do endereço (rua, cidade, estado)',
+  alternates: {
+    canonical: 'https://core.theretech.com.br/ferramentas/buscar-cep',
+  },
 };
 
 export default function BuscarCEPLayout({

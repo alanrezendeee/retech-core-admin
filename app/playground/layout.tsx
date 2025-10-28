@@ -8,6 +8,9 @@ export const metadata: Metadata = {
     title: 'API Playground - Teste Gratuitamente',
     description: 'Teste CEP, CNPJ e Geografia sem cadastro. Veja o código pronto e copie para seu projeto.',
   },
+  alternates: {
+    canonical: 'https://core.theretech.com.br/playground',
+  },
 };
 
 export default function PlaygroundLayout({
