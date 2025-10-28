@@ -56,10 +56,67 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
+      url: `${baseUrl}/ferramentas/buscar-cep`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/ferramentas/validar-cnpj`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
+    },
+    // Institucional
+    {
+      url: `${baseUrl}/sobre`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/contato`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/precos`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/status`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.5,
+    },
+    // Legal
+    {
+      url: `${baseUrl}/legal/termos`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.4,
+    },
+    {
+      url: `${baseUrl}/legal/privacidade`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.4,
+    },
+    // Redirects (para SEO)
+    {
+      url: `${baseUrl}/termos`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.3,
+    },
+    {
+      url: `${baseUrl}/privacidade`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.3,
     },
     // Blog
     {

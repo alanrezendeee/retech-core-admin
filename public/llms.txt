@@ -1,0 +1,35 @@
+# Retech Core API - LLMs.txt
+
+## Provider Information
+- Provider Name: The Retech
+- Provider URL: https://core.theretech.com.br
+- Contact Email: suporte@theretech.com.br
+- Description: Hub definitivo de APIs brasileiras. 36 APIs essenciais para desenvolvedores.
+
+## API Information
+- API Base URL: https://api-core.theretech.com.br
+- Documentation: https://api-core.theretech.com.br/docs
+- Playground: https://core.theretech.com.br/playground
+
+## Available APIs
+- CEP: Consulta de endereços brasileiros (ViaCEP + Brasil API)
+- CNPJ: Consulta de empresas (Receita Federal)
+- Geografia: 27 estados + 5.570 municípios brasileiros (IBGE)
+
+## Features
+- Cache 3 camadas (Redis + MongoDB + APIs externas)
+- Rate limiting configurável
+- Analytics em tempo real
+- Playground interativo sem cadastro
+
+## Free Tier
+- 1.000 requests/dia
+- Sem cartão de crédito
+- Acesso a 3 APIs principais
+
+## Links
+- Landing Page: https://core.theretech.com.br
+- Documentation: https://core.theretech.com.br/painel/docs
+- Status: https://core.theretech.com.br/status
+- Pricing: https://core.theretech.com.br/precos
+
