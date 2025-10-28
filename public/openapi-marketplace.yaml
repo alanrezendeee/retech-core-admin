@@ -1,0 +1,355 @@
+openapi: 3.0.3
+info:
+  title: Retech Core - Brazilian Data API
+  version: 1.0.0
+  description: |
+    Complete Brazilian data API: CEP, CNPJ, Geography. 
+    
+    **Features:**
+    - ⚡ ~160ms average response (1ms with cache)
+    - 🔄 Automatic fallback between 3 data sources
+    - 🔒 API Key authentication
+    - 📊 Real-time usage dashboard
+    - 🎁 1,000 free requests/day
+    
+  contact:
+    name: Retech Support
+    email: suporte@theretech.com.br
+    url: https://core.theretech.com.br
+  license:
+    name: Proprietary
+    url: https://core.theretech.com.br/legal/termos
+
+servers:
+  - url: https://api-core.theretech.com.br
+    description: Production server
+
+security:
+  - ApiKeyAuth: []
+
+tags:
+  - name: CEP
+    description: Brazilian postal code lookup and reverse lookup
+  - name: CNPJ
+    description: Brazilian business registry data
+  - name: Geography
+    description: Brazilian states and municipalities (IBGE data)
+
+paths:
+  /cep/{cep}:
+    get:
+      tags: [CEP]
+      summary: Get address by CEP
+      description: |
+        Get complete Brazilian address from 8-digit postal code.
+        
+        **Returns:** street, neighborhood, city, state, area code, IBGE code
+        **Sources:** ViaCEP + Brasil API with automatic fallback
+        **Cache:** 3-layer for ~1ms response
+        
+      parameters:
+        - name: cep
+          in: path
+          required: true
+          description: 8-digit Brazilian postal code (with or without hyphen)
+          schema:
+            type: string
+            pattern: '^\d{5}-?\d{3}$'
+            example: '01310100'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cep:
+                    type: string
+                    example: '01310-100'
+                  logradouro:
+                    type: string
+                    example: 'Avenida Paulista'
+                  complemento:
+                    type: string
+                    example: 'lado ímpar'
+                  bairro:
+                    type: string
+                    example: 'Bela Vista'
+                  localidade:
+                    type: string
+                    example: 'São Paulo'
+                  uf:
+                    type: string
+                    example: 'SP'
+                  ibge:
+                    type: string
+                    example: '3550308'
+                  ddd:
+                    type: string
+                    example: '11'
+                  source:
+                    type: string
+                    example: 'viacep'
+        '400':
+          description: Invalid CEP format
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'CEP inválido'
+        '404':
+          description: CEP not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'CEP não encontrado'
+
+  /cep/buscar:
+    get:
+      tags: [CEP]
+      summary: Reverse CEP lookup (NEW!)
+      description: |
+        Find CEP from address (reverse lookup). Returns up to 50 matching postal codes.
+        
+        **NEW!** Supports accents and special characters.
+        Perfect for address autocomplete.
+        
+      parameters:
+        - name: uf
+          in: query
+          required: true
+          description: State code (2 letters)
+          schema:
+            type: string
+            minLength: 2
+            maxLength: 2
+            example: 'SP'
+        - name: cidade
+          in: query
+          required: true
+          description: City name (supports accents)
+          schema:
+            type: string
+            minLength: 3
+            example: 'São Paulo'
+        - name: logradouro
+          in: query
+          required: true
+          description: Street name (min 3 characters)
+          schema:
+            type: string
+            minLength: 3
+            example: 'Paulista'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultados:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        cep:
+                          type: string
+                          example: '01310-100'
+                        logradouro:
+                          type: string
+                          example: 'Avenida Paulista'
+                        bairro:
+                          type: string
+                          example: 'Bela Vista'
+                        localidade:
+                          type: string
+                          example: 'São Paulo'
+                        uf:
+                          type: string
+                          example: 'SP'
+                  total:
+                    type: integer
+                    example: 2
+                  source:
+                    type: string
+                    example: 'viacep'
+
+  /cnpj/{cnpj}:
+    get:
+      tags: [CNPJ]
+      summary: Get company data by CNPJ
+      description: |
+        Get complete company data from Brazilian business registry.
+        
+        **Returns:** legal name, trade name, status, shareholders (QSA), activities (CNAEs), full address
+        **Source:** Official Receita Federal data
+        **Cache:** 30 days
+        
+      parameters:
+        - name: cnpj
+          in: path
+          required: true
+          description: 14-digit CNPJ (numbers only)
+          schema:
+            type: string
+            pattern: '^\d{14}$'
+            example: '00000000000191'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cnpj:
+                    type: string
+                    example: '00.000.000/0001-91'
+                  razao_social:
+                    type: string
+                    example: 'BANCO DO BRASIL S.A.'
+                  nome_fantasia:
+                    type: string
+                    example: 'BANCO DO BRASIL'
+                  situacao_cadastral:
+                    type: string
+                    example: 'ATIVA'
+                  endereco:
+                    type: object
+                    properties:
+                      logradouro:
+                        type: string
+                        example: 'Quadra SBS Quadra 1 Bloco A'
+                      municipio:
+                        type: string
+                        example: 'Brasília'
+                      uf:
+                        type: string
+                        example: 'DF'
+                      cep:
+                        type: string
+                        example: '70073-901'
+                  capital_social:
+                    type: number
+                    example: 95000000000.00
+                  qsa:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        nome:
+                          type: string
+                          example: 'EXEMPLO PESSOA'
+                        qualificacao:
+                          type: string
+                          example: 'Presidente'
+                  source:
+                    type: string
+                    example: 'cache'
+
+  /geo/estados:
+    get:
+      tags: [Geography]
+      summary: List all Brazilian states
+      description: |
+        Returns all 27 Brazilian states with IBGE data.
+        
+        **Returns:** state code, full name, region
+        **Total:** 27 states
+        **Cache:** Permanent (static data)
+        
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  estados:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        sigla:
+                          type: string
+                          example: 'SP'
+                        nome:
+                          type: string
+                          example: 'São Paulo'
+                        regiao:
+                          type: string
+                          example: 'Sudeste'
+                  total:
+                    type: integer
+                    example: 27
+
+  /geo/municipios/{uf}:
+    get:
+      tags: [Geography]
+      summary: List municipalities by state
+      description: |
+        Returns all municipalities of a specific Brazilian state.
+        
+        **Total:** 5,570 municipalities
+        **Returns:** IBGE code, name, state
+        
+      parameters:
+        - name: uf
+          in: path
+          required: true
+          description: State code (2 letters)
+          schema:
+            type: string
+            minLength: 2
+            maxLength: 2
+            example: 'SP'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  municipios:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: '3550308'
+                        nome:
+                          type: string
+                          example: 'São Paulo'
+                        uf:
+                          type: string
+                          example: 'SP'
+                  total:
+                    type: integer
+                    example: 645
+                  uf:
+                    type: string
+                    example: 'SP'
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: |
+        Your API key for authentication.
+        
+        Get your free API key at: https://core.theretech.com.br/painel/register
+
