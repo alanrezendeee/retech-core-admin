@@ -1677,12 +1677,12 @@ export default function AdminSettingsPage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Limpar Todo o Cache de CEP?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta ação irá remover todos os <strong>{cacheStats?.totalCached || 0} CEPs</strong> do cache.
-              <br /><br />
-              <span className="text-red-600 font-semibold">⚠️ Esta ação não pode ser desfeita.</span>
-              <br /><br />
-              Após limpar o cache, todas as próximas consultas de CEP irão buscar diretamente das APIs externas (ViaCEP/Brasil API) até que o cache seja reconstruído.
+            <AlertDialogDescription asChild>
+              <div className="space-y-3">
+                <p>Esta ação irá remover todos os <strong>{cacheStats?.totalCached || 0} CEPs</strong> do cache.</p>
+                <p className="text-red-600 font-semibold">⚠️ Esta ação não pode ser desfeita.</p>
+                <p>Após limpar o cache, todas as próximas consultas de CEP irão buscar diretamente das APIs externas (ViaCEP/Brasil API) até que o cache seja reconstruído.</p>
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -1702,12 +1702,12 @@ export default function AdminSettingsPage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Limpar Todo o Cache de CNPJ?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta ação irá remover todos os <strong>{cnpjCacheStats?.totalCached || 0} CNPJs</strong> do cache.
-              <br /><br />
-              <span className="text-red-600 font-semibold">⚠️ Esta ação não pode ser desfeita.</span>
-              <br /><br />
-              Após limpar o cache, todas as próximas consultas de CNPJ irão buscar diretamente das APIs externas (Brasil API/ReceitaWS) até que o cache seja reconstruído.
+            <AlertDialogDescription asChild>
+              <div className="space-y-3">
+                <p>Esta ação irá remover todos os <strong>{cnpjCacheStats?.totalCached || 0} CNPJs</strong> do cache.</p>
+                <p className="text-red-600 font-semibold">⚠️ Esta ação não pode ser desfeita.</p>
+                <p>Após limpar o cache, todas as próximas consultas de CNPJ irão buscar diretamente das APIs externas (Brasil API/ReceitaWS) até que o cache seja reconstruído.</p>
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -1727,21 +1727,23 @@ export default function AdminSettingsPage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Limpar Todo o Cache do Redis?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta ação irá remover <strong>TODOS os caches</strong> do Redis:
-              <br /><br />
-              <div className="bg-red-50 p-3 rounded text-sm">
-                <p>📮 <strong>CEP:</strong> {redisStats?.cepKeys || 0} keys</p>
-                <p>🏢 <strong>CNPJ:</strong> {redisStats?.cnpjKeys || 0} keys</p>
-                <p>🗺️ <strong>GEO:</strong> {redisStats?.geoKeys || 0} keys</p>
-                <p className="font-semibold">📊 <strong>Total:</strong> {redisStats?.totalKeys || 0} keys</p>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3">
+                <p>Esta ação irá remover <strong>TODOS os caches</strong> do Redis:</p>
+                
+                <div className="bg-red-50 p-3 rounded text-sm space-y-1">
+                  <div>📮 <strong>CEP:</strong> {redisStats?.cepKeys || 0} keys</div>
+                  <div>🏢 <strong>CNPJ:</strong> {redisStats?.cnpjKeys || 0} keys</div>
+                  <div>🗺️ <strong>GEO:</strong> {redisStats?.geoKeys || 0} keys</div>
+                  <div className="font-semibold">📊 <strong>Total:</strong> {redisStats?.totalKeys || 0} keys</div>
+                </div>
+                
+                <p className="text-red-600 font-semibold">⚠️ Esta ação não pode ser desfeita.</p>
+                
+                <p className="text-amber-600 font-medium">
+                  💡 Dica: O sistema continuará funcionando, mas as próximas consultas serão mais lentas até o cache ser reconstruído.
+                </p>
               </div>
-              <br />
-              <span className="text-red-600 font-semibold">⚠️ Esta ação não pode ser desfeita.</span>
-              <br /><br />
-              <span className="text-amber-600 font-medium">
-                💡 Dica: O sistema continuará funcionando, mas as próximas consultas serão mais lentas até o cache ser reconstruído.
-              </span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
