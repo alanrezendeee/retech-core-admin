@@ -4,3 +4,4 @@ export default function TermosPage() {
   redirect('/legal/termos');
 }
 
+

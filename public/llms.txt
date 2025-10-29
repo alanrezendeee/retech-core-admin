@@ -33,3 +33,4 @@
 - Status: https://core.theretech.com.br/status
 - Pricing: https://core.theretech.com.br/precos
 
+
