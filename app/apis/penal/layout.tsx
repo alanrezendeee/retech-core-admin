@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'API de Artigos Penais - Consulta Completa do Código Penal | Retech Core',
-  description: 'API de artigos penais brasileiros (Código Penal + Lei de Contravenções). Mais de 80 artigos completos com estrutura hierárquica. Ideal para autocomplete e sistemas jurídicos. Cache permanente e resposta em ~1ms.',
+  description: 'API de artigos penais brasileiros (Código Penal + Lei de Contravenções). Mais de 80 artigos completos com estrutura hierárquica. Ideal para autocomplete e sistemas jurídicos. Cache permanente para máxima performance.',
   keywords: [
     'api codigo penal',
     'api artigos penais',

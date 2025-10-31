@@ -21,11 +21,12 @@ import {
   Clock,
   Database,
   Code2,
-  HelpCircle
+  HelpCircle,
+  Scale
 } from 'lucide-react';
 import BreadcrumbSchema from '@/app/components/schemas/BreadcrumbSchema';
 
-export default function APICEPPage() {
+export default function APIPenalPage() {
   // API Base URL da env
   const apiBaseURL = process.env.NEXT_PUBLIC_API_URL || 'https://api-core.theretech.com.br';
 
@@ -33,15 +34,45 @@ export default function APICEPPage() {
   const breadcrumbs = [
     { name: "Home", url: "https://core.theretech.com.br" },
     { name: "APIs", url: "https://core.theretech.com.br/apis" },
-    { name: "API de CEP", url: "https://core.theretech.com.br/apis/cep" }
+    { name: "API de Artigos Penais", url: "https://core.theretech.com.br/apis/penal" }
   ];
 
   const codeExamples = {
     javascript: `// Node.js / JavaScript
 const axios = require('axios');
 
+// Listar todos os artigos (autocomplete)
 const response = await axios.get(
-  '${apiBaseURL}/cep/01310100',
+  '${apiBaseURL}/penal/artigos',
+  {
+    headers: {
+      'X-API-Key': 'rtc_sua_chave_aqui'
+    },
+    params: {
+      q: 'homicidio',  // Busca opcional
+      tipo: 'crime',   // Filtrar por tipo
+      legislacao: 'CP' // Filtrar por legislação
+    }
+  }
+);
+
+console.log(response.data);
+// {
+//   "success": true,
+//   "data": [
+//     {
+//       "codigo": "121",
+//       "codigoFormatado": "Art. 121 do CP",
+//       "descricao": "Homicídio simples",
+//       "tipo": "crime",
+//       "legislacao": "CP"
+//     }
+//   ]
+// }
+
+// Buscar artigo específico
+const artigo = await axios.get(
+  '${apiBaseURL}/penal/artigos/121',
   {
     headers: {
       'X-API-Key': 'rtc_sua_chave_aqui'
@@ -49,31 +80,48 @@ const response = await axios.get(
   }
 );
 
-console.log(response.data);
-// {
-//   "cep": "01310-100",
-//   "logradouro": "Avenida Paulista",
-//   "bairro": "Bela Vista",
-//   "localidade": "São Paulo",
-//   "uf": "SP",
-//   "ddd": "11",
-//   "source": "cache"
-// }`,
+// Buscar por texto
+const busca = await axios.get(
+  '${apiBaseURL}/penal/search',
+  {
+    headers: {
+      'X-API-Key': 'rtc_sua_chave_aqui'
+    },
+    params: {
+      q: 'matar alguém'
+    }
+  }
+);`,
     python: `# Python
 import requests
 
+# Listar artigos (autocomplete)
 response = requests.get(
-    '${apiBaseURL}/cep/01310100',
-    headers={'X-API-Key': 'rtc_sua_chave_aqui'}
+    '${apiBaseURL}/penal/artigos',
+    headers={'X-API-Key': 'rtc_sua_chave_aqui'},
+    params={
+        'q': 'homicidio',
+        'tipo': 'crime'
+    }
 )
 
 data = response.json()
-print(f"Endereço: {data['logradouro']}, {data['bairro']}")
-print(f"Cidade: {data['localidade']} - {data['uf']}")`,
+for artigo in data['data']:
+    print(f"{artigo['codigoFormatado']}: {artigo['descricao']}")
+
+# Buscar artigo específico
+artigo = requests.get(
+    '${apiBaseURL}/penal/artigos/121',
+    headers={'X-API-Key': 'rtc_sua_chave_aqui'}
+).json()
+
+print(artigo['data']['textoCompleto'])`,
     php: `<?php
 // PHP
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, '${apiBaseURL}/cep/01310100');
+
+// Listar artigos
+curl_setopt($ch, CURLOPT_URL, '${apiBaseURL}/penal/artigos?q=homicidio');
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'X-API-Key: rtc_sua_chave_aqui'
 ]);
@@ -82,10 +130,11 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 $response = curl_exec($ch);
 $data = json_decode($response, true);
 
-curl_close($ch);
+foreach ($data['data'] as $artigo) {
+    echo $artigo['codigoFormatado'] . ": " . $artigo['descricao'] . "\\n";
+}
 
-echo "CEP: " . $data['cep'];
-echo "Logradouro: " . $data['logradouro'];
+curl_close($ch);
 ?>`,
   };
 
@@ -95,22 +144,22 @@ echo "Logradouro: " . $data['logradouro'];
       <BreadcrumbSchema items={breadcrumbs} />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white py-20 px-4">
+      <section className="bg-gradient-to-br from-red-600 to-orange-700 text-white py-20 px-4">
         <div className="container max-w-6xl mx-auto text-center">
-          <Badge className="mb-4 bg-blue-500/30 text-white border-blue-400">
-            ✨ Mais rápida que ViaCEP
+          <Badge className="mb-4 bg-red-500/30 text-white border-red-400">
+            ⚖️ Código Penal Completo
           </Badge>
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            API de CEP Gratuita
+            API de Artigos Penais
           </h1>
-          <p className="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
-            Consulte endereços brasileiros com <strong>cache inteligente em 3 camadas</strong>, 
-            múltiplas fontes e resposta de <strong>~1ms a ~160ms</strong>
+          <p className="text-xl md:text-2xl text-red-100 mb-8 max-w-3xl mx-auto">
+            Mais de <strong>80 artigos penais brasileiros</strong> com estrutura hierárquica completa, 
+            ideal para <strong>autocomplete</strong> e sistemas jurídicos
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Button asChild size="lg" variant="secondary">
-              <Link href="/playground">
-                Testar Agora Grátis
+              <Link href="/ferramentas/penal">
+                Consultar Artigos Grátis
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
@@ -123,50 +172,87 @@ echo "Logradouro: " . $data['logradouro'];
           
           <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
             <div>
-              <div className="text-3xl font-bold">~160ms</div>
-              <div className="text-sm text-blue-200">média total</div>
+              <div className="text-3xl font-bold">80+</div>
+              <div className="text-sm text-red-200">artigos disponíveis</div>
             </div>
             <div>
-              <div className="text-3xl font-bold">3 fontes</div>
-              <div className="text-sm text-blue-200">ViaCEP + Brasil API</div>
+              <div className="text-3xl font-bold">Cache</div>
+              <div className="text-sm text-red-200">permanente ultra-rápido</div>
             </div>
             <div>
-              <div className="text-3xl font-bold">99.9%</div>
-              <div className="text-sm text-blue-200">uptime</div>
+              <div className="text-3xl font-bold">100%</div>
+              <div className="text-sm text-red-200">dados oficiais</div>
             </div>
             <div>
               <div className="text-3xl font-bold">Grátis</div>
-              <div className="text-sm text-blue-200">1.000 req/dia</div>
+              <div className="text-sm text-red-200">1.000 req/dia</div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Ferramenta Grátis */}
+      <section className="py-16 px-4 bg-white border-y-4 border-red-100">
+        <div className="container max-w-6xl mx-auto text-center">
+          <div className="mb-8">
+            <Badge className="mb-4 bg-gradient-to-r from-red-500 to-orange-500 text-white text-sm px-4 py-1">
+              ✨ Teste Grátis
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">
+              Consulte Artigos Penais <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-600">Agora Mesmo</span>
+            </h2>
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto mb-8">
+              Teste nossa ferramenta gratuitamente, sem cadastro. Digite um código de artigo e veja funcionando em tempo real.
+            </p>
+          </div>
+
+          <Card className="max-w-2xl mx-auto border-2 border-red-200 hover:border-red-400 hover:shadow-2xl transition-all">
+            <CardHeader className="text-center">
+              <div className="text-5xl mb-4">⚖️</div>
+              <CardTitle className="text-2xl mb-2 text-red-600">Consultar Artigos Penais Grátis</CardTitle>
+              <CardDescription className="text-base">
+                Digite o código do artigo (ex: 121, 157, 155) e obtenha informações completas instantaneamente
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+              <Button asChild size="lg" className="bg-red-600 hover:bg-red-700 text-white w-full">
+                <Link href="/ferramentas/penal">
+                  Consultar Agora →
+                </Link>
+              </Button>
+              <p className="text-xs text-slate-500 mt-3">
+                ⚡ Cache permanente • ✅ 100% Gratuito • 🎁 Sem cadastro necessário
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
       {/* Features */}
       <section className="py-16 px-4 bg-slate-50">
         <div className="container max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">Por que usar nossa API de CEP?</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Por que usar nossa API de Artigos Penais?</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <Card>
               <CardHeader>
-                <Zap className="w-12 h-12 text-blue-600 mb-4" />
-                <CardTitle>Ultra-Rápido</CardTitle>
-                <CardDescription>Respostas em ~160ms com cache Redis em 3 camadas</CardDescription>
+                <Scale className="w-12 h-12 text-red-600 mb-4" />
+                <CardTitle>Estrutura Hierárquica</CardTitle>
+                <CardDescription>Organização completa: Artigo → Parágrafo → Inciso → Alínea</CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
-                    <span>Cache compartilhado (7 dias)</span>
+                    <span>Mais de 80 artigos do CP e LCP</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
-                    <span>MongoDB otimizado</span>
+                    <span>Estrutura hierárquica completa</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
-                    <span>Go backend (performance nativa)</span>
+                    <span>Dados oficiais atualizados</span>
                   </li>
                 </ul>
               </CardContent>
@@ -174,23 +260,23 @@ echo "Logradouro: " . $data['logradouro'];
 
             <Card>
               <CardHeader>
-                <Shield className="w-12 h-12 text-green-600 mb-4" />
-                <CardTitle>Alta Disponibilidade</CardTitle>
-                <CardDescription>Múltiplas fontes com fallback automático</CardDescription>
+                <Zap className="w-12 h-12 text-blue-600 mb-4" />
+                <CardTitle>Ultra-Rápido</CardTitle>
+                <CardDescription>Cache permanente para máxima performance</CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
-                    <span>ViaCEP (fonte principal)</span>
+                    <span>Cache inteligente multi-camada</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
-                    <span>Brasil API (fallback)</span>
+                    <span>Infraestrutura otimizada</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
-                    <span>99.9% uptime garantido</span>
+                    <span>Dados sempre disponíveis</span>
                   </li>
                 </ul>
               </CardContent>
@@ -199,22 +285,22 @@ echo "Logradouro: " . $data['logradouro'];
             <Card>
               <CardHeader>
                 <Globe2 className="w-12 h-12 text-purple-600 mb-4" />
-                <CardTitle>Fácil Integração</CardTitle>
-                <CardDescription>REST API simples e bem documentada</CardDescription>
+                <CardTitle>Perfeito para Autocomplete</CardTitle>
+                <CardDescription>Ideal para Autocomplete e componentes de busca</CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
-                    <span>Exemplos em JS, Python, PHP</span>
+                    <span>Busca por texto em tempo real</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
-                    <span>Playground interativo</span>
+                    <span>Filtros por tipo e legislação</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
-                    <span>Documentação completa</span>
+                    <span>Formato JSON otimizado</span>
                   </li>
                 </ul>
               </CardContent>
@@ -254,107 +340,47 @@ echo "Logradouro: " . $data['logradouro'];
         </div>
       </section>
 
-      {/* Comparison Table */}
-      <section className="py-16 px-4 bg-slate-50">
-        <div className="container max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">Comparação com Concorrentes</h2>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse bg-white rounded-lg overflow-hidden shadow-lg">
-              <thead className="bg-indigo-600 text-white">
-                <tr>
-                  <th className="p-4 text-left">Recurso</th>
-                  <th className="p-4 text-center">Retech Core</th>
-                  <th className="p-4 text-center">ViaCEP</th>
-                  <th className="p-4 text-center">Brasil API</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b">
-                  <td className="p-4 font-semibold">Tempo de Resposta</td>
-                  <td className="p-4 text-center">
-                    <Badge className="bg-green-100 text-green-800">~160ms (médio)</Badge>
-                  </td>
-                  <td className="p-4 text-center">~200ms</td>
-                  <td className="p-4 text-center">~300ms+</td>
-                </tr>
-                <tr className="border-b bg-slate-50">
-                  <td className="p-4 font-semibold">Cache Inteligente</td>
-                  <td className="p-4 text-center"><CheckCircle2 className="w-6 h-6 text-green-600 mx-auto" /></td>
-                  <td className="p-4 text-center"><XCircle className="w-6 h-6 text-red-400 mx-auto" /></td>
-                  <td className="p-4 text-center"><XCircle className="w-6 h-6 text-red-400 mx-auto" /></td>
-                </tr>
-                <tr className="border-b">
-                  <td className="p-4 font-semibold">Fallback Automático</td>
-                  <td className="p-4 text-center"><CheckCircle2 className="w-6 h-6 text-green-600 mx-auto" /></td>
-                  <td className="p-4 text-center"><XCircle className="w-6 h-6 text-red-400 mx-auto" /></td>
-                  <td className="p-4 text-center"><XCircle className="w-6 h-6 text-red-400 mx-auto" /></td>
-                </tr>
-                <tr className="border-b bg-slate-50">
-                  <td className="p-4 font-semibold">Rate Limiting</td>
-                  <td className="p-4 text-center">1.000/dia (grátis)</td>
-                  <td className="p-4 text-center">Ilimitado</td>
-                  <td className="p-4 text-center">Sem controle</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="p-4 font-semibold">Dashboard de Uso</td>
-                  <td className="p-4 text-center"><CheckCircle2 className="w-6 h-6 text-green-600 mx-auto" /></td>
-                  <td className="p-4 text-center"><XCircle className="w-6 h-6 text-red-400 mx-auto" /></td>
-                  <td className="p-4 text-center"><XCircle className="w-6 h-6 text-red-400 mx-auto" /></td>
-                </tr>
-                <tr className="bg-slate-50">
-                  <td className="p-4 font-semibold">Outras APIs (CNPJ, CPF, Geo)</td>
-                  <td className="p-4 text-center"><CheckCircle2 className="w-6 h-6 text-green-600 mx-auto" /></td>
-                  <td className="p-4 text-center"><XCircle className="w-6 h-6 text-red-400 mx-auto" /></td>
-                  <td className="p-4 text-center"><CheckCircle2 className="w-6 h-6 text-green-600 mx-auto" /></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
       {/* Use Cases */}
-      <section className="py-16 px-4">
+      <section className="py-16 px-4 bg-slate-50">
         <div className="container max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">Casos de Uso</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <Card>
               <CardHeader>
-                <CardTitle>E-commerce</CardTitle>
-                <CardDescription>Autocomplete de endereço no checkout</CardDescription>
+                <CardTitle>Sistemas Jurídicos</CardTitle>
+                <CardDescription>Autocomplete de crimes em sistemas de gestão jurídica</CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-slate-600">
-                  Melhore a experiência de compra permitindo que seus clientes preencham endereços 
-                  automaticamente apenas digitando o CEP. Reduz abandono de carrinho em até 30%.
+                  Popule campos de seleção de artigos penais em sistemas jurídicos, processos, 
+                  denúncias e petições. Reduza erros de digitação e padronize nomenclaturas.
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>Marketplaces</CardTitle>
-                <CardDescription>Cálculo de frete automático</CardDescription>
+                <CardTitle>Formulários Online</CardTitle>
+                <CardDescription>Autocomplete, React Select e outros componentes</CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-slate-600">
-                  Calcule fretes automaticamente a partir do CEP de origem e destino. Integre com 
-                  Correios, transportadoras e faça cotações em tempo real.
+                  Integre nossa API em qualquer componente de autocomplete (React Select, Downshift, 
+                  Radix UI, Headless UI). Formato JSON otimizado para fácil integração.
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>Cadastros</CardTitle>
-                <CardDescription>Validação e preenchimento de formulários</CardDescription>
+                <CardTitle>Busca Inteligente</CardTitle>
+                <CardDescription>Pesquisa por texto, código ou legislação</CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-slate-600">
-                  Valide endereços em tempo real durante cadastros. Reduza erros de digitação e 
-                  melhore a qualidade dos dados do seu sistema.
+                  Busque artigos por texto completo, código (ex: "121"), tipo (crime/contravenção) 
+                  ou legislação (CP, LCP). Perfeito para sistemas de busca jurídica.
                 </p>
               </CardContent>
             </Card>
@@ -362,12 +388,12 @@ echo "Logradouro: " . $data['logradouro'];
             <Card>
               <CardHeader>
                 <CardTitle>Análise de Dados</CardTitle>
-                <CardDescription>Enriquecimento de bases de dados</CardDescription>
+                <CardDescription>Estatísticas e relatórios jurídicos</CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-slate-600">
-                  Enriqueça sua base de clientes com dados geográficos completos. Faça análises 
-                  por região, cidade, bairro e tome decisões estratégicas.
+                  Use os dados para gerar estatísticas sobre tipos de crimes mais comuns, 
+                  análises por legislação ou criar relatórios jurídicos automatizados.
                 </p>
               </CardContent>
             </Card>
@@ -376,24 +402,19 @@ echo "Logradouro: " . $data['logradouro'];
       </section>
 
       {/* CTA Final */}
-      <section className="py-16 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+      <section className="py-16 px-4 bg-gradient-to-r from-red-600 to-orange-600 text-white">
         <div className="container max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Pronto para começar?
+            Pronto para integrar?
           </h2>
-          <p className="text-xl text-indigo-100 mb-8">
+          <p className="text-xl text-red-100 mb-8">
             Crie sua conta grátis agora e comece a usar em menos de 5 minutos
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Button asChild size="lg" variant="secondary">
-              <Link href="/playground">
-                Testar no Playground
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white/30">
               <Link href="/painel/register">
                 Criar Conta Grátis
+                <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
           </div>
@@ -405,7 +426,7 @@ echo "Logradouro: " . $data['logradouro'];
         <div className="container max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <HelpCircle className="w-12 h-12 text-indigo-600 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold mb-4">Perguntas Frequentes sobre API de CEP</h2>
+            <h2 className="text-3xl font-bold mb-4">Perguntas Frequentes sobre API de Artigos Penais</h2>
             <p className="text-slate-600">Tudo que você precisa saber antes de começar</p>
           </div>
 
@@ -414,55 +435,60 @@ echo "Logradouro: " . $data['logradouro'];
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="item-1">
                   <AccordionTrigger className="text-left text-lg font-semibold">
-                    O que é uma API de CEP?
+                    Quantos artigos estão disponíveis?
                   </AccordionTrigger>
                   <AccordionContent className="text-slate-600">
-                    Uma API de CEP é um serviço web que permite consultar endereços brasileiros a partir do 
-                    Código de Endereçamento Postal (CEP). Nossa API consulta automaticamente múltiplas fontes 
-                    (ViaCEP e Brasil API) e retorna dados completos como logradouro, bairro, cidade, estado e DDD.
+                    A API contém mais de <strong>80 artigos penais</strong> do Código Penal (CP) e Lei de 
+                    Contravenções Penais (LCP), incluindo os artigos mais comuns e utilizados no dia a dia. 
+                    Caso precise de artigos específicos que ainda não estejam disponíveis, 
+                    <strong> entre em contato</strong> e podemos adicionar rapidamente.
                   </AccordionContent>
                 </AccordionItem>
 
                 <AccordionItem value="item-2">
                   <AccordionTrigger className="text-left text-lg font-semibold">
-                    Qual a diferença entre Retech Core e ViaCEP?
+                    A API é adequada para autocomplete?
                   </AccordionTrigger>
                   <AccordionContent className="text-slate-600">
-                    Enquanto o ViaCEP é gratuito, nossa API oferece <strong>cache inteligente em 3 camadas</strong> 
-                    (Redis L1, MongoDB L2, API Externa L3), <strong>fallback automático</strong> (se o ViaCEP cair, usamos Brasil API), 
-                    <strong>dashboard de uso</strong>, e integração com outras APIs (CNPJ, CPF, Geografia) em uma única plataforma.
+                    Sim! A API foi desenvolvida especialmente para <strong>componentes de autocomplete modernos</strong>. 
+                    Retorna dados em formato JSON otimizado, permite busca por texto em tempo real, 
+                    filtros por tipo (crime/contravenção) e legislação (CP/LCP). <strong>Respostas ultra-rápidas</strong> 
+                    graças ao nosso sistema de cache inteligente.
                   </AccordionContent>
                 </AccordionItem>
 
                 <AccordionItem value="item-3">
                   <AccordionTrigger className="text-left text-lg font-semibold">
-                    Quantas requisições posso fazer por dia?
+                    Quais legislações estão incluídas?
                   </AccordionTrigger>
                   <AccordionContent className="text-slate-600">
-                    O plano gratuito oferece <strong>1.000 requisições por dia</strong>. Para volumes maiores, 
-                    oferecemos planos Pro (10.000/dia) e Business (ilimitado). Entre em contato para planos empresariais.
+                    Atualmente incluímos artigos do <strong>Código Penal (CP)</strong>, <strong>Lei de Contravenções Penais (LCP)</strong>, 
+                    <strong>Lei de Drogas (Lei 11.343/2006)</strong> e <strong>Lei Maria da Penha (Lei 11.340/2006)</strong>. 
+                    Estamos constantemente expandindo nossa base de dados. Se precisar de outras legislações específicas, 
+                    <strong> entre em contato</strong> com nossa equipe.
                   </AccordionContent>
                 </AccordionItem>
 
                 <AccordionItem value="item-4">
                   <AccordionTrigger className="text-left text-lg font-semibold">
-                    Como funciona o cache?
+                    Como funciona a busca?
                   </AccordionTrigger>
                   <AccordionContent className="text-slate-600">
-                    Nossa API usa cache Redis em 3 camadas (L1, L2, L3), garantindo respostas rápidas (~160ms em média). 
-                    CEPs populares ficam em cache por 7 dias. Sistema com fallback automático entre múltiplas fontes 
-                    (ViaCEP, Brasil API) para máxima confiabilidade.
+                    A API oferece <strong>3 tipos de busca</strong>: 1) Lista todos os artigos (com filtros opcionais por tipo e legislação), 
+                    2) Busca artigo específico por código (ex: "121", "157"), 3) Busca por texto livre em descrição e conteúdo completo. 
+                    Todos os endpoints são <strong>extremamente rápidos</strong> e otimizados para alta performance.
                   </AccordionContent>
                 </AccordionItem>
 
                 <AccordionItem value="item-5">
                   <AccordionTrigger className="text-left text-lg font-semibold">
-                    A API é confiável?
+                    Os dados são atualizados?
                   </AccordionTrigger>
                   <AccordionContent className="text-slate-600">
-                    Sim! Garantimos <strong>99.9% de uptime</strong> com infraestrutura na Railway. Temos 
-                    fallback automático entre ViaCEP e Brasil API, então mesmo se uma fonte falhar, sua 
-                    aplicação continua funcionando.
+                    Os artigos penais são baseados na <strong>legislação oficial brasileira</strong> vigente. 
+                    Como a legislação penal não muda com frequência, mantemos os dados em cache permanente para máxima performance. 
+                    Quando houver alterações oficiais no Código Penal ou legislações relacionadas, <strong>nossa equipe atualiza a base de dados </strong> 
+                    e todas as consultas passam a retornar as informações atualizadas automaticamente. Você não precisa fazer nada!
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>

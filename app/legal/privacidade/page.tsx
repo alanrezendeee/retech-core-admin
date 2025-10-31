@@ -71,9 +71,9 @@ export default function PrivacidadePage() {
                 <AlertDescription className="text-green-700">
                   <strong>✅ NÃO armazenamos:</strong>
                   <ul className="list-disc list-inside space-y-1 ml-4 mt-2">
-                    <li>CEPs que você consultou (armazenamos apenas o cache compartilhado)</li>
-                    <li>CNPJs que você consultou (cache compartilhado, sem relação com usuário)</li>
-                    <li>Relação "usuário X consultou CEP Y"</li>
+                    <li>CEPs, CNPJs, ou Artigos Penais que você consultou (armazenamos apenas cache compartilhado)</li>
+                    <li>Relação "usuário X consultou dado Y"</li>
+                    <li>Histórico individual de consultas</li>
                     <li>Cookies de tracking ou analytics de terceiros</li>
                   </ul>
                 </AlertDescription>
@@ -116,9 +116,9 @@ export default function PrivacidadePage() {
                 <strong>Como funciona:</strong>
               </p>
               <p>
-                Quando QUALQUER usuário consulta um CEP (ex: 01310-100), armazenamos o resultado em cache 
-                <strong> compartilhado</strong> por 7 dias. Se OUTRO usuário consultar o mesmo CEP, 
-                retornamos do cache (~1ms vs ~160ms).
+                Quando QUALQUER usuário consulta um dado (CEP, CNPJ, Artigo Penal), armazenamos o resultado em cache 
+                <strong> compartilhado</strong> (7 dias para CEP, 30 dias para CNPJ, permanente para Artigos Penais). 
+                Se OUTRO usuário consultar o mesmo dado, retornamos do cache (resposta ultra-rápida).
               </p>
               <Alert className="bg-blue-50 border-blue-200">
                 <AlertDescription className="text-blue-700">

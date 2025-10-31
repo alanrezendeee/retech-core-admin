@@ -166,7 +166,7 @@ export default function AdminAnalyticsPage() {
                     const rankColor = rankColors[index] || 'text-slate-400';
 
                     return (
-                      <div key={index} className="space-y-2">
+                      <div key={`endpoint-${item.endpoint || item._id || index}`} className="space-y-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <div className={`text-2xl font-bold ${rankColor}`}>
@@ -224,7 +224,7 @@ export default function AdminAnalyticsPage() {
                     const isToday = index === usage.byDay.length - 1;
 
                     return (
-                      <div key={item._id} className="space-y-2">
+                      <div key={`day-${item._id || index}`} className="space-y-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <span className={`text-sm font-medium ${isToday ? 'text-blue-700' : 'text-slate-700'}`}>

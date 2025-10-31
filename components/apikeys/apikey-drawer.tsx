@@ -50,6 +50,7 @@ const availableScopes = [
   { value: 'geo', label: '🗺️ GEO - Dados geográficos (UFs, Municípios)' },
   { value: 'cep', label: '📮 CEP - Consulta de endereços' },
   { value: 'cnpj', label: '🏢 CNPJ - Dados de empresas (Receita Federal)' },
+  { value: 'penal', label: '⚖️ PENAL - Artigos penais (Código Penal)' },
   { value: 'all', label: '⭐ ALL - Acesso total a todas as APIs' },
 ];
 

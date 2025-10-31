@@ -287,19 +287,23 @@ export default function PainelRegisterPage() {
                   <ul className="space-y-2 text-sm text-slate-700">
                     <li className="flex items-center gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
-                      1.000 requisições por dia
+                      <strong>1.000 requisições/dia</strong>
                     </li>
                     <li className="flex items-center gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
-                      Acesso a todos os endpoints GEO
+                      4 APIs (CEP, CNPJ, Geografia, Penal)
                     </li>
                     <li className="flex items-center gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
-                      Suporte via email
+                      Cache 3 camadas + Dashboard
                     </li>
                     <li className="flex items-center gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
-                      Sem necessidade de cartão de crédito
+                      Documentação completa
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
+                      Sem cartão de crédito
                     </li>
                   </ul>
                 </div>

@@ -120,7 +120,7 @@ export default function ConsultarCEPPage() {
   const faqs = [
     {
       question: "Como consultar CEP gratuitamente?",
-      answer: "Basta digitar o CEP no formato XXXXX-XXX ou XXXXXXXX e clicar em Consultar. A busca é ilimitada e gratuita, sem necessidade de cadastro."
+      answer: "Basta digitar o CEP no formato XXXXX-XXX ou XXXXXXXX e clicar em Consultar. A ferramenta é gratuita e não requer cadastro."
     },
     {
       question: "De onde vêm os dados de CEP?",
@@ -164,7 +164,7 @@ export default function ConsultarCEPPage() {
           <div className="flex items-center justify-center gap-4 text-sm text-slate-500">
             <span>✅ Gratuito</span>
             <span>✅ Sem cadastro</span>
-            <span>✅ Sem limites</span>
+            <span>✅ Dados atualizados</span>
           </div>
         </div>
 
@@ -324,7 +324,7 @@ export default function ConsultarCEPPage() {
             <CardContent className="pt-6 text-center">
               <div className="text-3xl mb-2">💯</div>
               <h3 className="font-semibold mb-1">100% Gratuito</h3>
-              <p className="text-sm text-slate-600">Sem cadastro, sem limites</p>
+              <p className="text-sm text-slate-600">Gratuito e sem cadastro</p>
             </CardContent>
           </Card>
         </div>
@@ -374,7 +374,7 @@ export default function ConsultarCEPPage() {
             <Link href="/playground" className="text-indigo-600 hover:underline">API de CEP</Link> oferece:
           </p>
           <ul className="list-disc list-inside text-slate-600 space-y-2 mb-4">
-            <li>Cache em 3 camadas: Redis (~1ms), MongoDB (~10ms), API Externa (~160ms)</li>
+            <li>Cache inteligente em 3 camadas para máxima velocidade</li>
             <li>Fallback automático entre ViaCEP e Brasil API</li>
             <li>1.000 requests gratuitos por dia</li>
             <li>Documentação completa com exemplos em JavaScript, Python e PHP</li>

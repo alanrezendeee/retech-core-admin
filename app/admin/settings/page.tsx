@@ -66,6 +66,11 @@ interface SystemSettings {
       ttlDays: number | '';
       autoCleanup: boolean;
     };
+    penal?: {
+      enabled: boolean;
+      ttlDays: number | '';
+      autoCleanup: boolean;
+    };
   };
   // Playground
   playground?: {
@@ -115,6 +120,11 @@ export default function AdminSettingsPage() {
         ttlDays: 30,
         autoCleanup: true,
       },
+      penal: {
+        enabled: true,
+        ttlDays: 365,
+        autoCleanup: false,
+      },
     },
     playground: {
       enabled: false,
@@ -123,7 +133,7 @@ export default function AdminSettingsPage() {
         requestsPerDay: 100,
         requestsPerMinute: 10,
       },
-      allowedApis: ['cep', 'cnpj', 'geo'],
+      allowedApis: ['cep', 'cnpj', 'geo', 'penal'],
     },
   });
 
@@ -142,12 +152,17 @@ export default function AdminSettingsPage() {
     totalCached: number;
     recentCached: number;
   } | null>(null);
+  const [penalCacheStats, setPenalCacheStats] = useState<{
+    totalCached: number;
+    recentCached: number;
+  } | null>(null);
   const [redisStats, setRedisStats] = useState<{
     connected: boolean;
     totalKeys: number;
     cepKeys: number;
     cnpjKeys: number;
     geoKeys: number;
+    penalKeys: number;
     memoryUsedMB: string;
     message: string;
   } | null>(null);
@@ -190,6 +205,11 @@ export default function AdminSettingsPage() {
             ttlDays: data.cache.cnpj?.ttlDays ?? (data.cache.cnpjTtlDays || 30),
             autoCleanup: data.cache.cnpj?.autoCleanup ?? (data.cache.autoCleanup ?? true),
           },
+          penal: data.cache.penal ? {
+            enabled: data.cache.penal.enabled ?? true,
+            ttlDays: data.cache.penal.ttlDays ?? 365,
+            autoCleanup: data.cache.penal.autoCleanup ?? false,
+          } : undefined,
         } : undefined,
         // ✅ Normalizar playground.rateLimit também
         playground: data.playground ? {
@@ -206,6 +226,7 @@ export default function AdminSettingsPage() {
       // ✅ Carregar stats APÓS settings carregar com sucesso
       loadCacheStats();
       loadCNPJCacheStats();
+      loadPenalCacheStats();
       loadRedisStats();
     } catch (error: any) {
       console.error('Erro ao carregar configurações:', error);
@@ -245,6 +266,19 @@ export default function AdminSettingsPage() {
     }
   };
 
+  const loadPenalCacheStats = async () => {
+    try {
+      const response = await api.get('/admin/cache/penal/stats');
+      setPenalCacheStats({
+        totalCached: response.data.totalCached || 0,
+        recentCached: response.data.recentCached || 0,
+      });
+    } catch (error: any) {
+      console.error('Erro ao carregar stats de cache Penal:', error);
+      // Silencioso
+    }
+  };
+
   const loadRedisStats = async () => {
     try {
       const response = await api.get('/admin/cache/redis/stats');
@@ -254,6 +288,7 @@ export default function AdminSettingsPage() {
         cepKeys: response.data.cepKeys || 0,
         cnpjKeys: response.data.cnpjKeys || 0,
         geoKeys: response.data.geoKeys || 0,
+        penalKeys: response.data.penalKeys || 0,
         memoryUsedMB: response.data.memoryUsedMB || '0',
         message: response.data.message || '',
       });
@@ -265,6 +300,7 @@ export default function AdminSettingsPage() {
         cepKeys: 0,
         cnpjKeys: 0,
         geoKeys: 0,
+        penalKeys: 0,
         memoryUsedMB: '0',
         message: 'Erro ao conectar com Redis',
       });
@@ -313,6 +349,7 @@ export default function AdminSettingsPage() {
       loadRedisStats(); // Recarregar stats
       loadCacheStats(); // Recarregar CEP stats
       loadCNPJCacheStats(); // Recarregar CNPJ stats
+      loadPenalCacheStats(); // Recarregar Penal stats
     } catch (error: any) {
       console.error('Erro ao limpar Redis:', error);
       toast.error(error.response?.data?.error || 'Erro ao limpar cache do Redis');
@@ -1097,7 +1134,7 @@ export default function AdminSettingsPage() {
               <div className="space-y-2">
                 <Label>APIs Disponíveis no Playground</Label>
                 <div className="flex flex-wrap gap-2">
-                  {['cep', 'cnpj', 'geo'].map((apiName) => (
+                  {['cep', 'cnpj', 'geo', 'penal'].map((apiName) => (
                     <label
                       key={apiName}
                       className="flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors"
@@ -1329,7 +1366,8 @@ export default function AdminSettingsPage() {
                     <div className="text-xs text-red-700 space-y-1">
                       <p>├─ 📮 CEP: {redisStats.cepKeys} keys</p>
                       <p>├─ 🏢 CNPJ: {redisStats.cnpjKeys} keys</p>
-                      <p>└─ 🗺️ GEO: {redisStats.geoKeys} keys</p>
+                      <p>├─ 🗺️ GEO: {redisStats.geoKeys} keys</p>
+                      <p>└─ ⚖️ PENAL: {redisStats.penalKeys} keys</p>
                     </div>
                   </div>
                 </div>
@@ -1735,6 +1773,7 @@ export default function AdminSettingsPage() {
                   <div>📮 <strong>CEP:</strong> {redisStats?.cepKeys || 0} keys</div>
                   <div>🏢 <strong>CNPJ:</strong> {redisStats?.cnpjKeys || 0} keys</div>
                   <div>🗺️ <strong>GEO:</strong> {redisStats?.geoKeys || 0} keys</div>
+                  <div>⚖️ <strong>PENAL:</strong> {redisStats?.penalKeys || 0} keys</div>
                   <div className="font-semibold">📊 <strong>Total:</strong> {redisStats?.totalKeys || 0} keys</div>
                 </div>
                 

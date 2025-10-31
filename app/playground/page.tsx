@@ -17,10 +17,11 @@ export default function PlaygroundPage() {
   const [isPlaygroundEnabled, setIsPlaygroundEnabled] = useState(true);
   const [isCheckingStatus, setIsCheckingStatus] = useState(true);
   const [demoApiKey, setDemoApiKey] = useState('rtc_demo_playground_2024'); // Default, será atualizado
-  const [selectedAPI, setSelectedAPI] = useState<'cep' | 'cnpj' | 'geo'>('cep');
+  const [selectedAPI, setSelectedAPI] = useState<'cep' | 'cnpj' | 'geo' | 'penal'>('cep');
   const [cepInput, setCepInput] = useState('01310-100');
   const [cnpjInput, setCnpjInput] = useState('00000000000191');
   const [ufInput, setUfInput] = useState('SP');
+  const [penalInput, setPenalInput] = useState('121');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<any>(null);
   const [responseTime, setResponseTime] = useState<number | null>(null);
@@ -34,6 +35,20 @@ export default function PlaygroundPage() {
   // Verificar se playground está habilitado ao carregar
   useEffect(() => {
     checkPlaygroundStatus();
+    
+    // ✅ Verificar se há parâmetro ?api na URL
+    const params = new URLSearchParams(window.location.search);
+    const apiParam = params.get('api');
+    if (apiParam === 'penal') {
+      setSelectedAPI('penal');
+    } else if (apiParam === 'cnpj') {
+      setSelectedAPI('cnpj');
+    } else if (apiParam === 'geo') {
+      setSelectedAPI('geo');
+    } else {
+      // ✅ Sempre iniciar com CEP por padrão
+      setSelectedAPI('cep');
+    }
   }, []);
 
   const checkPlaygroundStatus = async () => {
@@ -60,12 +75,8 @@ export default function PlaygroundPage() {
         setAllowedApis(data.allowedApis);
         console.log('✅ APIs permitidas:', data.allowedApis);
         
-        // ✅ Selecionar automaticamente a primeira API disponível
-        if (data.allowedApis.length > 0) {
-          const firstAvailableAPI = data.allowedApis[0] as 'cep' | 'cnpj' | 'geo';
-          setSelectedAPI(firstAvailableAPI);
-          console.log('✅ API selecionada automaticamente:', firstAvailableAPI);
-        }
+        // ✅ Não selecionar automaticamente - deixar o useEffect inicial definir
+        // (CEP por padrão ou parâmetro da URL)
       }
       
       // 🔍 Debug: log completo do status
@@ -107,6 +118,8 @@ export default function PlaygroundPage() {
         url = `${apiBaseURL}/public/cep/${cepInput.replace(/\D/g, '')}`;
       } else if (selectedAPI === 'cnpj') {
         url = `${apiBaseURL}/public/cnpj/${cnpjInput.replace(/\D/g, '')}`;
+      } else if (selectedAPI === 'penal') {
+        url = `${apiBaseURL}/public/penal/artigos/${penalInput}`;
       } else {
         url = `${apiBaseURL}/public/geo/ufs/${ufInput}`;
       }
@@ -154,6 +167,8 @@ export default function PlaygroundPage() {
       endpoint = `/cep/${cepInput.replace(/\D/g, '')}`;
     } else if (selectedAPI === 'cnpj') {
       endpoint = `/cnpj/${cnpjInput.replace(/\D/g, '')}`;
+    } else if (selectedAPI === 'penal') {
+      endpoint = `/penal/artigos/${penalInput}`;
     } else {
       endpoint = `/geo/ufs/${ufInput}`;
     }
@@ -384,6 +399,21 @@ curl -X GET '${apiBaseURL}${endpoint}' \\
                   <p className="text-sm text-slate-600">Estados e municípios</p>
                 </button>
               )}
+
+              {allowedApis.includes('penal') && (
+                <button
+                  onClick={() => setSelectedAPI('penal')}
+                  className={`p-6 rounded-lg border-2 transition-all ${
+                    selectedAPI === 'penal'
+                      ? 'border-indigo-600 bg-indigo-50'
+                      : 'border-slate-200 hover:border-slate-300'
+                  }`}
+                >
+                  <div className="text-4xl mb-2">⚖️</div>
+                  <h3 className="font-semibold text-lg mb-1">Artigos Penais</h3>
+                  <p className="text-sm text-slate-600">Código Penal brasileiro</p>
+                </button>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -441,6 +471,22 @@ curl -X GET '${apiBaseURL}${endpoint}' \\
                   />
                   <p className="text-xs text-slate-500">
                     Exemplos: SP, RJ, MG, RS, SC, PR
+                  </p>
+                </div>
+              )}
+
+              {selectedAPI === 'penal' && (
+                <div className="space-y-2">
+                  <Label htmlFor="penal">Código do Artigo</Label>
+                  <Input
+                    id="penal"
+                    placeholder="121"
+                    value={penalInput}
+                    onChange={(e) => setPenalInput(e.target.value)}
+                    className="text-lg"
+                  />
+                  <p className="text-xs text-slate-500">
+                    Exemplos: 121 (Homicídio), 157 (Roubo), 155 (Furto), 213 (Estupro)
                   </p>
                 </div>
               )}
@@ -548,11 +594,25 @@ curl -X GET '${apiBaseURL}${endpoint}' \\
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white/30">
-                <Link href={process.env.NEXT_PUBLIC_DOCS_URL || 'https://api-core.theretech.com.br/docs'} target="_blank" rel="noopener noreferrer">
-                  Ver Documentação
-                </Link>
-              </Button>
+              {apiBaseURL ? (
+                <Button asChild size="lg" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white/30">
+                  <Link href={`${apiBaseURL}/docs`} target="_blank" rel="noopener noreferrer">
+                    Ver Documentação
+                  </Link>
+                </Button>
+              ) : (
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="bg-red-500/20 hover:bg-red-500/30 text-white border-red-400"
+                  onClick={() => {
+                    console.error('❌ NEXT_PUBLIC_API_URL não está definida no .env.local');
+                    alert('⚠️ DEV: NEXT_PUBLIC_API_URL não está configurada!\n\nAdicione no .env.local:\nNEXT_PUBLIC_API_URL=http://localhost:8080');
+                  }}
+                >
+                  ⚠️ API URL não configurada
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>

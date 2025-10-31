@@ -267,8 +267,8 @@ export default function AdminAPIKeysPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {apikeys.map((key) => (
-                    <TableRow key={key.keyId}>
+                  {apikeys.map((key, index) => (
+                    <TableRow key={key.id || `${key.keyId}-${index}`}>
                       <TableCell className="font-mono text-xs">
                         <div className="flex items-center gap-2">
                           <span>{key.keyId}</span>
@@ -284,8 +284,8 @@ export default function AdminAPIKeysPage() {
                       <TableCell>{getTenantName(key.ownerId)}</TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-1">
-                          {key.scopes.map((scope) => (
-                            <Badge key={scope} variant="outline" className="text-xs">
+                          {key.scopes.map((scope, scopeIndex) => (
+                            <Badge key={`${key.id || key.keyId}-scope-${scopeIndex}-${scope}`} variant="outline" className="text-xs">
                               {scope}
                             </Badge>
                           ))}

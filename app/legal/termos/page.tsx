@@ -65,7 +65,7 @@ export default function TermosPage() {
               <p>Você PODE usar nossas APIs para:</p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>Desenvolvimento de aplicações comerciais e pessoais</li>
-                <li>Consultas a dados públicos (CEP, CNPJ, Geografia)</li>
+                <li>Consultas a dados públicos (CEP, CNPJ, Geografia, Artigos Penais)</li>
                 <li>Integração em websites, aplicativos mobile e sistemas</li>
                 <li>Testes e desenvolvimento (ambiente sandbox)</li>
                 <li>Redistribuição de dados obtidos (com atribuição à fonte original)</li>
@@ -122,7 +122,7 @@ export default function TermosPage() {
               </p>
               <p>
                 Os dados fornecidos pela Retech Core são obtidos de <strong>fontes públicas confiáveis</strong> 
-                (ViaCEP, Brasil API, IBGE, Receita Federal) e fornecidos "COMO ESTÃO", sem garantias expressas ou 
+                (ViaCEP, Brasil API, IBGE, Receita Federal, Legislação Brasileira) e fornecidos "COMO ESTÃO", sem garantias expressas ou 
                 implícitas de precisão, atualização ou completude.
               </p>
               <p>
@@ -205,8 +205,8 @@ export default function TermosPage() {
                 <strong>6.3. Dados Atualizados</strong>
               </p>
               <p>
-                Os dados são atualizados conforme as fontes públicas (ViaCEP, Brasil API, IBGE). 
-                CEPs em cache por 7 dias, CNPJs por 30 dias (configurável).
+                Os dados são atualizados conforme as fontes públicas (ViaCEP, Brasil API, IBGE, Legislação). 
+                CEPs em cache por 7 dias, CNPJs por 30 dias, Artigos Penais são permanentes (alterados apenas quando a legislação muda).
               </p>
             </CardContent>
           </Card>
@@ -251,8 +251,8 @@ export default function TermosPage() {
                 <strong>8.1. Dados Públicos</strong>
               </p>
               <p>
-                Os dados fornecidos (CEPs, CNPJs, Geografia) são de <strong>domínio público</strong> e pertencem às 
-                suas respectivas fontes (Correios, Receita Federal, IBGE).
+                Os dados fornecidos (CEPs, CNPJs, Geografia, Artigos Penais) são de <strong>domínio público</strong> e pertencem às 
+                suas respectivas fontes (Correios, Receita Federal, IBGE, Legislação Brasileira).
               </p>
               <p>
                 <strong>8.2. Plataforma</strong>

@@ -119,7 +119,7 @@ export default function StatusPage() {
 
               <Card>
                 <CardContent className="pt-6 text-center">
-                  <div className="text-4xl font-bold text-purple-600 mb-2">3/36</div>
+                  <div className="text-4xl font-bold text-purple-600 mb-2">4/37</div>
                   <div className="text-sm text-slate-600">APIs Disponíveis</div>
                 </CardContent>
               </Card>
@@ -161,8 +161,8 @@ export default function StatusPage() {
                   <AlertCircle className="w-5 h-5 text-yellow-600" />
                 )}
                 <div>
-                  <div className="font-semibold">API CEP, CNPJ e Geografia</div>
-                  <div className="text-sm text-slate-600">Consulta de dados públicos</div>
+                  <div className="font-semibold">APIs Principais</div>
+                  <div className="text-sm text-slate-600">CEP, CNPJ, Geografia, Penal</div>
                 </div>
               </div>
               <Badge className={isOperational ? 'bg-green-600' : 'bg-yellow-600'}>
@@ -237,11 +237,11 @@ export default function StatusPage() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="p-4 bg-blue-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">~1ms</div>
+                <div className="text-2xl font-bold text-blue-600">&lt; 5ms</div>
                 <div className="text-sm text-slate-600">Cache Redis (L1) - Hit</div>
               </div>
               <div className="p-4 bg-indigo-50 rounded-lg">
-                <div className="text-2xl font-bold text-indigo-600">~10ms</div>
+                <div className="text-2xl font-bold text-indigo-600">&lt; 20ms</div>
                 <div className="text-sm text-slate-600">Cache MongoDB (L2) - Hit</div>
               </div>
               <div className="p-4 bg-purple-50 rounded-lg">

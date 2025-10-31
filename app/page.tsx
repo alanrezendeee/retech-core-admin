@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import PricingPlans from '@/components/pricing/PricingPlans';
 
 interface ContactInfo {
   whatsapp: string;
@@ -14,10 +15,11 @@ interface ContactInfo {
 
 export default function HomePage() {
   const [contact, setContact] = useState<ContactInfo | null>(null);
+  const apiBaseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
   useEffect(() => {
     // Buscar informações de contato
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    const apiUrl = apiBaseURL;
     
     fetch(`${apiUrl}/public/contact`)
       .then(res => {
@@ -66,7 +68,7 @@ export default function HomePage() {
             O Hub Definitivo de APIs Brasileiras
           </h1>
           <p className="text-xl md:text-2xl text-slate-300 mb-4 max-w-3xl mx-auto">
-            36 APIs essenciais em uma única plataforma
+            37 APIs essenciais em uma única plataforma
           </p>
           <p className="text-lg text-slate-400 mb-8 max-w-2xl mx-auto">
             ⚡ Respostas em ~160ms com cache inteligente
@@ -135,7 +137,7 @@ export default function HomePage() {
                   <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">📮</div>
                   <CardTitle className="text-xl mb-2 text-blue-600">Consultar CEP</CardTitle>
                   <CardDescription className="text-sm">
-                    Busca <strong>gratuita e ilimitada</strong> de endereços brasileiros
+                    Busca <strong>gratuita</strong> de endereços brasileiros
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -186,26 +188,63 @@ export default function HomePage() {
                 </CardContent>
               </Card>
             </Link>
+
+            {/* Artigos Penais */}
+            <Link href="/ferramentas/penal">
+              <Card className="border-2 border-red-200 hover:border-red-400 hover:shadow-2xl transition-all cursor-pointer h-full group">
+                <CardHeader className="text-center">
+                  <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">⚖️</div>
+                  <CardTitle className="text-xl mb-2 text-red-600">Artigos Penais</CardTitle>
+                  <CardDescription className="text-sm">
+                    Consulte <strong>artigos do Código Penal</strong> brasileiro (CP + LCP)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Badge className="w-full justify-center bg-red-100 text-red-800 hover:bg-red-200">
+                    Consultar Grátis →
+                  </Badge>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
 
-          {/* Link to API CEP below */}
-          <div className="max-w-7xl mx-auto mb-8">
+          {/* APIs para Desenvolvedores */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto mb-8">
+            {/* API de CEP */}
             <Link href="/apis/cep">
-              <Card className="border-2 border-purple-200 hover:border-purple-400 hover:shadow-2xl transition-all cursor-pointer group">
-                <CardHeader className="text-center">
-                  <div className="flex items-center justify-center gap-4">
+              <Card className="border-2 border-purple-200 hover:border-purple-400 hover:shadow-2xl transition-all cursor-pointer group h-full">
+                <CardHeader>
+                  <div className="flex items-center gap-4 mb-2">
                     <div className="text-5xl group-hover:scale-110 transition-transform">⚡</div>
-                    <div>
-                      <CardTitle className="text-2xl mb-2 text-purple-600">API de CEP Completa</CardTitle>
-                      <CardDescription className="text-base">
-                        <strong>3 fontes</strong> com fallback automático, cache Redis, <strong>~160ms</strong> • Integre no seu sistema agora
-                      </CardDescription>
-                    </div>
+                    <CardTitle className="text-2xl text-purple-600">API de CEP</CardTitle>
                   </div>
+                  <CardDescription className="text-base">
+                    <strong>3 fontes</strong> com fallback automático • Cache inteligente • <strong>~160ms</strong>
+                  </CardDescription>
                 </CardHeader>
-                <CardContent className="text-center">
-                  <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-200 px-6 py-2 text-base">
-                    Ver Documentação da API →
+                <CardContent>
+                  <Badge className="w-full justify-center bg-purple-100 text-purple-800 hover:bg-purple-200 px-6 py-2 text-base">
+                    Ver Documentação →
+                  </Badge>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* API de Artigos Penais */}
+            <Link href="/apis/penal">
+              <Card className="border-2 border-red-200 hover:border-red-400 hover:shadow-2xl transition-all cursor-pointer group h-full">
+                <CardHeader>
+                  <div className="flex items-center gap-4 mb-2">
+                    <div className="text-5xl group-hover:scale-110 transition-transform">⚖️</div>
+                    <CardTitle className="text-2xl text-red-600">API de Artigos Penais</CardTitle>
+                  </div>
+                  <CardDescription className="text-base">
+                    <strong>CP + LCP + Leis Especiais</strong> • Cache permanente • <strong>80+ artigos</strong>
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Badge className="w-full justify-center bg-red-100 text-red-800 hover:bg-red-200 px-6 py-2 text-base">
+                    Ver Documentação →
                   </Badge>
                 </CardContent>
               </Card>
@@ -215,7 +254,7 @@ export default function HomePage() {
           {/* Stats Row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl border border-indigo-200">
             <div className="text-center">
-              <div className="text-3xl font-bold text-indigo-600">36</div>
+              <div className="text-3xl font-bold text-indigo-600">37</div>
               <div className="text-sm text-slate-600">APIs Planejadas</div>
             </div>
             <div className="text-center">
@@ -323,14 +362,14 @@ export default function HomePage() {
             O Hub Definitivo de APIs Brasileiras
           </h2>
           <p className="text-center text-slate-600 mb-12 max-w-3xl mx-auto">
-            <strong>36 APIs essenciais</strong> para desenvolvedores brasileiros. Uma única integração, infinitas possibilidades.
+            <strong>37 APIs essenciais</strong> para desenvolvedores brasileiros. Uma única integração, infinitas possibilidades.
           </p>
           
           {/* Progress Bar */}
           <div className="max-w-2xl mx-auto mb-12">
             <div className="flex items-center justify-between mb-2 text-sm">
               <span className="text-slate-600 font-medium">Progresso Geral</span>
-              <span className="text-indigo-600 font-bold">25% (9/36 APIs)</span>
+              <span className="text-indigo-600 font-bold">27% (10/37 APIs)</span>
             </div>
             <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
               <div className="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 h-full rounded-full transition-all duration-1000" style={{ width: '25%' }}></div>
@@ -387,7 +426,7 @@ export default function HomePage() {
                   <div className="mt-4 pt-4 border-t border-green-200">
                     <p className="text-sm text-slate-600 mb-2 font-medium">Recursos:</p>
                     <ul className="text-xs text-slate-600 space-y-1">
-                      <li>✓ Cache Redis (~1ms)</li>
+                      <li>✓ Cache Redis ultra-rápido</li>
                       <li>✓ 3 fontes com fallback</li>
                       <li>✓ Coordenadas geográficas</li>
                       <li>✓ Processamento &lt;5ms</li>
@@ -468,6 +507,31 @@ export default function HomePage() {
                     </ul>
                   </div>
                 </CardHeader>
+              </Card>
+
+              {/* Artigos Penais */}
+              <Card className="border-2 border-red-400 bg-white hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer">
+                <Link href="/apis/penal">
+                  <CardHeader>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-4xl">⚖️</div>
+                      <Badge className="bg-green-600 text-white">✓ Disponível</Badge>
+                    </div>
+                    <CardTitle className="text-xl mb-2">Artigos Penais</CardTitle>
+                    <CardDescription className="text-base">
+                      Mais de 80 artigos penais brasileiros (CP + LCP) com estrutura hierárquica completa. Ideal para autocomplete.
+                    </CardDescription>
+                    <div className="mt-4 pt-4 border-t border-red-200">
+                      <p className="text-sm text-slate-600 mb-2 font-medium">Recursos:</p>
+                      <ul className="text-xs text-slate-600 space-y-1">
+                        <li>✓ 80+ artigos do CP/LCP</li>
+                        <li>✓ Busca por texto</li>
+                        <li>✓ Cache permanente</li>
+                        <li>✓ Autocomplete otimizado</li>
+                      </ul>
+                    </div>
+                  </CardHeader>
+                </Link>
               </Card>
             </div>
 
@@ -1089,193 +1153,7 @@ export default function HomePage() {
             Planos e Preços
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-            {/* Free */}
-            <Card className="border-2 hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <CardTitle className="text-xl">Free</CardTitle>
-                <CardDescription>Perfeito para testar e projetos pequenos</CardDescription>
-                <div className="mt-4">
-                  <div className="text-3xl font-bold">R$ 0</div>
-                  <div className="text-slate-500 text-sm">/mês</div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-600 mt-0.5">✓</span>
-                    <span><strong>1.000 requests/dia</strong></span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-600 mt-0.5">✓</span>
-                    <span>3 APIs (CEP, CNPJ, Geografia)</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-600 mt-0.5">✓</span>
-                    <span>Cache 3 camadas</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-600 mt-0.5">✓</span>
-                    <span>Dashboard de uso</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-600 mt-0.5">✓</span>
-                    <span>Documentação completa</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-600 mt-0.5">✓</span>
-                    <span>Suporte via email</span>
-                  </li>
-                </ul>
-                <Link href="/painel/register" className="w-full">
-                  <Button className="w-full mt-4" variant="outline">
-                    Começar Grátis
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            {/* Pro */}
-            <Card className="border-2 border-blue-400 hover:shadow-xl transition-shadow relative">
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <Badge className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1">
-                  Em Breve
-                </Badge>
-              </div>
-              <CardHeader>
-                <CardTitle className="text-xl">Pro</CardTitle>
-                <CardDescription>Para aplicações em crescimento</CardDescription>
-                <div className="mt-4">
-                  <div className="text-3xl font-bold">R$ 49</div>
-                  <div className="text-slate-500 text-sm">/mês</div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-600 mt-0.5">✓</span>
-                    <span><strong>10.000 requests/dia</strong></span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-600 mt-0.5">✓</span>
-                    <span>Acesso a TODAS as APIs</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-600 mt-0.5">✓</span>
-                    <span>Cache prioritário</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-600 mt-0.5">✓</span>
-                    <span>Dashboard avançado</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-600 mt-0.5">✓</span>
-                    <span>Analytics em tempo real</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-600 mt-0.5">✓</span>
-                    <span>Suporte prioritário</span>
-                  </li>
-                </ul>
-                <Button className="w-full mt-4" disabled>
-                  Em Breve
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Business */}
-            <Card className="border-4 border-purple-600 shadow-2xl relative hover:shadow-3xl transition-shadow">
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1">
-                  Mais Popular
-                </Badge>
-              </div>
-              <CardHeader>
-                <CardTitle className="text-xl">Business</CardTitle>
-                <CardDescription>Para empresas em crescimento</CardDescription>
-                <div className="mt-4">
-                  <div className="text-3xl font-bold">R$ 149</div>
-                  <div className="text-slate-500 text-sm">/mês</div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-600 mt-0.5">✓</span>
-                    <span><strong>100.000 requests/dia</strong></span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-600 mt-0.5">✓</span>
-                    <span>TODAS as 36 APIs</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-600 mt-0.5">✓</span>
-                    <span>Cache Redis L1 prioritário</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-600 mt-0.5">✓</span>
-                    <span>APIs Premium (NF-e, Boletos)</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-600 mt-0.5">✓</span>
-                    <span>Suporte WhatsApp prioritário</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-600 mt-0.5">✓</span>
-                    <span>SLA de 99.5%</span>
-                  </li>
-                </ul>
-                <Button className="w-full mt-4 bg-purple-600 hover:bg-purple-700" disabled>
-                  Em Breve
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Enterprise */}
-            <Card className="border-2 border-slate-400 hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <CardTitle className="text-xl">Enterprise</CardTitle>
-                <CardDescription>Soluções personalizadas para grandes volumes</CardDescription>
-                <div className="mt-4">
-                  <div className="text-3xl font-bold">Custom</div>
-                  <div className="text-slate-500 text-sm">sob consulta</div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-start gap-2">
-                    <span className="text-slate-600 mt-0.5">✓</span>
-                    <span><strong>Requests ilimitados</strong></span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-slate-600 mt-0.5">✓</span>
-                    <span>Todas as 36 APIs</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-slate-600 mt-0.5">✓</span>
-                    <span>Infraestrutura dedicada</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-slate-600 mt-0.5">✓</span>
-                    <span>White-label disponível</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-slate-600 mt-0.5">✓</span>
-                    <span>Suporte 24/7</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-slate-600 mt-0.5">✓</span>
-                    <span>SLA de 99.9%</span>
-                  </li>
-                </ul>
-                <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="w-full">
-                  <Button className="w-full mt-4" variant="outline">
-                    Falar com Vendas
-                  </Button>
-                </a>
-              </CardContent>
-            </Card>
-          </div>
+          <PricingPlans variant="landing" />
         </div>
       </section>
 
@@ -1303,7 +1181,7 @@ export default function HomePage() {
                 <CardContent>
                   <pre className="bg-slate-950 rounded-lg p-4 text-sm text-slate-100 overflow-x-auto">
                     <code>
-                      <span className="text-green-400">GET</span> https://api-core.theretech.com.br/geo/estados{'\n'}
+                      <span className="text-green-400">GET</span> {apiBaseURL}/geo/estados{'\n'}
                       {'\n'}
                       <span className="text-slate-400">// Headers</span>{'\n'}
                       <span className="text-yellow-300">X-API-Key: rtc_sua_chave_aqui</span>{'\n'}
@@ -1337,7 +1215,7 @@ export default function HomePage() {
                       <span className="text-purple-400">const</span> <span className="text-blue-300">axios</span> = <span className="text-yellow-300">require</span>(<span className="text-green-300">&apos;axios&apos;</span>);{'\n'}
                       {'\n'}
                       <span className="text-purple-400">const</span> <span className="text-blue-300">api</span> = axios.<span className="text-yellow-300">create</span>({'({'}{'\n'}
-                      {'  '}<span className="text-purple-400">baseURL</span>: <span className="text-green-300">&apos;https://api-core.theretech.com.br&apos;</span>,{'\n'}
+                      {'  '}<span className="text-purple-400">baseURL</span>: <span className="text-green-300">&apos;{apiBaseURL}&apos;</span>,{'\n'}
                       {'  '}<span className="text-purple-400">headers</span>: {'{'}{'\n'}
                       {'    '}<span className="text-purple-400">&apos;X-API-Key&apos;</span>: <span className="text-green-300">&apos;rtc_sua_chave&apos;</span>{'\n'}
                       {'  }'}
@@ -1355,7 +1233,7 @@ export default function HomePage() {
             </div>
 
             <div className="text-center mt-8">
-              <Link href={process.env.NEXT_PUBLIC_DOCS_URL || 'https://api-core.theretech.com.br/docs'} target="_blank" rel="noopener noreferrer">
+              <Link href={`${apiBaseURL}/docs`} target="_blank" rel="noopener noreferrer">
                 <Button variant="outline" size="lg" className="text-blue-600 border-blue-600 hover:bg-blue-50">
                   📚 Ver Documentação Completa
                 </Button>
@@ -1395,7 +1273,7 @@ export default function HomePage() {
             <div>
               <h4 className="text-white font-semibold mb-4">Produto</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href={process.env.NEXT_PUBLIC_DOCS_URL || 'https://api-core.theretech.com.br/docs'} target="_blank" className="hover:text-white">Documentação</Link></li>
+                <li><Link href={`${apiBaseURL}/docs`} target="_blank" className="hover:text-white">Documentação</Link></li>
                 <li><Link href="/precos" className="hover:text-white">Preços</Link></li>
                 <li><Link href="/status" className="hover:text-white">Status</Link></li>
               </ul>
