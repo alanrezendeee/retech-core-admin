@@ -27,6 +27,8 @@ interface ArtigoPenal {
   penaMin?: string;
   penaMax?: string;
   codigoFormatado: string;
+  fonte?: string;
+  dataAtualizacao?: string;
 }
 
 export default function ConsultarPenalPage() {
@@ -321,17 +323,44 @@ export default function ConsultarPenalPage() {
               </div>
 
               <div className="mt-6 pt-6 border-t">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary">
-                      Fonte: Cache
-                    </Badge>
-                    {responseTime && responseTime < 5 && (
-                      <Badge variant="secondary" className="bg-green-100 text-green-800">
-                        ⚡ Ultra-rápido
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary">
+                        Fonte: Cache
                       </Badge>
-                    )}
+                      {responseTime && responseTime < 5 && (
+                        <Badge variant="secondary" className="bg-green-100 text-green-800">
+                          ⚡ Ultra-rápido
+                        </Badge>
+                      )}
+                    </div>
                   </div>
+                  
+                  {data.fonte && (
+                    <div className="pt-2 border-t">
+                      <Label className="text-xs text-slate-500">Fonte Oficial</Label>
+                      <p className="text-xs text-slate-600 mt-1 break-all">
+                        <a 
+                          href={data.fonte} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline"
+                        >
+                          {data.fonte}
+                        </a>
+                      </p>
+                    </div>
+                  )}
+                  
+                  {data.dataAtualizacao && (
+                    <div>
+                      <Label className="text-xs text-slate-500">Atualizado em</Label>
+                      <p className="text-xs text-slate-600 mt-1">
+                        {data.dataAtualizacao}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </CardContent>
