@@ -65,7 +65,10 @@ console.log(response.data);
 //       "codigoFormatado": "Art. 121 do CP",
 //       "descricao": "Homicídio simples",
 //       "tipo": "crime",
-//       "legislacao": "CP"
+//       "legislacao": "CP",
+//       "legislacaoNome": "Código Penal",
+//       "fonte": "https://www2.senado.leg.br/bdsf/bitstream/handle/id/685738/Codigo_penal_8ed.pdf",
+//       "dataAtualizacao": "fevereiro/2025"
 //     }
 //   ]
 // }
@@ -115,7 +118,12 @@ artigo = requests.get(
     headers={'X-API-Key': 'rtc_sua_chave_aqui'}
 ).json()
 
-print(artigo['data']['textoCompleto'])`,
+print(f"Artigo: {artigo['data']['codigoFormatado']}")
+print(f"Descrição: {artigo['data']['descricao']}")
+print(f"Texto: {artigo['data']['textoCompleto']}")
+print(f"Pena: {artigo['data']['penaMin']}")
+print(f"Fonte: {artigo['data']['fonte']}")
+print(f"Atualizado em: {artigo['data']['dataAtualizacao']}")`,
     php: `<?php
 // PHP
 $ch = curl_init();
@@ -244,7 +252,7 @@ curl_close($ch);
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
-                    <span>Mais de 80 artigos do CP e LCP</span>
+                    <span>Mais de 100 artigos do CP e LCP</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
@@ -252,7 +260,11 @@ curl_close($ch);
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
-                    <span>Dados oficiais atualizados</span>
+                    <span>Fonte oficial documentada (Senado Federal)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
+                    <span>Data de atualização rastreável</span>
                   </li>
                 </ul>
               </CardContent>
@@ -335,6 +347,45 @@ curl_close($ch);
                   </TabsContent>
                 ))}
               </Tabs>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Response Example */}
+      <section className="py-16 px-4 bg-slate-900 text-white">
+        <div className="container max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-8">Exemplo de Resposta Completa</h2>
+          <p className="text-center text-slate-300 mb-8">
+            Cada artigo retorna informações completas incluindo fonte oficial e data de atualização
+          </p>
+          <Card className="bg-slate-800 border-slate-700">
+            <CardContent className="pt-6">
+              <pre className="bg-slate-900 text-green-400 p-6 rounded-lg overflow-auto text-sm font-mono border border-slate-700">
+{`{
+  "success": true,
+  "data": {
+    "id": "66a1b2c3d4e5f6g7h8i9j0k1",
+    "codigo": "121",
+    "artigo": 121,
+    "paragrafo": null,
+    "inciso": null,
+    "alinea": null,
+    "descricao": "Homicídio simples",
+    "textoCompleto": "Matar alguém",
+    "tipo": "crime",
+    "legislacao": "CP",
+    "legislacaoNome": "Código Penal",
+    "penaMin": "Reclusão, de 6 a 20 anos",
+    "penaMax": "",
+    "codigoFormatado": "Art. 121 do CP",
+    "fonte": "https://www2.senado.leg.br/bdsf/bitstream/handle/id/685738/Codigo_penal_8ed.pdf",
+    "dataAtualizacao": "fevereiro/2025",
+    "createdAt": "2025-10-29T12:00:00Z",
+    "updatedAt": "2025-10-29T12:00:00Z"
+  }
+}`}
+              </pre>
             </CardContent>
           </Card>
         </div>
