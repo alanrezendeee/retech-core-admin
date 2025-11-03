@@ -17,11 +17,10 @@ export default function PlaygroundPage() {
   const [isPlaygroundEnabled, setIsPlaygroundEnabled] = useState(true);
   const [isCheckingStatus, setIsCheckingStatus] = useState(true);
   const [demoApiKey, setDemoApiKey] = useState('rtc_demo_playground_2024'); // Default, será atualizado
-  const [selectedAPI, setSelectedAPI] = useState<'cep' | 'cnpj' | 'geo' | 'penal'>('cep');
+  const [selectedAPI, setSelectedAPI] = useState<'cep' | 'cnpj' | 'geo'>('cep');
   const [cepInput, setCepInput] = useState('01310-100');
   const [cnpjInput, setCnpjInput] = useState('00000000000191');
   const [ufInput, setUfInput] = useState('SP');
-  const [penalInput, setPenalInput] = useState('121');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<any>(null);
   const [responseTime, setResponseTime] = useState<number | null>(null);
@@ -39,9 +38,7 @@ export default function PlaygroundPage() {
     // ✅ Verificar se há parâmetro ?api na URL
     const params = new URLSearchParams(window.location.search);
     const apiParam = params.get('api');
-    if (apiParam === 'penal') {
-      setSelectedAPI('penal');
-    } else if (apiParam === 'cnpj') {
+    if (apiParam === 'cnpj') {
       setSelectedAPI('cnpj');
     } else if (apiParam === 'geo') {
       setSelectedAPI('geo');
@@ -118,8 +115,6 @@ export default function PlaygroundPage() {
         url = `${apiBaseURL}/public/cep/${cepInput.replace(/\D/g, '')}`;
       } else if (selectedAPI === 'cnpj') {
         url = `${apiBaseURL}/public/cnpj/${cnpjInput.replace(/\D/g, '')}`;
-      } else if (selectedAPI === 'penal') {
-        url = `${apiBaseURL}/public/penal/artigos/${penalInput}`;
       } else {
         url = `${apiBaseURL}/public/geo/ufs/${ufInput}`;
       }
@@ -167,8 +162,6 @@ export default function PlaygroundPage() {
       endpoint = `/cep/${cepInput.replace(/\D/g, '')}`;
     } else if (selectedAPI === 'cnpj') {
       endpoint = `/cnpj/${cnpjInput.replace(/\D/g, '')}`;
-    } else if (selectedAPI === 'penal') {
-      endpoint = `/penal/artigos/${penalInput}`;
     } else {
       endpoint = `/geo/ufs/${ufInput}`;
     }
@@ -399,21 +392,6 @@ curl -X GET '${apiBaseURL}${endpoint}' \\
                   <p className="text-sm text-slate-600">Estados e municípios</p>
                 </button>
               )}
-
-              {allowedApis.includes('penal') && (
-                <button
-                  onClick={() => setSelectedAPI('penal')}
-                  className={`p-6 rounded-lg border-2 transition-all ${
-                    selectedAPI === 'penal'
-                      ? 'border-indigo-600 bg-indigo-50'
-                      : 'border-slate-200 hover:border-slate-300'
-                  }`}
-                >
-                  <div className="text-4xl mb-2">⚖️</div>
-                  <h3 className="font-semibold text-lg mb-1">Artigos Penais</h3>
-                  <p className="text-sm text-slate-600">Código Penal brasileiro</p>
-                </button>
-              )}
             </div>
           </CardContent>
         </Card>
@@ -471,22 +449,6 @@ curl -X GET '${apiBaseURL}${endpoint}' \\
                   />
                   <p className="text-xs text-slate-500">
                     Exemplos: SP, RJ, MG, RS, SC, PR
-                  </p>
-                </div>
-              )}
-
-              {selectedAPI === 'penal' && (
-                <div className="space-y-2">
-                  <Label htmlFor="penal">Código do Artigo</Label>
-                  <Input
-                    id="penal"
-                    placeholder="121"
-                    value={penalInput}
-                    onChange={(e) => setPenalInput(e.target.value)}
-                    className="text-lg"
-                  />
-                  <p className="text-xs text-slate-500">
-                    Exemplos: 121 (Homicídio), 157 (Roubo), 155 (Furto), 213 (Estupro)
                   </p>
                 </div>
               )}

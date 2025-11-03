@@ -67,6 +67,7 @@ console.log(response.data);
 //       "tipo": "crime",
 //       "legislacao": "CP",
 //       "legislacaoNome": "Código Penal",
+//       "idUnico": "CP:121",
 //       "fonte": "https://www2.senado.leg.br/bdsf/bitstream/handle/id/685738/Codigo_penal_8ed.pdf",
 //       "dataAtualizacao": "fevereiro/2025"
 //     }
@@ -161,7 +162,7 @@ curl_close($ch);
             API de Artigos Penais
           </h1>
           <p className="text-xl md:text-2xl text-red-100 mb-8 max-w-3xl mx-auto">
-            Mais de <strong>80 artigos penais brasileiros</strong> com estrutura hierárquica completa, 
+            <strong>91 artigos penais brasileiros</strong> de múltiplas legislações com estrutura hierárquica completa, 
             ideal para <strong>autocomplete</strong> e sistemas jurídicos
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
@@ -180,7 +181,7 @@ curl_close($ch);
           
           <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
             <div>
-              <div className="text-3xl font-bold">80+</div>
+              <div className="text-3xl font-bold">91</div>
               <div className="text-sm text-red-200">artigos disponíveis</div>
             </div>
             <div>
@@ -252,7 +253,7 @@ curl_close($ch);
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
-                    <span>Mais de 100 artigos do CP e LCP</span>
+                    <span>91 artigos de crimes que podem levar à prisão</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
@@ -357,7 +358,7 @@ curl_close($ch);
         <div className="container max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-8">Exemplo de Resposta Completa</h2>
           <p className="text-center text-slate-300 mb-8">
-            Cada artigo retorna informações completas incluindo fonte oficial e data de atualização
+            Cada artigo retorna informações completas incluindo fonte oficial, data de atualização, identificador único (idUnico) e hash para rastreamento de alterações
           </p>
           <Card className="bg-slate-800 border-slate-700">
             <CardContent className="pt-6">
@@ -379,6 +380,8 @@ curl_close($ch);
     "penaMin": "Reclusão, de 6 a 20 anos",
     "penaMax": "",
     "codigoFormatado": "Art. 121 do CP",
+    "idUnico": "CP:121",
+    "hashConteudo": "a1b2c3d4e5f6...",
     "fonte": "https://www2.senado.leg.br/bdsf/bitstream/handle/id/685738/Codigo_penal_8ed.pdf",
     "dataAtualizacao": "fevereiro/2025",
     "createdAt": "2025-10-29T12:00:00Z",
@@ -489,10 +492,18 @@ curl_close($ch);
                     Quantos artigos estão disponíveis?
                   </AccordionTrigger>
                   <AccordionContent className="text-slate-600">
-                    A API contém mais de <strong>80 artigos penais</strong> do Código Penal (CP) e Lei de 
-                    Contravenções Penais (LCP), incluindo os artigos mais comuns e utilizados no dia a dia. 
-                    Caso precise de artigos específicos que ainda não estejam disponíveis, 
-                    <strong> entre em contato</strong> e podemos adicionar rapidamente.
+                    A API contém <strong>91 artigos penais</strong> de crimes que podem levar à prisão, distribuídos em:
+                    <ul className="list-disc list-inside mt-2 space-y-1">
+                      <li><strong>Código Penal (CP):</strong> 70 artigos</li>
+                      <li><strong>Lei de Contravenções Penais (LCP):</strong> 3 artigos</li>
+                      <li><strong>Lei de Drogas (Lei 11.343/2006):</strong> 2 artigos</li>
+                      <li><strong>Estatuto da Criança e do Adolescente (ECA):</strong> 4 artigos</li>
+                      <li><strong>Código de Trânsito Brasileiro (CTB):</strong> 4 artigos</li>
+                      <li><strong>Lei de Crimes Ambientais (Lei 9.605/98):</strong> 5 artigos</li>
+                      <li><strong>Código de Defesa do Consumidor (CDC):</strong> 2 artigos</li>
+                      <li><strong>Lei de Lavagem de Dinheiro (Lei 9.613/98):</strong> 1 artigo</li>
+                    </ul>
+                    Todos os artigos incluem identificador único (<code className="bg-slate-100 px-1 rounded">idUnico</code> no formato "LEGISLACAO:CODIGO") para evitar ambiguidade quando o mesmo código aparece em legislações diferentes. Caso precise de artigos específicos que ainda não estejam disponíveis, <strong>entre em contato</strong> e podemos adicionar rapidamente.
                   </AccordionContent>
                 </AccordionItem>
 
@@ -513,10 +524,18 @@ curl_close($ch);
                     Quais legislações estão incluídas?
                   </AccordionTrigger>
                   <AccordionContent className="text-slate-600">
-                    Atualmente incluímos artigos do <strong>Código Penal (CP)</strong>, <strong>Lei de Contravenções Penais (LCP)</strong>, 
-                    <strong>Lei de Drogas (Lei 11.343/2006)</strong> e <strong>Lei Maria da Penha (Lei 11.340/2006)</strong>. 
-                    Estamos constantemente expandindo nossa base de dados. Se precisar de outras legislações específicas, 
-                    <strong> entre em contato</strong> com nossa equipe.
+                    Incluímos artigos de <strong>8 legislações brasileiras</strong>:
+                    <ul className="list-disc list-inside mt-2 space-y-1">
+                      <li><strong>Código Penal (CP):</strong> 70 artigos</li>
+                      <li><strong>Lei de Contravenções Penais (LCP):</strong> 3 artigos</li>
+                      <li><strong>Lei de Drogas (Lei 11.343/2006):</strong> 2 artigos</li>
+                      <li><strong>Estatuto da Criança e do Adolescente (ECA):</strong> 4 artigos</li>
+                      <li><strong>Código de Trânsito Brasileiro (CTB):</strong> 4 artigos</li>
+                      <li><strong>Lei de Crimes Ambientais (Lei 9.605/98):</strong> 5 artigos</li>
+                      <li><strong>Código de Defesa do Consumidor (CDC):</strong> 2 artigos</li>
+                      <li><strong>Lei de Lavagem de Dinheiro (Lei 9.613/98):</strong> 1 artigo</li>
+                    </ul>
+                    <strong>Total: 91 artigos de crimes que podem levar à prisão.</strong> Estamos constantemente expandindo nossa base de dados. Se precisar de outras legislações específicas, <strong>entre em contato</strong> com nossa equipe.
                   </AccordionContent>
                 </AccordionItem>
 
@@ -525,9 +544,13 @@ curl_close($ch);
                     Como funciona a busca?
                   </AccordionTrigger>
                   <AccordionContent className="text-slate-600">
-                    A API oferece <strong>3 tipos de busca</strong>: 1) Lista todos os artigos (com filtros opcionais por tipo e legislação), 
-                    2) Busca artigo específico por código (ex: "121", "157"), 3) Busca por texto livre em descrição e conteúdo completo. 
-                    Todos os endpoints são <strong>extremamente rápidos</strong> e otimizados para alta performance.
+                    A API oferece <strong>3 tipos de busca</strong>: 
+                    <ol className="list-decimal list-inside mt-2 space-y-1">
+                      <li><strong>Lista todos os artigos</strong> (com filtros opcionais por tipo e legislação) - ideal para autocomplete</li>
+                      <li><strong>Busca artigo específico</strong> por código (ex: "121", "157") ou por identificador único (ex: "CP:121", "Lei 11.343/2006:33") - útil quando o mesmo código aparece em múltiplas legislações</li>
+                      <li><strong>Busca por texto livre</strong> em descrição e conteúdo completo</li>
+                    </ol>
+                    Todos os artigos incluem o campo <code className="bg-slate-100 px-1 rounded">idUnico</code> (formato "LEGISLACAO:CODIGO") para evitar ambiguidade. Todos os endpoints são <strong>extremamente rápidos</strong> e otimizados para alta performance.
                   </AccordionContent>
                 </AccordionItem>
 

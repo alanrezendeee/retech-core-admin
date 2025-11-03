@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'API de Artigos Penais - Consulta Completa do Código Penal | Retech Core',
-  description: 'API de artigos penais brasileiros (Código Penal + Lei de Contravenções). Mais de 80 artigos completos com estrutura hierárquica. Ideal para autocomplete e sistemas jurídicos. Cache permanente para máxima performance.',
+  description: 'API de artigos penais brasileiros: 91 artigos de crimes que podem levar à prisão, de 8 legislações (CP, LCP, ECA, CTB, CDC e Leis Especiais). Estrutura hierárquica completa. Ideal para autocomplete e sistemas jurídicos. Cache permanente para máxima performance.',
   keywords: [
     'api codigo penal',
     'api artigos penais',
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: 'API de Artigos Penais - Código Penal Completo',
-    description: 'Mais de 80 artigos penais brasileiros com estrutura hierárquica. Ideal para autocomplete e sistemas jurídicos.',
+    description: '91 artigos penais de crimes que podem levar à prisão, de 8 legislações brasileiras. Estrutura hierárquica completa. Ideal para autocomplete e sistemas jurídicos.',
     type: 'website',
     images: [
       {

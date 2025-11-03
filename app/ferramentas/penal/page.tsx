@@ -29,6 +29,7 @@ interface ArtigoPenal {
   codigoFormatado: string;
   fonte?: string;
   dataAtualizacao?: string;
+  idUnico?: string;
 }
 
 export default function ConsultarPenalPage() {
@@ -38,6 +39,9 @@ export default function ConsultarPenalPage() {
   const [error, setError] = useState<string | null>(null);
   const [responseTime, setResponseTime] = useState<number | null>(null);
   const [demoApiKey, setDemoApiKey] = useState('');
+  const [glossario, setGlossario] = useState<any[]>([]);
+  const [loadingGlossario, setLoadingGlossario] = useState(false);
+  const [showGlossario, setShowGlossario] = useState(false);
 
   const apiBaseURL = process.env.NEXT_PUBLIC_API_URL || 'https://api-core.theretech.com.br';
 
@@ -63,6 +67,52 @@ export default function ConsultarPenalPage() {
     };
     fetchPlaygroundConfig();
   }, []);
+
+  // ✅ Carregar glossário completo (todos os artigos sem filtros = sem limite)
+  const loadGlossario = async () => {
+    if (glossario.length > 0 || !demoApiKey) return; // Já carregado ou sem API key
+    
+    setLoadingGlossario(true);
+    try {
+      // Sem filtros = endpoint retorna TODOS os artigos (sem limite de 100)
+      const res = await fetch(`${apiBaseURL}/public/penal/artigos`, {
+        headers: {
+          'X-API-Key': demoApiKey
+        }
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.data) {
+          console.log(`📊 Glossário carregado: ${data.data.length} artigos`);
+          // Verificar se DRG:33 está presente
+          const drg33 = data.data.find((a: any) => a.idUnico === 'DRG:33');
+          if (drg33) {
+            console.log('✅ DRG:33 encontrado no glossário:', drg33);
+          } else {
+            console.warn('⚠️ DRG:33 NÃO encontrado no glossário!');
+            console.log('Artigos da Lei de Drogas encontrados:', data.data.filter((a: any) => a.legislacao === 'Lei 11.343/2006'));
+          }
+          setGlossario(data.data);
+        } else {
+          console.error('Erro na resposta da API:', data);
+        }
+      } else {
+        console.error('Erro HTTP:', res.status, res.statusText);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar glossário:', error);
+    } finally {
+      setLoadingGlossario(false);
+    }
+  };
+
+  // Carregar glossário quando mostrar
+  useEffect(() => {
+    if (showGlossario && demoApiKey) {
+      loadGlossario();
+    }
+  }, [showGlossario, demoApiKey]);
 
   // ✅ Buscar código da URL query string ao carregar
   useEffect(() => {
@@ -138,7 +188,7 @@ export default function ConsultarPenalPage() {
     },
     {
       question: "De onde vêm os dados dos artigos penais?",
-      answer: "Utilizamos dados oficiais do Código Penal Brasileiro (CP) e Lei de Contravenções Penais (LCP), com mais de 80 artigos disponíveis. Dados fixos armazenados em cache permanente para máxima performance."
+      answer: "Utilizamos dados oficiais de múltiplas legislações brasileiras: Código Penal (CP - 70 artigos), Lei de Contravenções Penais (LCP - 3 artigos), Lei de Drogas (2 artigos), Estatuto da Criança e do Adolescente (ECA - 4 artigos), Código de Trânsito Brasileiro (CTB - 4 artigos), Lei de Crimes Ambientais (5 artigos), Código de Defesa do Consumidor (CDC - 2 artigos) e Lei de Lavagem de Dinheiro (1 artigo). Total de 91 artigos de crimes que podem levar à prisão. Dados fixos armazenados em cache permanente para máxima performance."
     },
     {
       question: "Qual a velocidade de resposta?",
@@ -186,7 +236,17 @@ export default function ConsultarPenalPage() {
         <Card className="mb-8 shadow-xl">
           <CardHeader>
             <CardTitle>Digite o código do artigo que você quer consultar</CardTitle>
-            <CardDescription>Informe o número do artigo (ex: 121, 157, 155)</CardDescription>
+            <CardDescription>
+              Informe o número do artigo (ex: 121, 157, 155) ou use o{' '}
+              <button
+                type="button"
+                onClick={() => setShowGlossario(true)}
+                className="text-red-600 hover:text-red-700 underline font-medium"
+              >
+                glossário completo
+              </button>
+              {' '}abaixo para encontrar todos os artigos disponíveis
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleConsulta} className="space-y-4">
@@ -367,6 +427,163 @@ export default function ConsultarPenalPage() {
           </Card>
         )}
 
+        {/* Glossário de Artigos */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <Search className="w-5 h-5" />
+                Glossário Completo de Artigos Penais
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setShowGlossario(!showGlossario);
+                }}
+              >
+                {showGlossario ? 'Ocultar' : 'Mostrar'} Glossário
+              </Button>
+            </CardTitle>
+            <CardDescription>
+              Lista completa de todos os artigos disponíveis com seus identificadores únicos (idUnico). 
+              Clique em <strong>"Usar"</strong> para preencher o campo de busca acima e consultar automaticamente.
+            </CardDescription>
+          </CardHeader>
+          {showGlossario && (
+            <CardContent>
+              {loadingGlossario ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin h-8 w-8 border-4 border-red-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+                  <p className="text-slate-600">Carregando glossário...</p>
+                </div>
+              ) : glossario.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-slate-600 mb-4">Nenhum artigo encontrado. Verifique se há dados no banco.</p>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {/* Legenda */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                    <p className="text-sm text-blue-900 mb-2">
+                      <strong>Como usar:</strong>
+                    </p>
+                    <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
+                      <li><strong>CP (Código Penal):</strong> Use apenas o número (ex: <code className="bg-blue-100 px-1 rounded">121</code>)</li>
+                      <li><strong>Outras legislações:</strong> Use o idUnico quando houver duplicidade (ex: <code className="bg-blue-100 px-1 rounded">DRG:33</code> para Lei de Drogas - Tráfico)</li>
+                      <li><strong>Códigos curtos:</strong> CP, LCP, DRG (Drogas), ECA, CTB, AMB (Ambiente), CDC, LVD (Lavagem)</li>
+                    </ul>
+                  </div>
+
+                  {/* Total de artigos */}
+                  <div className="bg-slate-100 rounded-lg p-3 text-center">
+                    <p className="text-sm text-slate-700">
+                      <strong>{glossario.length} artigos</strong> disponíveis no total
+                    </p>
+                  </div>
+
+                  {/* Agrupar por legislação */}
+                  {(() => {
+                    const grupos: { [key: string]: any[] } = {};
+                    glossario.forEach((art) => {
+                      const leg = art.legislacao || 'Outros';
+                      if (!grupos[leg]) grupos[leg] = [];
+                      grupos[leg].push(art);
+                    });
+                    
+                    // Debug: log dos grupos
+                    console.log('Grupos formados:', Object.keys(grupos).map(k => ({ leg: k, count: grupos[k].length })));
+
+                    const legCodes: { [key: string]: string } = {
+                      'CP': 'CP',
+                      'LCP': 'LCP',
+                      'Lei 11.343/2006': 'DRG',
+                      'ECA': 'ECA',
+                      'CTB': 'CTB',
+                      'Lei 9.605/98': 'AMB',
+                      'CDC': 'CDC',
+                      'Lei 9.613/98': 'LVD'
+                    };
+
+                    return Object.entries(grupos)
+                      .sort(([a], [b]) => {
+                        // CP primeiro, depois alfabeticamente
+                        if (a === 'CP') return -1;
+                        if (b === 'CP') return 1;
+                        return a.localeCompare(b);
+                      })
+                      .map(([legislacao, artigos]) => {
+                        const legCode = legCodes[legislacao] || legislacao;
+                        // Debug: log dos artigos desta legislação
+                        console.log(`Legislacao ${legislacao}:`, artigos.map(a => a.idUnico));
+                        
+                        return (
+                          <div key={legislacao} className="border border-slate-200 rounded-lg p-4">
+                            <h3 className="font-bold text-lg mb-3 text-slate-900">
+                              {artigos[0]?.legislacaoNome || legislacao}
+                              <span className="ml-2 text-sm font-normal text-slate-600">
+                                ({legCode}) - {artigos.length} {artigos.length === 1 ? 'artigo' : 'artigos'}
+                              </span>
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                              {artigos
+                                .sort((a, b) => {
+                                  // Ordenar por código numérico
+                                  const numA = parseInt(a.codigo) || 0;
+                                  const numB = parseInt(b.codigo) || 0;
+                                  return numA - numB;
+                                })
+                                .map((art) => (
+                                  <div
+                                    key={art.idUnico}
+                                    className="flex items-center justify-between p-2 bg-slate-50 rounded hover:bg-slate-100 transition-colors"
+                                  >
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2">
+                                        <code className="text-xs font-mono bg-white px-1.5 py-0.5 rounded border border-slate-300 text-slate-700">
+                                          {art.idUnico}
+                                        </code>
+                                        <span className="text-xs text-slate-500 truncate">
+                                          {art.codigoFormatado}
+                                        </span>
+                                      </div>
+                                      <p className="text-xs text-slate-600 mt-1 truncate" title={art.descricao}>
+                                        {art.descricao}
+                                      </p>
+                                    </div>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="ml-2 shrink-0 bg-red-50 hover:bg-red-100 text-red-700"
+                                      onClick={() => {
+                                        const codigoParaBusca = art.legislacao === 'CP' ? art.codigo : art.idUnico;
+                                        setCodigo(codigoParaBusca);
+                                        handleConsultaFromURL(codigoParaBusca);
+                                        // Scroll suave até o campo de busca
+                                        setTimeout(() => {
+                                          const input = document.getElementById('codigo');
+                                          if (input) {
+                                            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                            input.focus();
+                                          }
+                                        }, 100);
+                                      }}
+                                    >
+                                      Usar
+                                    </Button>
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
+                        );
+                      });
+                  })()}
+                </div>
+              )}
+            </CardContent>
+          )}
+        </Card>
+
         {/* Info Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <Card>
@@ -402,15 +619,15 @@ export default function ConsultarPenalPage() {
               Use nossa API profissional com <strong>1.000 requests/dia gratuitos</strong>
             </p>
             <div className="flex gap-4 justify-center flex-wrap">
-              <Button asChild size="lg" variant="secondary">
-                <Link href="/playground?api=penal">
-                  Testar no Playground
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </Button>
               <Button asChild size="lg" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white/30">
                 <Link href="/painel/register">
                   Criar Conta Grátis
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="secondary">
+                <Link href="/apis/penal">
+                  Ver Documentação da API
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
             </div>
@@ -431,7 +648,7 @@ export default function ConsultarPenalPage() {
           <p className="text-slate-600 mb-4">
             Consultar um artigo penal é simples: basta digitar o código do artigo (ex: 121 para Homicídio, 
             157 para Roubo, 155 para Furto) na ferramenta acima. Nossa plataforma busca automaticamente no 
-            banco de dados oficial, com mais de 80 artigos disponíveis, garantindo informações precisas e 
+            banco de dados oficial, com 91 artigos de crimes que podem levar à prisão, garantindo informações precisas e 
             atualizadas sobre o artigo, incluindo descrição, texto completo, tipo, legislação e penas.
           </p>
 
@@ -443,7 +660,7 @@ export default function ConsultarPenalPage() {
           </p>
           <ul className="list-disc list-inside text-slate-600 space-y-2 mb-4">
             <li>Cache permanente no Redis para dados fixos</li>
-            <li>Mais de 80 artigos do CP e LCP disponíveis</li>
+            <li>91 artigos de crimes que podem levar à prisão, de múltiplas legislações (CP, LCP, ECA, CTB, CDC e Leis Especiais)</li>
             <li>Busca por texto, código, tipo e legislação</li>
             <li>1.000 requests gratuitos por dia</li>
             <li>Documentação completa com exemplos em JavaScript, Python e PHP</li>
