@@ -181,7 +181,7 @@ curl_close($ch);
           
           <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
             <div>
-              <div className="text-3xl font-bold">111</div>
+              <div className="text-3xl font-bold">116</div>
               <div className="text-sm text-red-200">artigos disponíveis</div>
             </div>
             <div>
