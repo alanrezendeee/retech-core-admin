@@ -162,7 +162,7 @@ curl_close($ch);
             API de Artigos Penais
           </h1>
           <p className="text-xl md:text-2xl text-red-100 mb-8 max-w-3xl mx-auto">
-            <strong>111 artigos penais brasileiros</strong> de múltiplas legislações com estrutura hierárquica completa, 
+            <strong>116 artigos penais brasileiros</strong> de múltiplas legislações com estrutura hierárquica completa, 
             ideal para <strong>autocomplete</strong> e sistemas jurídicos
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
@@ -253,7 +253,7 @@ curl_close($ch);
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
-                    <span>111 artigos de crimes que podem levar à prisão</span>
+                    <span>116 artigos de crimes que podem levar à prisão</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5" />
@@ -492,9 +492,9 @@ curl_close($ch);
                     Quantos artigos estão disponíveis?
                   </AccordionTrigger>
                   <AccordionContent className="text-slate-600">
-                    A API contém <strong>111 artigos penais</strong> de crimes que podem levar à prisão, distribuídos em:
+                    A API contém <strong>116 artigos penais</strong> de crimes que podem levar à prisão, distribuídos em:
                     <ul className="list-disc list-inside mt-2 space-y-1">
-                      <li><strong>Código Penal (CP):</strong> 86 artigos (incluindo homicídio simples, qualificado, feminicídio, culposo, receptação, furto qualificado, roubo qualificado, estelionato qualificado, estupro qualificado, extorsão, sequestro, tráfico de pessoas, violação sexual mediante fraude, importunação sexual, assédio sexual)</li>
+                      <li><strong>Código Penal (CP):</strong> 91 artigos (incluindo homicídio simples, qualificado, feminicídio, culposo, receptação, furto qualificado, roubo qualificado, estelionato qualificado, estupro qualificado, extorsão, sequestro, tráfico de pessoas, violação sexual mediante fraude, importunação sexual, assédio sexual)</li>
                       <li><strong>Estatuto da Criança e do Adolescente (ECA):</strong> 4 artigos</li>
                       <li><strong>Lei de Contravenções Penais (LCP):</strong> 3 artigos</li>
                       <li><strong>Lei de Drogas (Lei 11.343/2006):</strong> 2 artigos (tráfico, associação)</li>
@@ -528,7 +528,7 @@ curl_close($ch);
                   <AccordionContent className="text-slate-600">
                     Incluímos artigos de <strong>10 legislações brasileiras</strong>:
                     <ul className="list-disc list-inside mt-2 space-y-1">
-                      <li><strong>Código Penal (CP - Decreto-Lei 2.848/1940):</strong> 86 artigos (incluindo variações qualificadas de furto, roubo, estelionato, estupro, extorsão, sequestro, tráfico de pessoas, violação sexual mediante fraude, importunação sexual e assédio sexual)</li>
+                      <li><strong>Código Penal (CP - Decreto-Lei 2.848/1940):</strong> 91 artigos (incluindo variações qualificadas de furto, roubo, estelionato, estupro, extorsão, sequestro, tráfico de pessoas, violação sexual mediante fraude, importunação sexual e assédio sexual)</li>
                       <li><strong>Estatuto da Criança e do Adolescente (ECA - Lei 8.069/1990):</strong> 4 artigos</li>
                       <li><strong>Lei de Contravenções Penais (LCP - Decreto-Lei 3.688/1941):</strong> 3 artigos</li>
                       <li><strong>Lei de Drogas (Lei 11.343/2006):</strong> 2 artigos (tráfico, associação)</li>
@@ -539,7 +539,7 @@ curl_close($ch);
                       <li><strong>Código de Defesa do Consumidor (CDC - Lei 8.078/1990):</strong> 2 artigos</li>
                       <li><strong>Lei de Lavagem de Dinheiro (Lei 9.613/98):</strong> 1 artigo</li>
                     </ul>
-                    <strong>Total: 111 artigos de crimes que podem levar à prisão.</strong> Incluindo formas qualificadas e agravadas dos crimes mais comuns. Estamos constantemente expandindo nossa base de dados. Se precisar de outras legislações específicas, <strong>entre em contato</strong> com nossa equipe.
+                    <strong>Total: 116 artigos de crimes que podem levar à prisão.</strong> Incluindo formas qualificadas e agravadas dos crimes mais comuns. Estamos constantemente expandindo nossa base de dados. Se precisar de outras legislações específicas, <strong>entre em contato</strong> com nossa equipe.
                   </AccordionContent>
                 </AccordionItem>
 

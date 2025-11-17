@@ -218,9 +218,9 @@ export default function HomePage() {
                     <div className="text-5xl group-hover:scale-110 transition-transform">⚡</div>
                     <CardTitle className="text-2xl text-purple-600">API de CEP</CardTitle>
                   </div>
-                  <CardDescription className="text-base">
+                      <CardDescription className="text-base">
                     <strong>3 fontes</strong> com fallback automático • Cache inteligente • <strong>~160ms</strong>
-                  </CardDescription>
+                      </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Badge className="w-full justify-center bg-purple-100 text-purple-800 hover:bg-purple-200 px-6 py-2 text-base">
@@ -237,9 +237,9 @@ export default function HomePage() {
                   <div className="flex items-center gap-4 mb-2">
                     <div className="text-5xl group-hover:scale-110 transition-transform">⚖️</div>
                     <CardTitle className="text-2xl text-red-600">API de Artigos Penais</CardTitle>
-                  </div>
+                    </div>
                   <CardDescription className="text-base">
-                    <strong>10 legislações</strong> • Cache permanente • <strong>111 artigos</strong>
+                    <strong>10 legislações</strong> • Cache permanente • <strong>116 artigos</strong>
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -519,12 +519,12 @@ export default function HomePage() {
                     </div>
                     <CardTitle className="text-xl mb-2">Artigos Penais</CardTitle>
                     <CardDescription className="text-base">
-                      111 artigos penais de crimes que podem levar à prisão, de 10 legislações brasileiras (CP, Lei Maria da Penha, Estatuto do Desarmamento, ECA, LCP, Lei de Drogas, CTB, CDC e Leis Especiais). Inclui formas qualificadas e agravadas dos crimes mais comuns. Estrutura hierárquica completa. Ideal para autocomplete.
+                      116 artigos penais de crimes que podem levar à prisão, de 10 legislações brasileiras (CP, Lei Maria da Penha, Estatuto do Desarmamento, ECA, LCP, Lei de Drogas, CTB, CDC e Leis Especiais). Inclui formas qualificadas e agravadas dos crimes mais comuns. Estrutura hierárquica completa. Ideal para autocomplete.
                     </CardDescription>
                     <div className="mt-4 pt-4 border-t border-red-200">
                       <p className="text-sm text-slate-600 mb-2 font-medium">Recursos:</p>
                       <ul className="text-xs text-slate-600 space-y-1">
-                        <li>✓ 111 artigos de 10 legislações (incluindo qualificadas)</li>
+                        <li>✓ 116 artigos de 10 legislações (incluindo qualificadas)</li>
                         <li>✓ Busca por texto</li>
                         <li>✓ Cache permanente</li>
                         <li>✓ Autocomplete otimizado</li>
