@@ -188,7 +188,7 @@ export default function ConsultarPenalPage() {
     },
     {
       question: "De onde vêm os dados dos artigos penais?",
-      answer: "Utilizamos dados oficiais de 10 legislações brasileiras: Código Penal (CP - 83 artigos incluindo homicídio, feminicídio, receptação, furto qualificado, roubo qualificado, estelionato qualificado, estupro qualificado, extorsão, sequestro, tráfico de pessoas), Lei Maria da Penha (2 artigos), Estatuto do Desarmamento (2 artigos), Estatuto da Criança e do Adolescente (ECA - 4 artigos), Lei de Contravenções Penais (LCP - 3 artigos), Lei de Drogas (2 artigos), Código de Trânsito Brasileiro (CTB - 4 artigos), Lei de Crimes Ambientais (5 artigos), Código de Defesa do Consumidor (CDC - 2 artigos) e Lei de Lavagem de Dinheiro (1 artigo). Total de 108 artigos de crimes que podem levar à prisão. Dados fixos armazenados em cache permanente para máxima performance."
+      answer: "Utilizamos dados oficiais de 10 legislações brasileiras: Código Penal (CP - 86 artigos incluindo homicídio, feminicídio, receptação, furto qualificado, roubo qualificado, estelionato qualificado, estupro qualificado, extorsão, sequestro, tráfico de pessoas, violação sexual mediante fraude, importunação sexual, assédio sexual), Lei Maria da Penha (2 artigos), Estatuto do Desarmamento (2 artigos), Estatuto da Criança e do Adolescente (ECA - 4 artigos), Lei de Contravenções Penais (LCP - 3 artigos), Lei de Drogas (2 artigos), Código de Trânsito Brasileiro (CTB - 4 artigos), Lei de Crimes Ambientais (5 artigos), Código de Defesa do Consumidor (CDC - 2 artigos) e Lei de Lavagem de Dinheiro (1 artigo). Total de 111 artigos de crimes que podem levar à prisão. Dados fixos armazenados em cache permanente para máxima performance."
     },
     {
       question: "Qual a velocidade de resposta?",
@@ -648,7 +648,7 @@ export default function ConsultarPenalPage() {
           <p className="text-slate-600 mb-4">
             Consultar um artigo penal é simples: basta digitar o código do artigo (ex: 121 para Homicídio, 
             157 para Roubo, 155 para Furto) na ferramenta acima. Nossa plataforma busca automaticamente no 
-            banco de dados oficial, com 108 artigos de crimes que podem levar à prisão (incluindo feminicídio, receptação, furto qualificado, roubo qualificado, estelionato qualificado, estupro qualificado, extorsão, sequestro, tráfico de pessoas, Lei Maria da Penha e Estatuto do Desarmamento), garantindo informações precisas e 
+            banco de dados oficial, com 111 artigos de crimes que podem levar à prisão (incluindo feminicídio, receptação, furto qualificado, roubo qualificado, estelionato qualificado, estupro qualificado, extorsão, sequestro, tráfico de pessoas, violação sexual mediante fraude, importunação sexual, assédio sexual, Lei Maria da Penha e Estatuto do Desarmamento), garantindo informações precisas e 
             atualizadas sobre o artigo, incluindo descrição, texto completo, tipo, legislação e penas.
           </p>
 
@@ -660,7 +660,7 @@ export default function ConsultarPenalPage() {
           </p>
           <ul className="list-disc list-inside text-slate-600 space-y-2 mb-4">
             <li>Cache permanente no Redis para dados fixos</li>
-            <li>108 artigos de crimes que podem levar à prisão, de 10 legislações (CP, Maria da Penha, Desarmamento, LCP, ECA, CTB, CDC e Leis Especiais), incluindo formas qualificadas e agravadas</li>
+            <li>111 artigos de crimes que podem levar à prisão, de 10 legislações (CP, Maria da Penha, Desarmamento, LCP, ECA, CTB, CDC e Leis Especiais), incluindo formas qualificadas e agravadas</li>
             <li>Busca por texto, código, tipo e legislação</li>
             <li>1.000 requests gratuitos por dia</li>
             <li>Documentação completa com exemplos em JavaScript, Python e PHP</li>

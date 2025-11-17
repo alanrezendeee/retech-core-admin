@@ -239,7 +239,7 @@ export default function HomePage() {
                     <CardTitle className="text-2xl text-red-600">API de Artigos Penais</CardTitle>
                   </div>
                   <CardDescription className="text-base">
-                    <strong>10 legislações</strong> • Cache permanente • <strong>108 artigos</strong>
+                    <strong>10 legislações</strong> • Cache permanente • <strong>111 artigos</strong>
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -519,12 +519,12 @@ export default function HomePage() {
                     </div>
                     <CardTitle className="text-xl mb-2">Artigos Penais</CardTitle>
                     <CardDescription className="text-base">
-                      108 artigos penais de crimes que podem levar à prisão, de 10 legislações brasileiras (CP, Lei Maria da Penha, Estatuto do Desarmamento, ECA, LCP, Lei de Drogas, CTB, CDC e Leis Especiais). Inclui formas qualificadas e agravadas dos crimes mais comuns. Estrutura hierárquica completa. Ideal para autocomplete.
+                      111 artigos penais de crimes que podem levar à prisão, de 10 legislações brasileiras (CP, Lei Maria da Penha, Estatuto do Desarmamento, ECA, LCP, Lei de Drogas, CTB, CDC e Leis Especiais). Inclui formas qualificadas e agravadas dos crimes mais comuns. Estrutura hierárquica completa. Ideal para autocomplete.
                     </CardDescription>
                     <div className="mt-4 pt-4 border-t border-red-200">
                       <p className="text-sm text-slate-600 mb-2 font-medium">Recursos:</p>
                       <ul className="text-xs text-slate-600 space-y-1">
-                        <li>✓ 108 artigos de 10 legislações (incluindo qualificadas)</li>
+                        <li>✓ 111 artigos de 10 legislações (incluindo qualificadas)</li>
                         <li>✓ Busca por texto</li>
                         <li>✓ Cache permanente</li>
                         <li>✓ Autocomplete otimizado</li>
