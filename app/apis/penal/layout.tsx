@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'API de Artigos Penais - Consulta Completa do Código Penal | Retech Core',
-  description: 'API de artigos penais brasileiros: 116 artigos de crimes que podem levar à prisão, de 10 legislações (CP, Maria da Penha, Desarmamento, LCP, ECA, CTB, CDC e Leis Especiais). Inclui formas qualificadas e agravadas. Estrutura hierárquica completa. Ideal para autocomplete e sistemas jurídicos. Cache permanente para máxima performance.',
+  description: 'API de artigos penais brasileiros: 117 artigos de crimes que podem levar à prisão, de 10 legislações (CP, Maria da Penha, Desarmamento, LCP, ECA, CTB, CDC e Leis Especiais). Inclui formas qualificadas e agravadas. Estrutura hierárquica completa. Ideal para autocomplete e sistemas jurídicos. Cache permanente para máxima performance.',
   keywords: [
     'api codigo penal',
     'api artigos penais',
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: 'API de Artigos Penais - Código Penal Completo',
-    description: '116 artigos penais de crimes que podem levar à prisão, de 10 legislações brasileiras (incluindo Lei Maria da Penha e Estatuto do Desarmamento). Inclui formas qualificadas e agravadas. Estrutura hierárquica completa. Ideal para autocomplete e sistemas jurídicos.',
+    description: '117 artigos penais de crimes que podem levar à prisão, de 10 legislações brasileiras (incluindo Lei Maria da Penha e Estatuto do Desarmamento). Inclui formas qualificadas e agravadas. Estrutura hierárquica completa. Ideal para autocomplete e sistemas jurídicos.',
     type: 'website',
     images: [
       {

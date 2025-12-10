@@ -557,11 +557,11 @@ curl -X GET '${apiBaseURL}${endpoint}' \\
                 </Link>
               </Button>
               {apiBaseURL ? (
-                <Button asChild size="lg" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white/30">
+              <Button asChild size="lg" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white/30">
                   <Link href={`${apiBaseURL}/docs`} target="_blank" rel="noopener noreferrer">
-                    Ver Documentação
-                  </Link>
-                </Button>
+                  Ver Documentação
+                </Link>
+              </Button>
               ) : (
                 <Button 
                   size="lg" 
